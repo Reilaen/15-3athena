@@ -2334,10 +2334,12 @@ static int pc_bonus_addeff(struct s_addeffect* effect, int max_value, enum sc_ty
 			return 1;
 		}
 	}
+
 	if (i == max_value) {
 		ShowWarning("pc_bonus: Reached max (%d) number of add effects per character!\n", max_value);
 		return 0;
 	}
+
 	effect[i].sc = sc;
 	effect[i].rate = rate;
 	effect[i].arrow_rate = arrow_rate;
@@ -2369,8 +2371,8 @@ static int pc_bonus_addeff_onskill(struct s_addeffectonskill* effect, int max_va
 			return 1;
 		}
 	}
-	if( i == max_value) {
-		ShowWarning("pc_bonus: Reached max (%d) number of add effects on skill per character!\n", max_value);
+	if( i == max_value ) {
+		ShowWarning("pc_bonus: Reached max (%d) number of add effects on skill per character!\n", max);
 		return 0;
 	}
 	effect[i].sc = sc;
@@ -4133,7 +4135,7 @@ int pc_skill(TBL_PC* sd, int id, int level, int flag)
 {
 	nullpo_ret(sd);
 
-	if( id <= 0 || id >= MAX_SKILL || skill_db[id].name[0] == '\0') {
+	if( id <= 0 || id >= MAX_SKILL || skill_db[id].name[0]) {
 		ShowError("pc_skill: Skill with id %d does not exist in the skill database\n", id);
 		return 0;
 	}
@@ -5499,7 +5501,7 @@ int pc_steal_item(struct map_session_data *sd,struct block_list *bl, int lv)
 		struct item_data *i_data;
 		char message[128];
 		i_data = itemdb_search(itemid);
-		sprintf (message, msg_txt(sd,542), (sd->status.name[0] != '\0')?sd->status.name :"GM", md->db->jname, i_data->jname, (float)md->db->dropitem[i].p/100);
+		sprintf (message, msg_txt(sd,542), (sd->status.name[0])?sd->status.name :"GM", md->db->jname, i_data->jname, (float)md->db->dropitem[i].p/100);
 		//MSG: "'%s' stole %s's %s (chance: %0.02f%%)"
 		intif_broadcast(message,strlen(message)+1,BC_DEFAULT);
 	}

@@ -852,7 +852,7 @@ static int pet_unequipitem(struct map_session_data *sd, struct pet_data *pd) {
 	return 0;
 }
 
-int pet_food(struct map_session_data *sd, struct pet_data *pd)
+static int pet_food(struct map_session_data *sd, struct pet_data *pd)
 {
 	int i,k;
 
@@ -1152,7 +1152,7 @@ int pet_lootitem_drop(struct pet_data *pd,struct map_session_data *sd)
 	memset(pd->loot->item,0,pd->loot->max * sizeof(struct item));
 	pd->loot->count = 0;
 	pd->loot->weight = 0;
-	pd->ud.canact_tick = gettick()+10000;	//	10*1000ms‚ÌŠÔE‚í‚È‚¢
+	pd->ud.canact_tick = gettick()+10000;	//	10*1000msï¿½ÌŠÔEï¿½ï¿½È‚ï¿½
 
 	if (dlist->item)
 		add_timer(gettick()+540,pet_delay_item_drop,0,(intptr_t)dlist);
@@ -1316,7 +1316,7 @@ int pet_skill_support_timer(int tid, int64 tick, int id, intptr_t data)
 }
 
 /*==========================================
- *ƒyƒbƒgƒf[ƒ^“Ç‚İ‚İ
+ *ï¿½yï¿½bï¿½gï¿½fï¿½[ï¿½^ï¿½Ç‚İï¿½ï¿½ï¿½
  *------------------------------------------*/ 
 void read_petdb()
 {
@@ -1579,7 +1579,7 @@ void read_petevolve_db()
 }
 
 /*==========================================
- * ƒXƒLƒ‹ŠÖŒW‰Šú‰»ˆ—
+ * ï¿½Xï¿½Lï¿½ï¿½ï¿½ÖŒWï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 void do_init_pet(void)
 {

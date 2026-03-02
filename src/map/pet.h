@@ -150,7 +150,6 @@ int pet_menu(struct map_session_data *sd,int menunum);
 int pet_change_name(struct map_session_data *sd,char *name);
 int pet_change_name_ack(struct map_session_data *sd, char* name, int flag);
 int pet_equipitem(struct map_session_data *sd,int index);
-int pet_food(struct map_session_data *sd, struct pet_data *pd);
 int pet_lootitem_drop(struct pet_data *pd,struct map_session_data *sd);
 int pet_attackskill(struct pet_data *pd, int target_id);
 int pet_skill_support_timer(int tid, int64 tick, int id, intptr_t data); // [Skotlex]
