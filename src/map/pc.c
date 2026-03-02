@@ -2306,14 +2306,14 @@ static int pc_bonus_autospell_onskill(struct s_autospell *spell, int max, short 
 /**
  * Add inflict effect bonus for player while attacking/atatcked
  * @param effect Effect array
- * @param max Max array
+ * @param max_value Max array
  * @param sc SC/Effect type
  * @param rate Success chance
  * @param arrow_rate success chance if bonus comes from arrow-type item
  * @param flag Target flag
  * @param duration Duration. If 0 use default duration lookup for associated skill with level 7
  **/
-static int pc_bonus_addeff(struct s_addeffect* effect, int max, enum sc_type sc, short rate, short arrow_rate, unsigned char flag, unsigned int duration)
+static int pc_bonus_addeff(struct s_addeffect* effect, int max_value, enum sc_type sc, short rate, short arrow_rate, unsigned char flag, unsigned int duration)
 {
 	int i;
 	if (!(flag&(ATF_SHORT|ATF_LONG)))
@@ -2326,7 +2326,7 @@ static int pc_bonus_addeff(struct s_addeffect* effect, int max, enum sc_type sc,
 	if (!duration)
 		duration = skill_get_time2(status_sc2skill(sc), 7);
 
-	for (i = 0; i < max && effect[i].flag; i++) {
+	for (i = 0; i < max_value && effect[i].flag; i++) {
 		if (effect[i].sc == sc && effect[i].flag == flag) {
 			effect[i].rate += rate;
 			effect[i].arrow_rate += arrow_rate;
@@ -2334,7 +2334,7 @@ static int pc_bonus_addeff(struct s_addeffect* effect, int max, enum sc_type sc,
 			return 1;
 		}
 	}
-	if (i == max) {
+	if (i == max_value) {
 		ShowWarning("pc_bonus: Reached max (%d) number of add effects per character!\n", max);
 		return 0;
 	}
@@ -2349,27 +2349,27 @@ static int pc_bonus_addeff(struct s_addeffect* effect, int max, enum sc_type sc,
 /**
  * Add inflict effect bonus for player while attacking using skill
  * @param effect Effect array
- * @param max Max array
+ * @param max_value Max array
  * @param sc SC/Effect type
  * @param rate Success chance
  * @param flag Target flag
  * @param duration Duration. If 0 use default duration lookup for associated skill with level 7
  **/
-static int pc_bonus_addeff_onskill(struct s_addeffectonskill* effect, int max, enum sc_type sc, short rate, short skill_id, unsigned char target, unsigned int duration)
+static int pc_bonus_addeff_onskill(struct s_addeffectonskill* effect, int max_value, enum sc_type sc, short rate, short skill_id, unsigned char target, unsigned int duration)
 {
 	int i;
 
 	if (!duration)
 		duration = skill_get_time2(status_sc2skill(sc), 7);
 
-	for (i = 0; i < max && effect[i].skill_id; i++) {
+	for (i = 0; i < max_value && effect[i].skill_id; i++) {
 		if (effect[i].sc == sc && effect[i].skill_id == skill_id && effect[i].target == target) {
 			effect[i].rate += rate;
 			effect[i].duration = max(effect[i].duration, duration);
 			return 1;
 		}
 	}
-	if( i == max ) {
+	if( i == max_value ) {
 		ShowWarning("pc_bonus: Reached max (%d) number of add effects on skill per character!\n", max);
 		return 0;
 	}
