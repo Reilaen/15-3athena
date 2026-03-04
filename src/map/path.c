@@ -56,7 +56,7 @@ static const unsigned char walk_choices[3][3] =
 /*==========================================
  * Find the closest reachable cell, 'count' cells away from (x0,y0) in direction (dx,dy).
  * 
- * ‚«”ò‚Î‚µ‚½‚ ‚Æ‚ÌÀ•W‚ðŠ“¾
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚Ìï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int path_blownpos(int m,int x0,int y0,int dx,int dy,int count)
 {
@@ -88,7 +88,7 @@ int path_blownpos(int m,int x0,int y0,int dx,int dy,int count)
 				int fy = (dy != 0 && md->getcellp(md, x0, y0 + dy, CELL_CHKPASS));
 				if (fx && fy)
 				{
-					if (rnd() & 1)
+					if (rnd_chance(1, 2))
 						dx = 0;
 					else
 						dy = 0;

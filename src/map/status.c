@@ -7700,7 +7700,7 @@ int64 status_get_sc_def(struct block_list *src, struct block_list *bl, enum sc_t
 		break;
 	default:
 		//Effect that cannot be reduced? Likely a buff.
-		if (!(rnd()%10000 < rate))
+		if (!rnd_chance(rate, 10000))
 			return 0;
 		return tick ? tick : 1;
 	}
@@ -7774,7 +7774,7 @@ int64 status_get_sc_def(struct block_list *src, struct block_list *bl, enum sc_t
 		//Aegis accuracy
 		if (rate > 0 && rate % 10 != 0) rate += (10 - rate % 10);
 	}
-	if (!(rnd()%10000 < rate))
+	if (!rnd_chance(rate, 10000))
 		return 0;
 
 	//Rate reduction
@@ -8949,10 +8949,10 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 			// val1 : Element Lvl (if called by skill lvl 1, takes random value between 1 and 4)
 			// val2 : Element (When no element, random one is picked)
 			// val3 : 0 = called by skill 1 = called by script (fixed level)
-			if( !val2 ) val2 = rnd()% ELE_ALL;
+			if( !val2 ) val2 = rnd_value_int32(0, ELE_ALL - 1);
 
 			if( val1 == 1 && val3 == 0 )
-				val1 = 1 + rnd()%4;
+				val1 = rnd_value_int32(1, 4);
 			else if( val1 > 4 )
 				val1 = 4; // Max Level
 			val3 = 0; // Not need to keep this info.
@@ -9665,7 +9665,7 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 			if (val1 >= ELE_ALL)
 				val1 = val1% ELE_ALL;
 			else if (val1 < 0)
-				val1 = rnd()% ELE_ALL;
+				val1 = rnd_value_int32(0, ELE_ALL - 1);
 			val_flag |= 1;
 			break;
 		case SC_CRITICALWOUND:
@@ -10041,8 +10041,8 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 		case SC_GLOOMYDAY:
 			val2 = 20 + 5 * val1;//Flee reduction
 			val3 = 15 + 5 * val1;//ASPD reduction
-			val4 = rnd_value(15, 10 * val1 + 5 * val4);// Damage Increase
-			if (rnd() % 100 < val1)// Chance of super gloomy effect.
+			val4 = rnd_value_int32(15, 10 * val1 + 5 * val4); // Damage Increase
+			if (rnd_chance(val1, 100))// Chance of super gloomy effect.
 			{
 				if ( sd )
 				{// If successful, dismount the player. Only applies to Peco/Gryphin and Dragon.
@@ -10324,7 +10324,7 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 			tick = 1000;
 			break;
 		case SC_KYOUGAKU:
-			val2 = rnd_value(2 * val1, 3 * val1);// Stats decrease.
+			val2 = rnd_value_int32(2 * val1, 3 * val1);// Stats decrease.
 			val1 = 1002;
 			break;
 		case SC_ZENKAI:
@@ -12403,7 +12403,7 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 		break;
 	case SC_BLEEDING:
 		if (sce->val4 >= 0) {
-			int64 damage = rnd() % 600 + 200;
+			int64 damage = rnd_value_int32(200, 800);
 			if (!sd && damage >= status->hp)
 				damage = status->hp - 1; // No deadly damage for monsters
 			map_freeblock_lock();
@@ -12449,7 +12449,7 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 					unit_skillcastcancel(bl, 1);
 					do
 					{
-						int i = rnd() % MAX_SKILL_MAGICMUSHROOM_DB;
+						int i = rnd_value_int32(0, MAX_SKILL_MAGICMUSHROOM_DB - 1);
 						mushroom_skillid = skill_magicmushroom_db[i].skill_id;
 					} while (mushroom_skillid == 0);
 					switch (skill_get_casttype(mushroom_skillid)) { // Magic Mushroom skills are buffs or area damage
@@ -13387,7 +13387,7 @@ int status_change_timer_sub(struct block_list* bl, va_list ap)
 	switch( type )
 	{
 	case SC_SIGHT:	/* Reveal hidden ennemy on 3*3 range */
-		if (sce && sce->val4 == 2000 && tsc && tsc->data[SC__SHADOWFORM] && rnd() % 100 < 100 - 10 * tsc->data[SC__SHADOWFORM]->val1)
+		if (sce && sce->val4 == 2000 && tsc && tsc->data[SC__SHADOWFORM] && rnd_chance(100 - 10 * tsc->data[SC__SHADOWFORM]->val1, 100))
 		{//Attempt to remove Shadow Form status by chance every 2 seconds. [Rytech]
 			status_change_end(bl, SC__SHADOWFORM, INVALID_TIMER);
 			sce->val4 = 0;
@@ -13402,7 +13402,7 @@ int status_change_timer_sub(struct block_list* bl, va_list ap)
 		status_change_end(bl, SC_NEWMOON, INVALID_TIMER);
 		break;
 	case SC_RUWACH:	/* At */
-		if (sce && sce->val4 == 2000 && tsc && tsc->data[SC__SHADOWFORM] && rnd() % 100 < 100 - 10 * tsc->data[SC__SHADOWFORM]->val1)
+		if (sce && sce->val4 == 2000 && tsc && tsc->data[SC__SHADOWFORM] && rnd_chance(100 - 10 * tsc->data[SC__SHADOWFORM]->val1, 100))
 		{//Attempt to remove Shadow Form status by chance every 2 seconds. [Rytech]
 			status_change_end(bl, SC__SHADOWFORM, INVALID_TIMER);
 			if(battle_check_target( src, bl, BCT_ENEMY ) > 0)
@@ -13955,7 +13955,7 @@ static int status_natural_heal( struct block_list* bl, va_list args )
 						100,rate,skill_get_time(TK_SPTIME, rate));
 				if (
 					(sd->class_&MAPID_UPPERMASK) == MAPID_STAR_GLADIATOR &&
-					rnd()%10000 < battle_config.sg_angel_skill_ratio
+					rnd_chance(battle_config.sg_angel_skill_ratio, 10000)
 				) { //Angel of the Sun/Moon/Star
 					clif_feel_hate_reset(sd);
 					pc_resethate(sd);

@@ -418,9 +418,9 @@ bool mercenary_dead(struct mercenary_data *md)
 void mercenary_killbonus(struct mercenary_data *md)
 {
 	const enum sc_type scs[] = { SC_MERC_FLEEUP, SC_MERC_ATKUP, SC_MERC_HPUP, SC_MERC_SPUP, SC_MERC_HITUP };
-	uint8 index = rnd() % ARRAYLENGTH(scs);
+	uint8 index = (uint8)rnd_value_int32(0, ARRAYLENGTH(scs) - 1);
 
-	sc_start(&md->bl, scs[index], 100, rnd() % 5, 600000);
+	sc_start(&md->bl, scs[index], 100, rnd_value_int32(0, 4), 600000);
 }
 
 /**

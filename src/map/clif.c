@@ -2567,7 +2567,7 @@ static void clif_addcards(struct EQUIPSLOTINFO* buf, struct item* item) {
 
 	// Client only receives four cards.. so randomly send them a set of cards. [Skotlex]
 	if (MAX_SLOTS > 4 && (j = itemdb_slot(item->nameid)) > 4) {
-		i = rnd() % (j - 3); //eg: 6 slots, possible i values: 0->3, 1->4, 2->5 => i = rnd()%3;
+		i = rnd_value_int32(0, j - 4); //eg: 6 slots, possible i values: 0->3, 1->4, 2->5 => i = rnd()%3;
 	}
 
 	// Normal items.
@@ -5178,19 +5178,13 @@ static int clif_calc_walkdelay(struct block_list *bl,int delay, int type, int da
  *------------------------------------------*/
 static int clif_hallucination_damage()
 {
-	int digit = rnd() % 5 + 1;
-	switch (digit)
-	{
-	case 1:
-		return (rnd() % 10);
-	case 2:
-		return (rnd() % 100);
-	case 3:
-		return (rnd() % 1000);
-	case 4:
-		return (rnd() % 10000);
+	switch (rnd_value_int32(1, 5)) {
+		case 1: return rnd_value_int32(0, 9);
+		case 2: return rnd_value_int32(0, 99);
+		case 3: return rnd_value_int32(0, 999);
+		case 4: return rnd_value_int32(0, 9999);
+		default: return rnd_value_int32(0, 32767);
 	}
-	return (rnd() % 32767);
 }
 
 /// Sends a 'damage' packet (src performs action on dst)
@@ -11984,7 +11978,7 @@ void clif_parse_Emotion(int fd, struct map_session_data *sd)
 
 		if(battle_config.client_reshuffle_dice && emoticon>=E_DICE1 && emoticon<=E_DICE6)
 		{// re-roll dice
-			emoticon = rnd()%6+E_DICE1;
+			emoticon = rnd_value_int32(E_DICE1, E_DICE6);
 		}
 
 		clif_emotion(&sd->bl, emoticon);
@@ -19224,7 +19218,7 @@ void clif_mercenary_updatestatus(struct map_session_data *sd, int type)
 	{
 		case SP_ATK1:
 			{
-				int atk = rnd()%(status->rhw.atk2 - status->rhw.atk + 1) + status->rhw.atk;
+				int atk = rnd_value_int32(status->rhw.atk, status->rhw.atk2);
 				WFIFOL(fd,4) = cap_value(atk, 0, INT16_MAX);
 			}
 			break;
@@ -19294,7 +19288,7 @@ void clif_mercenary_info(struct map_session_data *sd)
 	WFIFOL(fd,2) = md->bl.id;
 
 	// Mercenary shows ATK as a random value between ATK ~ ATK2
-	atk = rnd()%(status->rhw.atk2 - status->rhw.atk + 1) + status->rhw.atk;
+	atk = rnd_value_int32(status->rhw.atk, status->rhw.atk2);
 	WFIFOW(fd,6) = cap_value(atk, 0, INT16_MAX);
 	WFIFOW(fd,8) = cap_value(status->matk_max, 0, INT16_MAX);
 	WFIFOW(fd,10) = status->hit;
@@ -20900,7 +20894,7 @@ void clif_parse_RouletteGenerate(int fd, struct map_session_data* sd)
 		}
 
 		sd->roulette.prizeStage = stage;
-		sd->roulette.prizeIdx = rnd()%rd.items[stage];
+		sd->roulette.prizeIdx = rnd_value_int32(0, rd.items[stage] - 1);
 
 		if (rd.flag[stage][sd->roulette.prizeIdx]&1) {
 			clif_roulette_generate_ack(sd,GENERATE_ROULETTE_LOSING,stage,sd->roulette.prizeIdx,0);

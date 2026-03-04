@@ -1587,12 +1587,12 @@ int map_pickrandominrange(int (*func)(struct block_list*,va_list), struct block_
 
 		for( i = 0; i < 2 * bl_list_count; i++ )
 		{ // Randomize indexes of array. Thanks to vallcrist. [LimitLine]
-			int size = bl_list_count, index1 = rnd() % size, index2 = 0, tries = 0;
+			int size = bl_list_count, index1 = rnd_value_int32(0, size - 1), index2 = 0, tries = 0;
 			struct block_list *temp;
 			do
 			{
 				tries ++; // Prevent infinite loop. [LimitLine]
-				index2 = rnd()% size;
+				index2 = rnd_value_int32(0, size - 1);
 			} while ( index2 == index1 && bl_list_count > 1 && tries < 10 );
 			temp = bl_list[index1];
 			bl_list[index1] = bl_list[index2];
@@ -1770,7 +1770,8 @@ int map_searchrandfreecell(int m,int *x,int *y,int stack)
 	}
 	if(free_cell==0)
 		return 0;
-	free_cell = rnd()%free_cell;
+
+	free_cell = rnd_value_int32(0, free_cell - 1);
 	*x = free_cells[free_cell][0];
 	*y = free_cells[free_cell][1];
 	return 1;
@@ -1831,8 +1832,8 @@ int map_search_freecell(struct block_list *src, int m, short *x,short *y, int rx
 	}
 	
 	while(tries--) {
-		*x = (rx >= 0)?(rnd()%rx2-rx+bx):(rnd()%(map[m].xs-2)+1);
-		*y = (ry >= 0)?(rnd()%ry2-ry+by):(rnd()%(map[m].ys-2)+1);
+		*x = (rx >= 0) ? (short)rnd_value_int32(bx - rx, bx + rx) : (short)rnd_value_int32(1, map[m].xs - 2);
+		*y = (ry >= 0) ? (short)rnd_value_int32(by - ry, by + ry) : (short)rnd_value_int32(1, map[m].ys - 2);
 		
 		if (*x == bx && *y == by)
 			continue; //Avoid picking the same target tile.
@@ -1951,7 +1952,6 @@ bool map_closest_freecell(int16 m, int16 *x, int16 *y, int type, int flag)
  *------------------------------------------*/
 int map_addflooritem(struct item *item_data,int amount,int m,int x,int y,int first_charid,int second_charid,int third_charid,int flags, unsigned short mob_id, bool canShowEffect)
 {
-	int r;
 	struct flooritem_data *fitem=NULL;
 
 	nullpo_ret(item_data);
@@ -1961,7 +1961,6 @@ int map_addflooritem(struct item *item_data,int amount,int m,int x,int y,int fir
 
 	if(!map_searchrandfreecell(m,&x,&y,flags&2?1:0))
 		return 0;
-	r=rnd();
 
 	CREATE(fitem, struct flooritem_data, 1);
 	fitem->bl.type=BL_ITEM;
@@ -1985,8 +1984,8 @@ int map_addflooritem(struct item *item_data,int amount,int m,int x,int y,int fir
 
 	memcpy(&fitem->item_data,item_data,sizeof(*item_data));
 	fitem->item_data.amount=amount;
-	fitem->subx=(r&3)*3+3;
-	fitem->suby=((r>>2)&3)*3+3;
+	fitem->subx=rnd_value_int32(0, 3) * 3 + 3;
+	fitem->suby=rnd_value_int32(0, 3) * 3 + 3;
 	fitem->cleartimer=add_timer(gettick()+battle_config.flooritem_lifetime,map_clearflooritem_timer,fitem->bl.id,0);
 
 	map_addiddb(&fitem->bl);
@@ -3043,8 +3042,8 @@ int map_random_dir(struct block_list *bl, short *x, short *y)
 	if (dist < 1) dist =1;
 	
 	do {
-		short j = 1 + 2 * (rnd() % 4); //Pick a random diagonal direction
-		short segment = 1 + (rnd() % dist); //Pick a random interval from the whole vector in that direction
+		short j = 1 + 2 * (short)rnd_value_int32(0, 3); //Pick a random diagonal direction
+		short segment = (short)rnd_value_int32(1, dist); //Pick a random interval from the whole vector in that direction
 		xi = bl->x + segment*dirx[j];
 		segment = (short)sqrt((float)(dist2 - segment*segment)); //The complement of the previously picked segment
 		yi = bl->y + segment*diry[j];

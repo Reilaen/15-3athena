@@ -1124,8 +1124,8 @@ int mmo_auth(struct login_session_data* sd, bool isServer)
 
 	// update session data
 	sd->account_id = acc.account_id;
-	sd->login_id1 = rnd() + 1;
-	sd->login_id2 = rnd() + 1;
+	sd->login_id1 = rnd_value_uint32(1, UINT32_MAX);
+	sd->login_id2 = rnd_value_uint32(1, UINT32_MAX);
 	safestrncpy(sd->lastlogin, acc.lastlogin, sizeof(sd->lastlogin));
 	sd->sex = acc.sex;
 	sd->level = acc.level;
@@ -1569,8 +1569,7 @@ int parse_login(int fd)
 		case 0x01db:	// Sending request of the coding key
 			RFIFOSKIP(fd,2);
 		{
-			memset(sd->md5key, '\0', sizeof(sd->md5key));
-			sd->md5keylen = (uint16)(12 + rnd() % 4);
+			sd->md5keylen = sizeof(sd->md5key);
 			MD5_Salt(sd->md5keylen, sd->md5key);
 
 			WFIFOHEAD(fd,4 + sd->md5keylen);

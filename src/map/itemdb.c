@@ -197,9 +197,8 @@ void itemdb_package_item(struct map_session_data *sd, int packageid)
 		}
 
 		// Now we'll get an random item of the current group.
-		if (qty > 0)
-		{
-			r = rnd() % qty;
+		if (qty > 0) {
+			r = rnd_value_uint32(0, qty - 1);
 
 			it.nameid = tmp[r]->nameid;
 			it.identify = itemdb_isstackable(it.nameid) ? 1 : 0; // should not be identified by default?
@@ -236,7 +235,7 @@ int itemdb_searchrandomid(uint16 group_id)
 		return UNKNOWN_ITEM_ID;
 	}
 	if (group->qty)
-		return group->nameid[rnd()%group->qty];
+		return group->nameid[rnd_value_uint32(0, group->qty - 1)];
 	
 	ShowError("itemdb_searchrandomid: No item entries for group id %d\n", group_id);
 	return UNKNOWN_ITEM_ID;

@@ -5144,7 +5144,7 @@ int pc_useitem(struct map_session_data *sd,int n) {
 			// If Earth Spike Scroll is used while SC_EARTHSCROLL is active, there is a chance to don't consume the scroll. [Kenpachi]
 			if ((nameid == ITEMID_EARTH_SCROLL_1_3 || nameid == ITEMID_EARTH_SCROLL_1_5)
 				&& sd->sc.count > 0 && sd->sc.data[SC_EARTHSCROLL] != NULL
-				&& rnd() % 100 > sd->sc.data[SC_EARTHSCROLL]->val2) {
+				&& !rnd_chance(sd->sc.data[SC_EARTHSCROLL]->val2, 100)) {
 				return 0;
 			}
 
@@ -5190,7 +5190,7 @@ int pc_useitem(struct map_session_data *sd,int n) {
 
 	// If Earth Spike Scroll is used while SC_EARTHSCROLL is active, there is a chance to don't consume the scroll. [Kenpachi]
 	if ((nameid == ITEMID_EARTH_SCROLL_1_3 || nameid == ITEMID_EARTH_SCROLL_1_5) && sd->sc.count > 0
-		&& sd->sc.data[SC_EARTHSCROLL] != NULL && rnd() % 100 > sd->sc.data[SC_EARTHSCROLL]->val2) {
+		&& sd->sc.data[SC_EARTHSCROLL] != NULL && !rnd_chance(sd->sc.data[SC_EARTHSCROLL]->val2, 100)) {
 		removeItem = false;
 	}
 
@@ -5468,7 +5468,7 @@ int pc_steal_item(struct map_session_data *sd,struct block_list *bl, int lv)
 	// Try dropping one item, in the order from first to last possible slot.
 	// Droprate is affected by the skill success rate.
 	for( i = 0; i < MAX_STEAL_DROP; i++ )
-		if( md->db->dropitem[i].nameid > 0 && itemdb_exists(md->db->dropitem[i].nameid) && rnd() % 10000 < md->db->dropitem[i].p * rate/100. )
+		if( md->db->dropitem[i].nameid > 0 && itemdb_exists(md->db->dropitem[i].nameid) && rnd_chance(md->db->dropitem[i].p * rate / 100.0, 10000))
 			break;
 	if( i == MAX_STEAL_DROP )
 		return 0;
@@ -5602,10 +5602,10 @@ int pc_steal_coin(struct map_session_data *sd,struct block_list *target)
 		return 0;
 
 	rate = sd->battle_status.dex / 2 + 2 * (sd->status.base_level - target_lv) + (10 * pc_checkskill(sd, RG_STEALCOIN)) + sd->battle_status.luk / 2;
-	if(rnd()%1000 < rate)
+	if(rnd_chance(rate, 1000))
 	{
 		// Zeny Steal Amount: (rnd() % (10 * target_lv + 1 - 8 * target_lv)) + 8 * target_lvAdd commentMore actions
-		int amount = (rnd() % (2 * target_lv + 1)) + 8 * target_lv; // Reduced formula
+		int amount = rnd_value_int32(8 * target_lv, 10 * target_lv);
 
 		log_zeny(sd, LOG_TYPE_STEAL, sd, amount);
 		pc_getzeny(sd, amount, LOG_TYPE_STEAL, NULL);
@@ -5801,8 +5801,8 @@ int pc_setpos(struct map_session_data* sd, unsigned short mapindex, int x, int y
 	if( x == 0 && y == 0 )
 	{// pick a random walkable cell
 		do {
-			x=rnd()%(map[m].xs-2)+1;
-			y=rnd()%(map[m].ys-2)+1;
+			x = rnd_value_int32(1, map[m].xs - 2);
+			y = rnd_value_int32(1, map[m].ys - 2);
 		} while(map_getcell(m,x,y,CELL_CHKNOPASS) || (!battle_config.teleport_on_portal && npc_check_areanpc(1, m, x, y, 1)));
 	}
 
@@ -5885,8 +5885,8 @@ char pc_randomwarp(struct map_session_data *sd, clr_type type)
 		return 3;
 
 	do{
-		x=rnd()%(map[m].xs-2)+1;
-		y=rnd()%(map[m].ys-2)+1;
+		x = rnd_value_int32(1, map[m].xs - 2);
+		y = rnd_value_int32(1, map[m].ys - 2);
 	} while((map_getcell(m, x, y, CELL_CHKNOPASS) || (!battle_config.teleport_on_portal && npc_check_areanpc(1, m, x, y, 1))) && (i++) < 1000);
 
 	if (i < 1000)
@@ -7964,8 +7964,8 @@ void pc_deathmatch(struct map_session_data* sd, clr_type clrtype)
 	if( map_getcell(sd->bl.m, sd->bl.x, sd->bl.y, CELL_CHKPVP) && battle_config.cellpvp_deathmatch ) 
 	{
 		do {
-			x = rnd() % (map[sd->bl.m].xs - 2) + 1;
-			y = rnd() % (map[sd->bl.m].ys - 2) + 1;
+			x = (short)rnd_value_int32(1, map[sd->bl.m].xs - 2);
+			y = (short)rnd_value_int32(1, map[sd->bl.m].ys - 2);
 		} while( !map_getcell(sd->bl.m, x, y, CELL_CHKPVP) );
 
 		pc_setstand(sd, false);
@@ -8442,8 +8442,8 @@ int pc_dead(struct map_session_data *sd,struct block_list *src)
 					}
 				}
 				if(eq_num > 0){
-					int n = eq_n[rnd()%eq_num];
-					if(rnd()%10000 < per){
+					int n = eq_n[rnd_value_int32(0, eq_num - 1)];
+					if(rnd_chance(per, 10000)){
 						if(sd->inventory.u.items_inventory[n].equip)
 							pc_unequipitem(sd,n,3);
 						pc_dropitem(sd,n,1);
@@ -8453,7 +8453,7 @@ int pc_dead(struct map_session_data *sd,struct block_list *src)
 			else if(id > 0){
 				for(i=0;i<MAX_INVENTORY;i++){
 					if(sd->inventory.u.items_inventory[i].nameid == id
-						&& rnd()%10000 < per
+						&& rnd_chance(per, 10000)
 						&& ((type == 1 && !sd->inventory.u.items_inventory[i].equip)
 							|| (type == 2 && sd->inventory.u.items_inventory[i].equip)
 							|| type == 3) ){

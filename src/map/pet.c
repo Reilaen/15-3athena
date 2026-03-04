@@ -150,7 +150,7 @@ int pet_attackskill(struct pet_data *pd, int target_id)
 	if (DIFF_TICK(pd->ud.canact_tick, gettick()) > 0)
 		return 0;
 	
-	if (rnd()%100 < (pd->a_skill->rate +pd->pet.intimate*pd->a_skill->bonusrate/1000))
+	if (rnd_chance(pd->a_skill->rate + (pd->pet.intimate * pd->a_skill->bonusrate / 1000), 100))
 	{	//Skotlex: Use pet's skill 
 		int inf;
 		struct block_list *bl;
@@ -202,9 +202,9 @@ int pet_target_check(struct pet_data *pd,struct block_list *bl,int type)
 		if(pd->petDB->defence_attack_rate > 0 && rate <= 0)
 			rate = 1;
 	}
-	if(rnd()%10000 < rate) 
+	if(rnd_chance(rate, 10000))
 	{
-		if(pd->target_id == 0 || rnd()%10000 < pd->petDB->change_target_rate)
+		if(pd->target_id == 0 || rnd_chance(rate, 10000))
 			pd->target_id = bl->id;
 	}
 
@@ -333,7 +333,7 @@ static int pet_performance(struct map_session_data *sd, struct pet_data *pd)
 		val = 1;
 
 	pet_stop_walking(pd,2000<<8);
-	clif_pet_performance(pd, rnd()%val + 1);
+	clif_pet_performance(pd, rnd_value_int32(1, val));
 	pet_lootitem_drop(pd,NULL);
 	return 1;
 }
@@ -612,7 +612,7 @@ int pet_catch_process2(struct map_session_data* sd, int target_id)
 	if(battle_config.pet_catch_rate != 100)
 		pet_catch_rate = (pet_catch_rate*battle_config.pet_catch_rate)/100;
 
-	if(rnd()%10000 < pet_catch_rate)
+	if(rnd_chance(pet_catch_rate, 10000))
 	{
 		//achievement_update_objective(sd, AG_TAMING, 1, md->mob_id);
 		unit_remove_map(&md->bl,CLR_OUTSIGHT);
@@ -908,9 +908,8 @@ static int pet_randomwalk(struct pet_data *pd,int64 tick)
 		int i,x,y,c,d=12-pd->move_fail_count;
 		if(d<5) d=5;
 		for(i=0;i<retrycount;i++){
-			int r=rnd();
-			x=pd->bl.x+r%(d*2+1)-d;
-			y=pd->bl.y+r/(d*2+1)%(d*2+1)-d;
+			x = rnd_value_int32(pd->bl.x - d, pd->bl.x + d);
+			y = rnd_value_int32(pd->bl.y - d, pd->bl.y + d);
 			if(map_getcell(pd->bl.m,x,y,CELL_CHKPASS) && unit_walktoxy(&pd->bl,x,y,0)){
 				pd->move_fail_count=0;
 				break;
@@ -931,7 +930,7 @@ static int pet_randomwalk(struct pet_data *pd,int64 tick)
 			else
 				c+=pd->status.speed;
 		}
-		pd->next_walktime = tick + rnd() % 1000 + MIN_RANDOMWALKTIME + c;
+		pd->next_walktime = tick + MIN_RANDOMWALKTIME + c + rnd_value_int32(0, 1000);
 
 		return 1;
 	}

@@ -638,7 +638,7 @@ int elem_unlocktarget(struct elemental_data *ed, int64 tick)
 		if (battle_config.elem_ai&0x8)
 			elem_stop_walking(ed,1); //Immediately stop chasing.
 		ed->state.skillstate = MSS_IDLE;
-		ed->next_walktime=tick+rnd()%3000+3000;
+		ed->next_walktime = tick + rnd_value_int32(3000, 6000);
 		break;
 	}
 	if (ed->target_id) {
@@ -725,7 +725,7 @@ static bool elem_ai_sub_hard(struct elemental_data *ed, unsigned int tick)
 			    )
 			&&  ed->state.attacked_count++ >= ELEM_RUDE_ATTACKED_COUNT
 			&&  !elemskill_use(ed, tick, MSC_RUDEATTACKED) // If can't rude Attack
-			&&  can_move && unit_escape(&ed->bl, tbl, rnd()%10 +1)) // Attempt escape
+			&&  can_move && unit_escape(&ed->bl, tbl, (short)rnd_value_int32(1, 10))) // Attempt escape
 			{	//Escaped
 				ed->attacked_id = 0;
 				return true;
@@ -749,7 +749,7 @@ static bool elem_ai_sub_hard(struct elemental_data *ed, unsigned int tick)
 			{ // Rude attacked
 				if (ed->state.attacked_count++ >= ELEM_RUDE_ATTACKED_COUNT
 				&& !elemskill_use(ed, tick, MSC_RUDEATTACKED) && can_move
-				&& !tbl && unit_escape(&ed->bl, abl, rnd()%10 +1))
+				&& !tbl && unit_escape(&ed->bl, tbl, (short)rnd_value_int32(1, 10)))
 				{	//Escaped.
 					//TODO: Maybe it shouldn't attempt to run if it has another, valid target?
 					ed->attacked_id = 0;
@@ -1150,7 +1150,7 @@ int elemskill_use(struct elemental_data *ed, int64 tick, int bypass)
 		return 0;
 
 	// Cast chance.
-	if (rnd() % 100 > battle_config.elem_offensive_skill_chance)
+	if (rnd_chance(battle_config.elem_offensive_skill_chance, 100))
 		return 0;
 
 	// Cast time should only be applied when

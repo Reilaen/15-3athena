@@ -135,7 +135,7 @@ void do_final_party(void)
 	party_db->destroy(party_db, party_db_final);
 	party_booking_db->destroy(party_booking_db,NULL); // Party Booking [Spiria]
 }
-// ‰Šú‰»
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void do_init_party(void)
 {
 	party_db = idb_alloc(DB_OPT_RELEASE_DATA);
@@ -1092,7 +1092,7 @@ int party_share_loot(struct party_data* p, struct map_session_data* sd, struct i
 				count++;
 			}
 			while (count > 0) { //Pick a random member.
-				i = rnd()%count;
+				i = rnd_value_int32(0, count - 1);
 				if (pc_additem(psd[i],item_data,item_data->amount,LOG_TYPE_PICKDROP_PLAYER))
 				{	//Discard this receiver.
 					psd[i] = psd[count-1];

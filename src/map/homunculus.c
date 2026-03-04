@@ -354,14 +354,14 @@ int hom_levelup(struct homun_data *hd)
 	max  = &hd->homunculusDB->gmax;
 	min  = &hd->homunculusDB->gmin;
 
-	growth_max_hp = rnd_value(min->HP, max->HP);
-	growth_max_sp = rnd_value(min->SP, max->SP);
-	growth_str = rnd_value(min->str, max->str);
-	growth_agi = rnd_value(min->agi, max->agi);
-	growth_vit = rnd_value(min->vit, max->vit);
-	growth_dex = rnd_value(min->dex, max->dex);
-	growth_int = rnd_value(min->int_,max->int_);
-	growth_luk = rnd_value(min->luk, max->luk);
+	growth_max_hp = rnd_value_int32(min->HP, max->HP);
+	growth_max_sp = rnd_value_int32(min->SP, max->SP);
+	growth_str = rnd_value_int32(min->str, max->str);
+	growth_agi = rnd_value_int32(min->agi, max->agi);
+	growth_vit = rnd_value_int32(min->vit, max->vit);
+	growth_dex = rnd_value_int32(min->dex, max->dex);
+	growth_int = rnd_value_int32(min->int_,max->int_);
+	growth_luk = rnd_value_int32(min->luk, max->luk);
 
 	//Aegis discards the decimals in the stat growth values!
 	growth_str-=growth_str%10;
@@ -444,14 +444,14 @@ int hom_evolution(struct homun_data *hd)
 	hom = &hd->homunculus;
 	max = &hd->homunculusDB->emax;
 	min = &hd->homunculusDB->emin;
-	hom->max_hp += rnd_value(min->HP, max->HP);
-	hom->max_sp += rnd_value(min->SP, max->SP);
-	hom->str += 10* rnd_value(min->str, max->str);
-	hom->agi += 10* rnd_value(min->agi, max->agi);
-	hom->vit += 10* rnd_value(min->vit, max->vit);
-	hom->int_+= 10* rnd_value(min->int_,max->int_);
-	hom->dex += 10* rnd_value(min->dex, max->dex);
-	hom->luk += 10* rnd_value(min->luk, max->luk);
+	hom->max_hp += rnd_value_int32(min->HP, max->HP);
+	hom->max_sp += rnd_value_int32(min->SP, max->SP);
+	hom->str += 10* rnd_value_int32(min->str, max->str);
+	hom->agi += 10* rnd_value_int32(min->agi, max->agi);
+	hom->vit += 10* rnd_value_int32(min->vit, max->vit);
+	hom->int_+= 10* rnd_value_int32(min->int_,max->int_);
+	hom->dex += 10* rnd_value_int32(min->dex, max->dex);
+	hom->luk += 10* rnd_value_int32(min->luk, max->luk);
 
 	// MaxHP/MaxSP/Stats Cap Check
 	merc_hom_stats_cap_check(hd);
@@ -541,14 +541,14 @@ int merc_hom_mutation(struct homun_data *hd, int class_)
 	// Finally, we apply the mutation bonus.
 	// Bonuses are the same for all mutations.
 	hom = &hd->homunculus;
-	hom->max_hp += rnd_value(1000, 2000);
-	hom->max_sp += rnd_value(10, 200);
-	hom->str += 10* rnd_value(1, 10);
-	hom->agi += 10* rnd_value(1, 10);
-	hom->vit += 10* rnd_value(1, 10);
-	hom->int_+= 10* rnd_value(1, 10);
-	hom->dex += 10* rnd_value(1, 10);
-	hom->luk += 10* rnd_value(1, 10);
+	hom->max_hp += rnd_value_int32(1000, 2000);
+	hom->max_sp += rnd_value_int32(10, 200);
+	hom->str += 10* rnd_value_int32(1, 10);
+	hom->agi += 10* rnd_value_int32(1, 10);
+	hom->vit += 10* rnd_value_int32(1, 10);
+	hom->int_+= 10* rnd_value_int32(1, 10);
+	hom->dex += 10* rnd_value_int32(1, 10);
+	hom->luk += 10* rnd_value_int32(1, 10);
 
 	// MaxHP/MaxSP/Stats Cap Check
 	merc_hom_stats_cap_check(hd);
@@ -930,7 +930,7 @@ int hom_call(struct map_session_data *sd)
 	struct homun_data *hd;
 
 	if (!sd->status.hom_id) //Create a new homun.
-		return hom_create_request(sd, HM_CLASS_BASE + rnd_value(0, 7)) ;
+		return hom_create_request(sd, HM_CLASS_BASE + rnd_value_int32(0, 7)) ;
 
 	// If homunc not yet loaded, load it
 	if (!sd->hd)
@@ -1169,14 +1169,14 @@ int hom_shuffle(struct homun_data *hd)
 		//Evolved bonuses
 		struct s_homunculus *hom = &hd->homunculus;
 		struct h_stats *max = &hd->homunculusDB->emax, *min = &hd->homunculusDB->emin;
-		hom->max_hp += rnd_value(min->HP, max->HP);
-		hom->max_sp += rnd_value(min->SP, max->SP);
-		hom->str += 10* rnd_value(min->str, max->str);
-		hom->agi += 10* rnd_value(min->agi, max->agi);
-		hom->vit += 10* rnd_value(min->vit, max->vit);
-		hom->int_+= 10* rnd_value(min->int_,max->int_);
-		hom->dex += 10* rnd_value(min->dex, max->dex);
-		hom->luk += 10* rnd_value(min->luk, max->luk);
+		hom->max_hp += rnd_value_int32(min->HP, max->HP);
+		hom->max_sp += rnd_value_int32(min->SP, max->SP);
+		hom->str += 10* rnd_value_int32(min->str, max->str);
+		hom->agi += 10* rnd_value_int32(min->agi, max->agi);
+		hom->vit += 10* rnd_value_int32(min->vit, max->vit);
+		hom->int_+= 10* rnd_value_int32(min->int_,max->int_);
+		hom->dex += 10* rnd_value_int32(min->dex, max->dex);
+		hom->luk += 10* rnd_value_int32(min->luk, max->luk);
 	}
 
 	// MaxHP/MaxSP/Stats Cap Check

@@ -298,7 +298,7 @@ void quest_update_objective(TBL_PC * sd, int mob_id)
 			if (dropitem->mob_id != 0 && dropitem->mob_id != mob_id)
 				continue;
 			// TODO: Should this be affected by server rates?
-			if (dropitem->rate < 10000 && rnd() % 10000 >= dropitem->rate)
+			if (dropitem->rate < 10000 && !rnd_chance(dropitem->rate, 10000))
 				continue;
 			if (!itemdb_exists(dropitem->nameid))
 				continue;

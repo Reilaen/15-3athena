@@ -5025,7 +5025,7 @@ BUILDIN_FUNC(rand)
 	if( range <= 1 )
 		script_pushint(st, min);
 	else
-		script_pushint(st, rnd()%range + min);
+		script_pushint(st, rnd_value_int32(min, min + range - 1));
 
 	return 0;
 }
@@ -5231,8 +5231,8 @@ BUILDIN_FUNC(warpparty)
 				uint8 attempts = 10;
 
 				do {
-					x = x0 + rnd() % (x1 - x0 + 1);
-					y = y0 + rnd() % (y1 - y0 + 1);
+					x = (int)rnd_value_int32(x0, x1);
+					y = (int)rnd_value_int32(y0, y1);
 				} while ((--attempts) > 0 && !map_getcell(m, x, y, CELL_CHKPASS));
 			}
 
@@ -10830,7 +10830,7 @@ BUILDIN_FUNC(homunculus_mutation)
 	if (script_hasdata(st, 2))
 		homun_id = script_getnum(st, 2);
 	else
-		homun_id = 6048 + (rnd() % 4);
+		homun_id = rnd_value_int32(6048, 6051);
 
 	if (sd->hd->homunculus.vaporize == 2) {
 

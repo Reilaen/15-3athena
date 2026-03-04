@@ -2817,11 +2817,11 @@ ACMD_FUNC(monstersmall)
 	for (i = 0; i < number; i++) {
 		int mx, my;
 		if (x <= 0)
-			mx = sd->bl.x + (rnd() % 11 - 5);
+			mx = sd->bl.x + rnd_value_int32(-5, 5);
 		else
 			mx = x;
 		if (y <= 0)
-			my = sd->bl.y + (rnd() % 11 - 5);
+			my = sd->bl.y + rnd_value_int32(-5, 5);
 		else
 			my = y;
 		count += (mob_once_spawn(sd, sd->bl.m, mx, my, name, mob_id, 1, "", 1, AI_NONE) != 0) ? 1 : 0;
@@ -2893,11 +2893,11 @@ ACMD_FUNC(monsterbig)
 	for (i = 0; i < number; i++) {
 		int mx, my;
 		if (x <= 0)
-			mx = sd->bl.x + (rnd() % 11 - 5);
+			mx = sd->bl.x + rnd_value_int32(-5, 5);
 		else
 			mx = x;
 		if (y <= 0)
-			my = sd->bl.y + (rnd() % 11 - 5);
+			my = sd->bl.y + rnd_value_int32(-5, 5);
 		else
 			my = y;
 		count += (mob_once_spawn(sd, sd->bl.m, mx, my, name, mob_id, 1, "", 2, AI_NONE) != 0) ? 1 : 0;
@@ -5808,17 +5808,15 @@ ACMD_FUNC(jail)
 		return -1;
 	}
 
-	switch(rnd() % 2) { //Jail Locations
-	case 0:
+	if(rnd_chance(1, 2)) {
+		//Jail Locations
 		m_index = mapindex_name2id(MAP_JAIL);
 		x = 24;
 		y = 75;
-		break;
-	default:
+	} else {
 		m_index = mapindex_name2id(MAP_JAIL);
 		x = 49;
 		y = 75;
-		break;
 	}
 
 	//Duration of INT_MAX to specify infinity.
@@ -5930,16 +5928,15 @@ ACMD_FUNC(jailfor)
 	}
 
 	//Jail locations, add more as you wish.
-	switch(rnd()%2)
-	{
-		case 1: //Jail #1
-			m_index = mapindex_name2id(MAP_JAIL);
-			x = 49; y = 75;
-			break;
-		default: //Default Jail
-			m_index = mapindex_name2id(MAP_JAIL);
-			x = 24; y = 75;
-			break;
+	if(rnd_chance(1, 2)) {
+		//Jail Locations
+		m_index = mapindex_name2id(MAP_JAIL);
+		x = 24;
+		y = 75;
+	} else {
+		m_index = mapindex_name2id(MAP_JAIL);
+		x = 49;
+		y = 75;
 	}
 
 	sc_start4(&pl_sd->bl,SC_JAILED,100,jailtime,m_index,x,y,jailtime?60000:1000); //jailtime = 0: Time was reset to 0. Wait 1 second to warp player out (since it's done in status_change_timer).
@@ -7586,7 +7583,7 @@ ACMD_FUNC(pettalk)
 		};
 		int i;
 		ARR_FIND( 0, ARRAYLENGTH(emo), i, stricmp(message, emo[i]) == 0 );
-		if (i == E_DICE1) i = rnd() % 6 + E_DICE1; // randomize /dice
+		if (i == E_DICE1) i = rnd_value_int32(E_DICE1, E_DICE6); // randomize /dice
 		if( i < ARRAYLENGTH(emo) )
 		{
 			if (sd->emotionlasttime + 1 >= time(NULL)) { // not more than 1 per second
@@ -9709,8 +9706,8 @@ ACMD_FUNC(clone)
 	}
 
 	do {
-		x = sd->bl.x + (rnd() % 10 - 5);
-		y = sd->bl.y + (rnd() % 10 - 5);
+		x = sd->bl.x + rnd_value_int32(-5, 5);
+		y = sd->bl.y + rnd_value_int32(-5, 5);
 	} while (map_getcell(sd->bl.m,x,y,CELL_CHKNOPASS) && i++ < 10);
 
 	if (i >= 10) {

@@ -4,82 +4,69 @@
 #include "../common/showmsg.h"
 #include "../common/timer.h" // gettick
 #include "random.h"
-#if defined(WIN32)
-	#define WIN32_LEAN_AND_MEAN
+
+#if defined(_WIN32)
 	#include <windows.h>
-#elif defined(HAVE_GETPID) || defined(HAVE_GETTID)
-	#include <sys/types.h>
-	#include <unistd.h>
+	#include <bcrypt.h>
+	#pragma comment(lib, "bcrypt.lib") // Sagt dem Windows-Linker, dass er die Bibliothek braucht
+#elif defined(__linux__)
+	#include <sys/random.h>
+#else
+	#include <stdlib.h>
 #endif
-#include <time.h> // time
 #include <mt19937ar.h> // init_genrand, genrand_int32, genrand_res53
 
-
-/// Initializes the random number generator with an appropriate seed.
 void rnd_init(void)
 {
-	unsigned long seed = (unsigned long)gettick();
-	seed += (unsigned long)time(NULL);
-#if defined(WIN32)
-	seed += (unsigned long)GetCurrentProcessId();
-	seed += (unsigned long)GetCurrentThreadId();
-#else
-#if defined(HAVE_GETPID)
-	seed += (unsigned long)getpid();
-#endif // HAVE_GETPID
-#if defined(HAVE_GETTID)
-	seed += (unsigned long)gettid();
-#endif // HAVE_GETTID
-#endif
+	unsigned long seed = 0;
+
+	#if defined(_WIN32)
+		BCryptGenRandom(NULL, (PUCHAR)&seed, sizeof(seed), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+	#elif defined(__linux__)
+		getrandom(&seed, sizeof(seed), 0);
+	#else
+		seed = arc4random();
+	#endif
+
 	ShowInfo("Initializing random number generator.\n");
+
 	init_genrand(seed);
 }
-
-
-/// Initializes the random number generator.
-void rnd_seed(uint32 seed)
-{
-	init_genrand(seed);
-}
-
 
 /// Generates a random number in the interval [0, UINT32_MAX]
-uint32 rnd(void)
-{
+uint32 rnd_uint32() {
 	return (uint32)genrand_int32();
 }
 
-
-/// Generates a random number in the interval [0, dice_faces)
-/// NOTE: interval is open ended, so dice_faces is excluded (unless it's 0)
-uint32 rnd_roll(uint32 dice_faces)
-{
-	return (uint32)(rnd_uniform()*dice_faces);
-}
-
-
 /// Generates a random number in the interval [min, max]
 /// Returns min if range is invalid.
-int32 rnd_value(int32 min, int32 max)
-{
-	if( min >= max )
+int32 rnd_value_int32(int32 min, int32 max) {
+	if(min >= max)
 		return min;
-	return min + (int32)(rnd_uniform()*(max-min+1));
+
+	return min + (int32)(genrand_real2() * ((double)max - (double)min + 1.0));
 }
 
+uint32 rnd_value_uint32(uint32 min, uint32 max) {
+	if(min >= max)
+		return min;
 
-/// Generates a random number in the interval [0.0, 1.0)
-/// NOTE: interval is open ended, so 1.0 is excluded
-double rnd_uniform(void)
-{
-	return ((uint32)genrand_int32())*(1.0/4294967296.0);// divided by 2^32
+	return min + (uint32)(genrand_real2() * ((double)max - (double)min + 1.0));
 }
 
+int64 rnd_value_int64(int64 min, int64 max) {
+	if(min >= max)
+		return min;
 
-/// Generates a random number in the interval [0.0, 1.0) with 53-bit resolution
-/// NOTE: interval is open ended, so 1.0 is excluded
-/// NOTE: 53 bits is the maximum precision of a double
-double rnd_uniform53(void)
-{
-	return genrand_res53();
+	return min + (int64)(genrand_res53() * ((double)max - (double)min + 1.0));
+}
+
+bool rnd_chance(uint32 chance, uint32 base) {
+	if(chance == 0 || base == 0)
+		return false;
+
+	if(chance >= base)
+		return true;
+
+	return rnd_value_uint32(1, base) <= chance;
 }

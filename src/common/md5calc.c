@@ -235,6 +235,5 @@ void MD5_Salt(unsigned int len, char * output)
 {
 	unsigned int i;
 	for( i = 0; i < len; ++i )
-		output[i] = (char)(1 + rnd() % 255);
-
+		output[i] = (char)rnd_value_uint32(1, 255);
 }
