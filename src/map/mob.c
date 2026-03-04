@@ -2581,7 +2581,7 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type)
 			}
 
 			// attempt to drop the item
-			if (rnd_chance(drop_rate, 10000))
+			if (!rnd_chance(drop_rate, 10000))
 					continue;
 
 			if (mvp_sd && it->type == IT_PETEGG) {
@@ -3035,7 +3035,7 @@ int mob_class_change (struct mob_data *md, int class_)
 }
 
 /*==========================================
- * mob‰ñ•œ
+ * mobï¿½ï¿½
  *------------------------------------------*/
 void mob_heal(struct mob_data *md,unsigned int heal)
 {
@@ -3087,7 +3087,7 @@ int mob_warpslave(struct block_list *bl, int range)
 }
 
 /*==========================================
- * ‰æ–Ê“à‚Ìæ‚èŠª‚«‚Ì”ŒvZ—p(foreachinarea)
+ * ï¿½ï¿½Ê“ï¿½ï¿½Ìï¿½èŠªï¿½ï¿½ï¿½Ìï¿½ï¿½vï¿½Zï¿½p(foreachinarea)
  *------------------------------------------*/
 int mob_countslave_sub(struct block_list *bl,va_list ap)
 {
@@ -3102,7 +3102,7 @@ int mob_countslave_sub(struct block_list *bl,va_list ap)
 }
 
 /*==========================================
- * ‰æ–Ê“à‚Ìæ‚èŠª‚«‚Ì”ŒvZ
+ * ï¿½ï¿½Ê“ï¿½ï¿½Ìï¿½èŠªï¿½ï¿½ï¿½Ìï¿½ï¿½vï¿½Z
  *------------------------------------------*/
 int mob_countslave(struct block_list *bl)
 {
@@ -3189,7 +3189,7 @@ int mob_summonslave(struct mob_data *md2,int *value,int amount,int skill_id)
 }
 
 /*==========================================
- *MOBskill‚©‚çŠY“–skill_id‚Ìskillidx‚ğ•Ô‚·
+ *MOBskillï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½skill_idï¿½ï¿½skillidxï¿½ï¿½Ô‚ï¿½
  *------------------------------------------*/
 int mob_skillid2skillidx(int class_,int skill_id)
 {
@@ -3795,7 +3795,7 @@ int mob_clone_delete(struct mob_data *md)
 }
 
 //
-// ‰Šú‰»
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //
 /*==========================================
  * Since un-setting [ mob ] up was used, it is an initial provisional value setup.
@@ -4219,7 +4219,7 @@ static bool mob_readdb_mobavail(char* str[], int columns, int current)
 
 	class_=atoi(str[0]);
 
-	if(mob_db(class_) == mob_dummy)	// ’l‚ªˆÙí‚È‚çˆ—‚µ‚È‚¢B
+	if(mob_db(class_) == mob_dummy)	// ï¿½lï¿½ï¿½ï¿½Ùï¿½È‚çˆï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½B
 	{
 		ShowWarning("mob_readdb_mobavail: Unknown mob id %d.\n", class_);
 		return false;
