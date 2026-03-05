@@ -79,7 +79,7 @@ macro( CONFIGURE_WITH name )
 endmacro( CONFIGURE_WITH )
 
 #add_subdirectory( msinttypes )# included in the root to setup global variables
-add_subdirectory( mt19937ar )
+add_subdirectory( xoshiro )
 add_subdirectory( mysql )
 add_subdirectory( pcre )
 add_subdirectory( zlib )

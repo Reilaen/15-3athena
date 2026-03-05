@@ -2,7 +2,7 @@
 // For more information, see LICENCE in the main folder
 
 #include "../common/showmsg.h"
-#include "../common/timer.h" // gettick
+#include "../common/timer.h"
 #include "random.h"
 
 #if defined(_WIN32)
@@ -11,62 +11,102 @@
 	#pragma comment(lib, "bcrypt.lib") // Sagt dem Windows-Linker, dass er die Bibliothek braucht
 #elif defined(__linux__)
 	#include <sys/random.h>
+	#include <unistd.h>
+	#include <time.h>
+	#include <string.h>
 #else
 	#include <stdlib.h>
 #endif
-#include <mt19937ar.h> // init_genrand, genrand_int32, genrand_res53
+#include <xoshiro.h>
 
-void rnd_init(void)
-{
-	unsigned long seed = 0;
+static uint64 splitmix64(uint64 *x) {
+	uint64 z = (*x += 0x9e3779b97f4a7c15ULL);
+	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9ULL;
+	z = (z ^ (z >> 27)) * 0x94d049bb133111ebULL;
 
-	#if defined(_WIN32)
-		BCryptGenRandom(NULL, (PUCHAR)&seed, sizeof(seed), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
-	#elif defined(__linux__)
-		getrandom(&seed, sizeof(seed), 0);
-	#else
-		seed = arc4random();
-	#endif
+	return z ^ (z >> 31);
+}
 
-	ShowInfo("Initializing random number generator.\n");
+void rnd_init(void) {
+	uint64 s[4] = {0};
 
-	init_genrand(seed);
+#if defined(_WIN32)
+	BCryptGenRandom(NULL, (PUCHAR)s, sizeof(s), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+#elif defined(__linux__)
+	if (getrandom(s, sizeof(s), 0) != (ssize_t)sizeof(s)) {
+		memset(s, 0, sizeof(s));
+	}
+#else
+	arc4random_buf(s, sizeof(s));
+#endif
+
+	if ((s[0] | s[1] | s[2] | s[3]) == 0) {
+		struct timespec ts;
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+
+		uint64 sm_seed = (uint64)time(NULL);
+		sm_seed ^= (uint64)ts.tv_nsec << 32;
+		sm_seed ^= (uint64)getpid() << 16;
+		sm_seed ^= (uintptr_t)&s;
+
+		s[0] = splitmix64(&sm_seed);
+		s[1] = splitmix64(&sm_seed);
+		s[2] = splitmix64(&sm_seed);
+		s[3] = splitmix64(&sm_seed);
+	}
+
+	xoshiro_init(s);
+
+	ShowInfo("Initialized xoshiro256** with 256-bit system entropy.\n");
+}
+
+
+static inline uint32 rnd_uint32_core(const uint32 range) {
+	uint32 x = rnd_uint32();
+	uint64 m = (uint64)x * (uint64)range;
+	uint32 l = (uint32)m;
+
+	if (l < range) {
+		const uint32_t t = -range % range;
+
+		while (l < t) {
+			x = rnd_uint32();
+			m = (uint64)x * (uint64)range;
+			l = (uint32)m;
+		}
+	}
+
+	return (uint32)(m >> 32);
 }
 
 /// Generates a random number in the interval [0, UINT32_MAX]
-uint32 rnd_uint32() {
-	return (uint32)genrand_int32();
+uint32 rnd_uint32(void) {
+	return (uint32)(xoshiro_next() >> 32);
 }
 
 /// Generates a random number in the interval [min, max]
 /// Returns min if range is invalid.
-int32 rnd_value_int32(int32 min, int32 max) {
-	if(min >= max)
+uint32 rnd_value_uint32(const uint32 min, const uint32 max) {
+	if (min >= max)
 		return min;
 
-	return min + (int32)(genrand_real2() * ((double)max - (double)min + 1.0));
+	return min + rnd_uint32_core(max - min + 1);
 }
 
-uint32 rnd_value_uint32(uint32 min, uint32 max) {
-	if(min >= max)
+int32 rnd_value_int32(const int32 min, const int32 max) {
+	if (min >= max)
 		return min;
 
-	return min + (uint32)(genrand_real2() * ((double)max - (double)min + 1.0));
+	return min + (int32)rnd_uint32_core((uint32)max - (uint32)min + 1);
 }
 
-int64 rnd_value_int64(int64 min, int64 max) {
-	if(min >= max)
-		return min;
-
-	return min + (int64)(genrand_res53() * ((double)max - (double)min + 1.0));
-}
-
-bool rnd_chance(uint32 chance, uint32 base) {
-	if(chance == 0 || base == 0)
+/// Check if we rolled a number <= chance
+bool rnd_chance(const uint32 chance, const uint32 base) {
+	if (chance == 0 || base == 0)
 		return false;
 
-	if(chance >= base)
+	if (base <= chance)
 		return true;
 
-	return rnd_value_uint32(1, base) <= chance;
+	return rnd_uint32_core(base) < chance;
 }

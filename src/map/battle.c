@@ -1558,7 +1558,7 @@ static int battle_calc_drain(int64 damage, int rate, int per)
 }
 
 /*==========================================
- * ?C—ûƒ_??[ƒW
+ * ?Cï¿½ï¿½ï¿½_??[ï¿½W
  *------------------------------------------*/
 int64 battle_addmastery(struct map_session_data *sd,struct block_list *target,int64 dmg,int type)
 {
@@ -5308,7 +5308,7 @@ struct Damage battle_calc_magic_attack(struct block_list *src,struct block_list 
 }
 
 /*==========================================
- * ‚»‚Ì‘¼ƒ_??[ƒWŒvŽZ
+ * ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½_??[ï¿½Wï¿½vï¿½Z
  *------------------------------------------*/
 struct Damage battle_calc_misc_attack(struct block_list *src,struct block_list *target,int skill_id,int skill_lv,int mflag)
 {
@@ -5442,7 +5442,7 @@ struct Damage battle_calc_misc_attack(struct block_list *src,struct block_list *
 	case NJ_ZENYNAGE:
 		md.damage = skill_get_zeny(skill_id ,skill_lv);
 		if (!md.damage) md.damage = 2;
-		md.damage = md.damage + rnd_value_int64(0, md.damage);
+		md.damage = md.damage + rnd_value_int32(0, (int32)md.damage);
 		if (status_get_class_(target) == CLASS_BOSS)
 			md.damage=md.damage/3;
 		else if (tsd)
@@ -6769,7 +6769,7 @@ int battle_check_target( struct block_list *src, struct block_list *target,int f
 	return (flag&state)?1:-1;
 }
 /*==========================================
- * ŽË’ö”»’è
+ * ï¿½Ë’ï¿½ï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 bool battle_check_range(struct block_list *src, struct block_list *bl, int range)
 {
