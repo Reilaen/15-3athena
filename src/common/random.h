@@ -4,6 +4,8 @@
 #ifndef _RANDOM_H_
 #define _RANDOM_H_
 
+#include "../common/cbasetypes.h"
+
 void rnd_init(void);
 uint32 rnd_uint32(void);// [0, UINT32_MAX]
 int32 rnd_value_int32(int32 min, int32 max);// [min, max]
