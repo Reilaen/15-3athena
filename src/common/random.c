@@ -57,7 +57,7 @@ void rnd_init(void) {
 
 	xoshiro_init(s);
 
-	ShowInfo("Initialized xoshiro256** with 256-bit system entropy.\n");
+	ShowInfo("Initialized xoshiro256++ with 256-bit system entropy.\n");
 }
 
 
