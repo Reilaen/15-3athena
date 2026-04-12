@@ -2525,6 +2525,13 @@ void script_hardcoded_constants(void)
 	export_constant(PET_INTIMATE_LOYAL);
 	export_constant(PET_INTIMATE_MAX);
 
+	export_constant(PET_HUNGRY_NONE);
+	export_constant(PET_HUNGRY_VERY_HUNGRY);
+	export_constant(PET_HUNGRY_HUNGRY);
+	export_constant(PET_HUNGRY_NEUTRAL);
+	export_constant(PET_HUNGRY_SATISFIED);
+	export_constant(PET_HUNGRY_STUFFED);
+
 	/* refine information types */
 	script_set_constant("REFINE_MATERIAL_ID", 0, false);
 	script_set_constant("REFINE_ZENY_COST", 1, false);

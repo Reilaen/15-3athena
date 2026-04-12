@@ -50,13 +50,13 @@ int pet_hungry_val(struct pet_data *pd)
 {
 	nullpo_ret(pd);
 
-	if(pd->pet.hungry > 90)
+	if(pd->pet.hungry > PET_HUNGRY_SATISFIED)
 		return 4;
-	else if(pd->pet.hungry > 75)
+	else if(pd->pet.hungry > PET_HUNGRY_NEUTRAL)
 		return 3;
-	else if(pd->pet.hungry > 25)
+	else if(pd->pet.hungry > PET_HUNGRY_HUNGRY)
 		return 2;
-	else if(pd->pet.hungry > 10)
+	else if(pd->pet.hungry > PET_HUNGRY_VERY_HUNGRY)
 		return 1;
 	else
 		return 0;
@@ -92,29 +92,35 @@ int pet_get_card4_value(int rename_flag, int intimacy)
 	return card4;
 }
 
-void pet_set_intimate(struct pet_data *pd, int value)
-{
-	int intimate;
-	struct map_session_data *sd;
+int pet_find_egg_inventory_slot(int pet_id, struct map_session_data* sd)  {
+	nullpo_retr(-1, sd);
 
+	int index;
+	ARR_FIND(0, MAX_INVENTORY, index, sd->inventory.u.items_inventory[index].card[0] == CARD0_PET &&
+		pet_id == MakeDWord(sd->inventory.u.items_inventory[index].card[1], sd->inventory.u.items_inventory[index].card[2]));
+
+	return index != MAX_INVENTORY ? index : -1;
+}
+
+void pet_set_intimate(struct pet_data *pd, const int value) {
 	nullpo_retv(pd);
-	intimate = pd->pet.intimate;
-	sd = pd->master;
 
-	pd->pet.intimate = value;
-	if(sd && (intimate >= battle_config.pet_equip_min_friendly && pd->pet.intimate < battle_config.pet_equip_min_friendly) || (intimate < battle_config.pet_equip_min_friendly && pd->pet.intimate >= battle_config.pet_equip_min_friendly) )
-		status_calc_pc(sd, SCO_NONE);
+	struct map_session_data *sd = pd->master;
+	nullpo_retv(sd);
 
-	/* Pet is lost, delete the egg */
-	if (value <= 0) {
-		int i;
+	pd->pet.intimate = cap_value(value, PET_INTIMATE_NONE, PET_INTIMATE_MAX);
 
-		ARR_FIND(0, MAX_INVENTORY, i, sd->inventory.u.items_inventory[i].card[0] == CARD0_PET &&
-			pd->pet.pet_id == MakeDWord(sd->inventory.u.items_inventory[i].card[1], sd->inventory.u.items_inventory[i].card[2]));
-
-		if (i != MAX_INVENTORY)
-			pc_delitem(sd, i, 1, 0, 0, LOG_TYPE_OTHER);
+	const int index = pet_find_egg_inventory_slot(pd->pet.pet_id, sd);
+	if (index > -1) {
+		/* Pet is lost, delete the egg */
+		if (value <= PET_INTIMATE_NONE) {
+			pc_delitem(sd, index, 1, 0, 0, LOG_TYPE_OTHER);
+		} else {
+			sd->inventory.u.items_inventory[index].card[3] = pet_get_card4_value(pd->pet.rename_flag, pd->pet.intimate);
+		}
 	}
+
+	status_calc_pc(sd, SCO_NONE);
 }
 
 int pet_create_egg(struct map_session_data *sd, t_itemid item_id)
@@ -141,6 +147,8 @@ int pet_unlocktarget(struct pet_data *pd)
 	pet_stop_walking(pd,1);
 	return 0;
 }
+
+
 
 /*==========================================
  * Pet Attack Skill [Skotlex]
@@ -347,18 +355,14 @@ static int pet_performance(struct map_session_data *sd, struct pet_data *pd)
 
 int pet_return_egg(struct map_session_data *sd, struct pet_data *pd)
 {
-	int i;
-
 	nullpo_retr(1, sd);
 	nullpo_retr(1, pd);
 
 	pet_lootitem_drop(pd,sd);
 
 	// Pet Evolution
-	ARR_FIND(0, MAX_INVENTORY, i, sd->inventory.u.items_inventory[i].card[0] == CARD0_PET &&
-		pd->pet.pet_id == MakeDWord(sd->inventory.u.items_inventory[i].card[1], sd->inventory.u.items_inventory[i].card[2]));
-
-	if (i != MAX_INVENTORY) {
+	const int i = pet_find_egg_inventory_slot(pd->pet.pet_id, sd);
+	if (i > -1) {
 		sd->inventory.u.items_inventory[i].attribute = 0;
 		sd->inventory.u.items_inventory[i].bound = BOUND_NONE;
 		sd->inventory.u.items_inventory[i].card[3] = pet_get_card4_value(pd->pet.rename_flag, pd->pet.intimate);
@@ -512,7 +516,7 @@ int pet_birth_process(struct map_session_data *sd, struct s_pet *pet)
 	return 0;
 }
 
-int pet_recv_petdata(uint32 account_id,struct s_pet *p,int flag)
+int pet_recv_petdata(uint32 account_id, struct s_pet *p,int flag)
 {
 	struct map_session_data *sd;
 
@@ -524,12 +528,9 @@ int pet_recv_petdata(uint32 account_id,struct s_pet *p,int flag)
 		return 1;
 	}
 	if(p->incuvate == 1) {
-		int i;
-		// Get Egg Index
-		ARR_FIND(0, MAX_INVENTORY, i, sd->inventory.u.items_inventory[i].card[0] == CARD0_PET &&
-			p->pet_id == MakeDWord(sd->inventory.u.items_inventory[i].card[1], sd->inventory.u.items_inventory[i].card[2]));
+		const int i = pet_find_egg_inventory_slot(p->pet_id, sd);
 
-		if (i == MAX_INVENTORY) {
+		if (i == -1) {
 			ShowError("pet_recv_petdata: Hatching pet (%d:%s) aborted, couldn't find egg in inventory for removal!\n",p->pet_id, p->name);
 			sd->status.pet_id = 0;
 			return 1;

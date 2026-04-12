@@ -50,9 +50,9 @@ enum e_regen
 	RGN_SSP  = 0x08,
 };
 
-static int refinebonus[MAX_REFINE_BONUS][3];	// ¸˜Bƒ{[ƒiƒXƒe[ƒuƒ‹(refine_db.txt)
-int percentrefinery[REFINE_TYPE_MAX][MAX_REFINE+1];	// ¸˜B¬Œ÷—¦(refine_db.txt)
-static int atkmods[3][MAX_WEAPON_TYPE];	// •ŠíATKƒTƒCƒYC³(size_fix.txt)
+static int refinebonus[MAX_REFINE_BONUS][3];	// ï¿½ï¿½ï¿½Bï¿½{ï¿½[ï¿½iï¿½Xï¿½eï¿½[ï¿½uï¿½ï¿½(refine_db.txt)
+int percentrefinery[REFINE_TYPE_MAX][MAX_REFINE+1];	// ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(refine_db.txt)
+static int atkmods[3][MAX_WEAPON_TYPE];	// ï¿½ï¿½ï¿½ï¿½ATKï¿½Tï¿½Cï¿½Yï¿½Cï¿½ï¿½(size_fix.txt)
 
 // TODO: rewrite refine system later to use this struct... [15peaces]
 static struct {
@@ -1433,7 +1433,7 @@ static inline void status_cpy(struct status_data* a, const struct status_data* b
 
 
 /*==========================================
- * ¸˜Bƒ{[ƒiƒX
+ * ï¿½ï¿½ï¿½Bï¿½{ï¿½[ï¿½iï¿½X
  *------------------------------------------*/
 int status_getrefinebonus(int lv,int type)
 {
@@ -3193,7 +3193,7 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 
 	b_cart_weight_max = sd->cart_weight_max;
 
-	pc_calc_skilltree(sd);	// ƒXƒLƒ‹ƒcƒŠ?‚ÌŒvZ
+	pc_calc_skilltree(sd);	// ï¿½Xï¿½Lï¿½ï¿½ï¿½cï¿½ï¿½?ï¿½ÌŒvï¿½Z
 
 	if(opt&SCO_FIRST) {
 		//Load Hp/SP from char-received data.
@@ -3532,12 +3532,12 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 
 	pc_bonus_script(sd);
 
-	if( sd->pd )
-	{ // Pet Bonus
-		struct pet_data *pd = sd->pd;
-		if( pd && pd->petDB && pd->petDB->pet_loyal_script && pd->pet.intimate >= battle_config.pet_equip_min_friendly )
+	if(sd->pd) { // Pet Bonus
+		const struct pet_data *pd = sd->pd;
+		if( pd && pd->petDB && pd->petDB->pet_loyal_script)
 			run_script(pd->petDB->pet_loyal_script,0,sd->bl.id,0);
-		if( pd && pd->pet.intimate > 0 && (!battle_config.pet_equip_required || pd->pet.equip > 0) && pd->state.skillbonus == 1 && pd->bonus )
+
+		if(pd && pd->pet.intimate > PET_INTIMATE_NONE && (!battle_config.pet_equip_required || pd->pet.equip > 0) && pd->state.skillbonus == 1 && pd->bonus)
 			pc_bonus(sd,pd->bonus->type, pd->bonus->val);
 	}
 
@@ -6894,8 +6894,8 @@ const char* status_get_name(struct block_list *bl)
 }
 
 /*==========================================
- * ‘ÎÛ‚ÌClass‚ğ•Ô‚·(”Ä—p)
- * –ß‚è‚Í®”‚Å0ˆÈã
+ * ï¿½ÎÛ‚ï¿½Classï¿½ï¿½Ô‚ï¿½(ï¿½Ä—p)
+ * ï¿½ß‚ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½Èï¿½
  *------------------------------------------*/
 int status_get_class(struct block_list *bl) {
 	nullpo_ret(bl);
@@ -6911,8 +6911,8 @@ int status_get_class(struct block_list *bl) {
 	return 0;
 }
 /*==========================================
- * ‘ÎÛ‚ÌƒŒƒxƒ‹‚ğ•Ô‚·(”Ä—p)
- * –ß‚è‚Í®”‚Å0ˆÈã
+ * ï¿½ÎÛ‚Ìƒï¿½ï¿½xï¿½ï¿½ï¿½ï¿½Ô‚ï¿½(ï¿½Ä—p)
+ * ï¿½ß‚ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½Èï¿½
  *------------------------------------------*/
 int status_get_lv(struct block_list *bl) {
 	nullpo_ret(bl);
@@ -11378,7 +11378,7 @@ int status_change_clear(struct block_list* bl, int type)
 }
 
 /*==========================================
- * ƒXƒe[ƒ^ƒXˆÙíI—¹
+ * ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ùï¿½Iï¿½ï¿½
  *------------------------------------------*/
 int status_change_end_(struct block_list* bl, enum sc_type type, int tid)
 {
@@ -12273,7 +12273,7 @@ int status_change_end_(struct block_list* bl, enum sc_type type, int tid)
 }
 
 /*==========================================
- * ƒXƒe[ƒ^ƒXˆÙíI—¹ƒ^ƒCƒ}[
+ * ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ùï¿½Iï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[
  *------------------------------------------*/
 int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 {
@@ -12545,7 +12545,7 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 		}
 		break;
 
-	case SC_DANCING: //ƒ_ƒ“ƒXƒXƒLƒ‹‚ÌŠÔSPÁ”ï
+	case SC_DANCING: //ï¿½_ï¿½ï¿½ï¿½Xï¿½Xï¿½Lï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½SPï¿½ï¿½ï¿½ï¿½
 		{
 			int s = 0;
 			int sp = 1;
@@ -13382,7 +13382,7 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 }
 
 /*==========================================
- * ƒXƒe[ƒ^ƒXˆÙíƒ^ƒCƒ}[”ÍˆÍˆ—
+ * ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ùï¿½^ï¿½Cï¿½}ï¿½[ï¿½ÍˆÍï¿½ï¿½ï¿½
  *------------------------------------------*/
 int status_change_timer_sub(struct block_list* bl, va_list ap)
 {

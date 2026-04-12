@@ -61,6 +61,15 @@ enum e_pet_intimacy_level {
 	PET_INTIMATE_MAX = 1000
 };
 
+enum e_pet_hungry : uint16 {
+	PET_HUNGRY_NONE = 0,
+	PET_HUNGRY_VERY_HUNGRY = 10,
+	PET_HUNGRY_HUNGRY = 25,
+	PET_HUNGRY_NEUTRAL = 75,
+	PET_HUNGRY_SATISFIED = 90,
+	PET_HUNGRY_STUFFED = 100
+};
+
 struct pet_recovery { //Stat recovery
 	enum sc_type type;	//Status Change id
 	unsigned short delay; //How long before curing (secs).
@@ -133,6 +142,7 @@ int pet_create_egg(struct map_session_data *sd, t_itemid item_id);
 int pet_return_egg(struct map_session_data *sd, struct pet_data *pd);
 int pet_hungry_val(struct pet_data *pd);
 int pet_get_card4_value(int rename_flag, int intimacy);
+int pet_find_egg_inventory_slot(int pet_id, struct map_session_data* sd);
 void pet_set_intimate(struct pet_data *pd, int value);
 int pet_target_check(struct pet_data *pd,struct block_list *bl,int type);
 int pet_unlocktarget(struct pet_data *pd);
