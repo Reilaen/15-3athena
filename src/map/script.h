@@ -17,6 +17,11 @@ extern int potion_flag; //For use on Alchemist improved potions/Potion Pitcher. 
 extern int potion_hp, potion_per_hp, potion_sp, potion_per_sp;
 extern int potion_target;
 
+enum script_cmd_result {
+	SCRIPT_CMD_SUCCESS = 0,
+	SCRIPT_CMD_FAILURE = 1,
+};
+
 extern struct Script_Config {
 	unsigned warn_func_mismatch_argtypes : 1;
 	unsigned warn_func_mismatch_paramnum : 1;
@@ -643,7 +648,11 @@ void script_free_state(struct script_state* st);
 
 struct DBMap* script_get_label_db(void);
 struct DBMap* script_get_userfunc_db(void);
-void script_run_autobonus(const char *autobonus, struct map_session_data *sd, unsigned int pos);
+
+void script_add_autobonus(const char* autobonus);
+void script_run_autobonus(const char* autobonus, const struct map_session_data* sd, unsigned int pos);
+void script_add_petautobonus(const char* autobonus);
+void script_run_petautobonus(const char* autobonus, const struct map_session_data *sd);
 
 void script_run_item_lapineddukddak_script(struct map_session_data *sd, struct item_data *data, int oid);
 void script_run_item_lapineupgrade_script(struct map_session_data *sd, struct item_data *data, int oid);

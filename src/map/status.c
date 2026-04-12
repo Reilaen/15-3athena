@@ -3325,6 +3325,12 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 	pc_delautobonus(sd,sd->autobonus2,ARRAYLENGTH(sd->autobonus2),true);
 	pc_delautobonus(sd,sd->autobonus3,ARRAYLENGTH(sd->autobonus3),true);
 
+	if (sd->pd != NULL) {
+		pet_delautobonus(sd, sd->pd->autobonus, true);
+		pet_delautobonus(sd, sd->pd->autobonus2, true);
+		pet_delautobonus(sd, sd->pd->autobonus3, true);
+	}
+
 	pc_itemgrouphealrate_clear(sd);
 
 	// Parse equipment.

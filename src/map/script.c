@@ -323,6 +323,7 @@ static int buildin_getelementofarray_ref = 0;
 // Caches compiled autoscript item code. 
 // Note: This is not cleared when reloading itemdb.
 static DBMap* autobonus_db=NULL; // char* script -> char* bytecode
+static DBMap* pet_autobonus_db=NULL;
 
 struct Script_Config script_config = {
 	1, // warn_func_mismatch_argtypes
@@ -4175,32 +4176,42 @@ static int db_script_free_code_sub(DBKey key, DBData *data, va_list ap)
 	return 0;
 }
 
-void script_run_autobonus(const char *autobonus, struct map_session_data *sd, unsigned int pos)
-{
-	struct script_code *script = (struct script_code *)strdb_get(autobonus_db, autobonus);
+void script_add_autobonus(const char *autobonus) {
+	if(strdb_get(autobonus_db, autobonus) != NULL) return;
 
-	if( script )
-	{
-		int j;
-		ARR_FIND(0, EQI_MAX, j, sd->equip_index[j] >= 0 && sd->inventory.u.items_inventory[sd->equip_index[j]].equip == pos);
-		if (j < EQI_MAX)
-			current_equip_item_index = sd->equip_index[j];
+	struct script_code *script = parse_script(autobonus, "autobonus", 0, 0);
+	if(!script) return;
 
-		run_script(script, 0, sd->bl.id, 0);
-	}
+	strdb_put(autobonus_db, autobonus, script);
 }
 
-void script_add_autobonus(const char *autobonus)
-{
-	if( strdb_get(autobonus_db, autobonus) == NULL )
-	{
-		struct script_code *script = parse_script(autobonus, "autobonus", 0, 0);
+void script_run_autobonus(const char* autobonus, const struct map_session_data* sd, const unsigned int pos) {
+	struct script_code *script = strdb_get(autobonus_db, autobonus);
+	if(!script) return;
 
-		if( script )
-			strdb_put(autobonus_db, autobonus, script);
-	}
+	int j;
+	ARR_FIND(0, EQI_MAX, j, sd->equip_index[j] >= 0 && sd->inventory.u.items_inventory[sd->equip_index[j]].equip == pos);
+	if (j < EQI_MAX)
+		current_equip_item_index = sd->equip_index[j];
+
+	run_script(script, 0, sd->bl.id, 0);
 }
 
+void script_add_petautobonus(const char* autobonus) {
+	if(strdb_get(pet_autobonus_db, autobonus) != NULL) return;
+
+	struct script_code* script = parse_script(autobonus, "petautobonus", 0, 0);
+	if(!script) return;
+
+	strdb_put(pet_autobonus_db, autobonus, script);
+}
+
+void script_run_petautobonus(const char* autobonus, const struct map_session_data* sd) {
+	struct script_code* script = strdb_get(pet_autobonus_db, autobonus);
+	if(!script) return;
+
+	run_script(script, 0, sd->bl.id, 0);
+}
 
 /// resets a temporary character array variable to given value
 void script_cleararray_pc(struct map_session_data* sd, const char* varname, void* value)
@@ -4336,6 +4347,7 @@ void do_final_script()
 	db_destroy(scriptlabel_db);
 	userfunc_db->destroy(userfunc_db, db_script_free_code_sub);
 	autobonus_db->destroy(autobonus_db, db_script_free_code_sub);
+	pet_autobonus_db->destroy(pet_autobonus_db, db_script_free_code_sub);
 	if(sleep_db) {
 		struct linkdb_node *n = (struct linkdb_node *)sleep_db;
 		while(n) {
@@ -4371,6 +4383,7 @@ void do_init_script()
 	userfunc_db=strdb_alloc(DB_OPT_DUP_KEY,0);
 	scriptlabel_db=strdb_alloc(DB_OPT_DUP_KEY | DB_OPT_ALLOW_NULL_DATA,50);
 	autobonus_db = strdb_alloc(DB_OPT_DUP_KEY,0);
+	pet_autobonus_db = strdb_alloc(DB_OPT_DUP_KEY,0);
 
 	mapreg_init();
 }
@@ -8542,6 +8555,103 @@ BUILDIN_FUNC(autobonus3)
 
 	return 0;
 }
+
+BUILDIN_FUNC(petautobonus) {
+	TBL_PC* sd;
+
+	if (!(sd = script_rid2sd(st)))
+		return SCRIPT_CMD_SUCCESS; // No player attached
+
+	const char *command = script_getfuncname(st);
+
+	if (sd->pd == NULL) {
+		ShowError("buildin_%s: Requires an active pet.\n", command);
+		return SCRIPT_CMD_FAILURE; // No pet attached to player
+	}
+
+	const char* bonus_script = script_getstr(st, 2);
+	const int16 rate = script_getnum(st, 3);
+	const uint dur = script_getnum(st, 4);
+
+	if (!rate || !dur || bonus_script == NULL || bonus_script[0] == '\0')
+		return SCRIPT_CMD_SUCCESS;
+
+	uint16 atk_type = 0;
+	const char* other_script = {};
+	bool bonus2 = false;
+
+	if (strcmpi(command, "petautobonus2") == 0)
+		bonus2 = true;
+
+	if (script_hasdata(st, 5))
+		atk_type = script_getnum(st, 5);
+	if (script_hasdata(st, 6))
+		other_script = script_getstr(st, 6);
+
+	if (!pet_addautobonus(bonus2 ? sd->pd->autobonus2 : sd->pd->autobonus, bonus_script, rate, dur, atk_type, other_script, false)) {
+		return SCRIPT_CMD_SUCCESS;
+	}
+
+	script_add_petautobonus(bonus_script);
+	if (other_script && other_script[0] != '\0')
+		script_add_petautobonus(other_script);
+
+	return SCRIPT_CMD_SUCCESS;
+}
+
+
+BUILDIN_FUNC(petautobonus3) {
+	TBL_PC* sd;
+
+	if (!(sd = script_rid2sd(st)))
+		return SCRIPT_CMD_SUCCESS; // No player attached
+
+	if (sd->pd == NULL) {
+		ShowError("buildin_petautobonus3: Requires an active pet.\n");
+		return SCRIPT_CMD_FAILURE; // No pet attached to player
+	}
+
+	const char* bonus_script = script_getstr(st, 2);
+	const int16 rate = script_getnum(st, 3);
+	const uint dur = script_getnum(st, 4);
+
+	if (!rate || !dur || bonus_script == NULL || bonus_script[0] == '\0')
+		return SCRIPT_CMD_SUCCESS;
+
+	uint16 skill_id = 0;
+	const char* other_script = {};
+
+	if (script_isstring(st, 5)) {
+		const char *name = script_getstr(st, 5);
+
+		if (!(skill_id = skill_name2id(name))) {
+			ShowError("buildin_petautobonus3: Invalid skill name %s passed to autobonus. Skipping.\n", name);
+			return SCRIPT_CMD_FAILURE;
+		}
+	} else {
+		skill_id = script_getnum(st, 5);
+
+		if (!skill_get_index(skill_id)) {
+			ShowError("buildin_petautobonus3: Invalid skill ID %d passed to autobonus. Skipping.\n", skill_id);
+			return SCRIPT_CMD_FAILURE;
+		}
+	}
+
+	if (script_hasdata(st, 6)) {
+		other_script = script_getstr(st, 6);
+	}
+
+	if (!pet_addautobonus(sd->pd->autobonus3, bonus_script, rate, dur, skill_id, other_script, true)) {
+		return SCRIPT_CMD_SUCCESS;
+	}
+
+	script_add_petautobonus(bonus_script);
+	if (other_script && other_script[0] != '\0')
+		script_add_petautobonus(other_script);
+
+	return SCRIPT_CMD_SUCCESS;
+}
+
 
 /// Changes the level of a player skill.
 /// <flag> defaults to 1
@@ -21473,6 +21583,9 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(autobonus,"sii??"),
 	BUILDIN_DEF(autobonus2,"sii??"),
 	BUILDIN_DEF(autobonus3,"siiv?"),
+	BUILDIN_DEF(petautobonus,"sii??"),
+	BUILDIN_DEF2(petautobonus,"petautobonus2","sii??"),
+	BUILDIN_DEF(petautobonus3,"siiv?"),
 	BUILDIN_DEF(skill,"vi?"),
 	BUILDIN_DEF(addtoskill,"vi?"), // [Valaris]
 	BUILDIN_DEF(guildskill,"vi"),
