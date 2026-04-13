@@ -8,13 +8,13 @@
 // 03. ItemID			Item(s) needed for evolution.
 // 04. ItemAmt			Item ammount(s) needed for evolution.
 
-1002,9069,610:619,10:3
-1019,9071,537:632:7101:4031:522,10:3:300:1:10
-//1023,9087,635:1124:931:2267:4066,3:1:500:1:1
-//1029,9090,639:Queens_Hair_Ornament:954:732,3:1:300:6
-//1041,9107,Elixir_Bandage:7511:969:4248,3:200:30:1
-//1052,9106,707:Grasshoppers_Leg:508:4057,3:777:200:1
-1057,9091,634:753:7182:4051,3:2:300:1
+1002,9069,610:619,10:3 // Poring -> Mastering
+1019,9071,537:632:7101:4031:522,10:3:300:1:10 // Peco Peco -> Grand Peco
+1023,9087,635:1124:931:2267:4066,3:1:500:1:1 // Orc Warrior -> High Orc | High Orc Egg is an unknown item in the client.
+1029,9090,639:10006:954:732,3:1:300:6 // Isis -> Little Isis
+1041,9107,23256:7511:969:4248,3:200:30:1 // Mummy -> Ancient Mummy | The taming item for Mummy was missing. Added it to the database but is still an unknown item in the client, Mummy and Ancient Mummy Egg are also unknown items.
+1052,9106,707:940:508:4057,3:777:200:1 // Rocker -> Metaller | Metaller Egg is an unknown item in the client.
+1057,9091,634:753:7182:4051,3:2:300:1 // Yoyo -> Choco
 //1063,Leaf_Lunatic_Egg,Great_Leaf:Clover:Four_Leaf_Clover:Leaf_Lunatic_Card,100:250:30:1
 //1090,9088,503:2282:509:909,20:1:50:200
 //1109,Diabolic_Egg_,Contracts_In_Shadow:Petite_DiablOfs_Wing:1009:Deviruchi_Card,3:250:30:1
@@ -29,7 +29,7 @@
 //1275,9120,Alices_Apron:511:985:4253,500:200:30:1
 //1379,9116,7120:510:935:4166,500:100:100:1
 //1416,9115,Mightysoul_Essence:4202:4265:4272,30:10:10:10
-//1180,Cat_o_Nine_Tails_Egg,23187:Fox_Tail:Punisher:Nine_Tail_Card,3:999:1:1
+1180,9096,23187:1022:10008:4159,3:999:1:1 // Nine Tail -> Cat O' Nine Tail
 //1307,Moonlight_Flower_Egg,Mightysoul_Essence:Nine_Tail_Card:Sohee_Card:Munak_Card,30:10:10:10
 //1622,Abandoned_Teddy_Bear_Egg,SmallDoll_Needle:Cursed_Seal:Cardinal_Jewel_:4340,3:300:50:1
 //1622,9118,7317:518:727:4340,500:100:10:1

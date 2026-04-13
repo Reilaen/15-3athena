@@ -5593,6 +5593,7 @@
 
 // missing Taming item
 23187,Sap_Jelly,Sap Jelly,2,10,,0,,,,,0xFFFFFFFF,7,2,,,,,,{pet(1180);},{},{}
+23256,Elixir_Bandage,Spiritual Bandage,2,10,,0,,,,,0xFFFFFFFF,7,2,,,,,,{pet(1041);},{},{}
 
 // renewal (WIP)
 490319,aegis_490319,Y.S.F. Ring,5,10,,10,,0,,1,0x00000080,48,2,8,,100,0,0,{ bonus bVit,20; bonus bMaxHPrate,15; bonus bLongAtkRate,10; bonus bPerfectHitAddRate,15; bonus2 bSubRace,RC_Player_Human,3; bonus2 bSubRace,RC_Player_Doram,3; bonus2 bSkillCooldown,"RK_HUNDREDSPEAR",-1000; bonus2 bSkillAtk,"RK_DRAGONBREATH_WATER",BaseLevel/2; bonus2 bSkillAtk,"RK_DRAGONBREATH",BaseLevel/2; bonus2 bSkillAtk,"RK_HUNDREDSPEAR",3*(BaseLevel/2); },{},{}
