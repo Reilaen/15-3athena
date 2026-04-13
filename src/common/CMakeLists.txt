@@ -59,6 +59,7 @@ set( COMMON_BASE_HEADERS
 	"${COMMON_SOURCE_DIR}/timer.h"
 	"${COMMON_SOURCE_DIR}/utils.h"
 	"${COMMON_SOURCE_DIR}/msg_conf.h"
+	"${COMMON_SOURCE_DIR}/csv.h"
 	CACHE INTERNAL "common_base headers" )
 set( COMMON_BASE_SOURCES
 	"${COMMON_SOURCE_DIR}/core.c"
@@ -79,6 +80,7 @@ set( COMMON_BASE_SOURCES
 	"${COMMON_SOURCE_DIR}/timer.c"
 	"${COMMON_SOURCE_DIR}/utils.c"
 	"${COMMON_SOURCE_DIR}/msg_conf.c"
+	"${COMMON_SOURCE_DIR}/csv.c"
 	CACHE INTERNAL "common_base sources" )
 set( DEPENDENCIES ${ZLIB_DEPENDENCIES} )
 set( LIBRARIES ${GLOBAL_LIBRARIES} ${ZLIB_LIBRARIES} )
