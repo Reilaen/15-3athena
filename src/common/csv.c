@@ -14,9 +14,15 @@ static char* trim_whitespace(char *str) {
 
 int csv_parse_line(char *line, csv_result_t *result, const int max_fields, const char delimiter, const uint32 flags) {
     if (!line || !result) return CSV_ERR_EMPTY_LINE;
-    
+
     memset(result, 0, sizeof(csv_result_t));
-    
+
+    if (strlen(line) > CSV_MAX_LINE_LEN) {
+        result->error_code = CSV_ERR_LINE_TOO_LONG;
+        result->error_msg = "Line too long";
+        return CSV_ERR_LINE_TOO_LONG;
+    }
+
     char *p = line;
     
     if (flags & CSV_FLAG_TRIM_WHITESPACE) {
@@ -40,7 +46,7 @@ int csv_parse_line(char *line, csv_result_t *result, const int max_fields, const
     int brace_depth = 0;
     bool in_quotes = false;
     
-    while (*p && count < max_fields) {
+    while (*p) {
         if ((flags & CSV_FLAG_ALLOW_QUOTES) && *p == '"') {
             in_quotes = !in_quotes;
             p++;
@@ -48,12 +54,19 @@ int csv_parse_line(char *line, csv_result_t *result, const int max_fields, const
         }
         
         if (!in_quotes) {
-            if ((flags & CSV_FLAG_BRACE_AWARE) && *p == '{') {
+            if (flags & CSV_FLAG_BRACE_AWARE && *p == '{') {
                 brace_depth++;
-            } else if ((flags & CSV_FLAG_BRACE_AWARE) && *p == '}') {
+            } else if (flags & CSV_FLAG_BRACE_AWARE && *p == '}') {
                 if (brace_depth > 0) brace_depth--;
             } else if (*p == delimiter && brace_depth == 0) {
                 *p = '\0';
+
+                if (count >= max_fields) {
+                    result->error_code = CSV_ERR_TOO_MANY_FIELDS;
+                    result->error_msg = "Too many fields";
+                    return CSV_ERR_TOO_MANY_FIELDS;
+                }
+
                 char *field = start;
                 
                 if (flags & CSV_FLAG_TRIM_WHITESPACE) {
@@ -105,13 +118,13 @@ int csv_parse_line(char *line, csv_result_t *result, const int max_fields, const
         return CSV_ERR_TOO_FEW_FIELDS;
     }
 
-    if ((flags & CSV_FLAG_BRACE_AWARE) && brace_depth > 0) {
+    if (flags & CSV_FLAG_BRACE_AWARE && brace_depth > 0) {
         result->error_code = CSV_ERR_UNCLOSED_BRACE;
         result->error_msg = "Unclosed { brace";
         return CSV_ERR_UNCLOSED_BRACE;
     }
 
-    if ((flags & CSV_FLAG_ALLOW_QUOTES) && in_quotes) {
+    if (flags & CSV_FLAG_ALLOW_QUOTES && in_quotes) {
         result->error_code = CSV_ERR_UNCLOSED_QUOTE;
         result->error_msg = "Unclosed \" quote";
         return CSV_ERR_UNCLOSED_QUOTE;
