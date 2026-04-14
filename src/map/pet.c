@@ -1542,29 +1542,29 @@ void read_petdb(void) {
 				continue;
 			}
 
-			pet_db[pet_db_idx].class_ = (short)csv_get_int(&csv, 0, 0);
-			safestrncpy(pet_db[pet_db_idx].name,csv_get_str(&csv, 1), NAME_LENGTH);
-			safestrncpy(pet_db[pet_db_idx].jname,csv_get_str(&csv, 2), NAME_LENGTH);
-			pet_db[pet_db_idx].itemID = csv_get_int(&csv, 3, 0);
-			pet_db[pet_db_idx].EggID = csv_get_int(&csv, 4, 0);
-			pet_db[pet_db_idx].AcceID = csv_get_int(&csv, 5, 0);
-			pet_db[pet_db_idx].FoodID = csv_get_int(&csv, 6, 0);
-			pet_db[pet_db_idx].fullness = csv_get_int(&csv, 7, 0);
-			pet_db[pet_db_idx].hungry_delay = csv_get_int(&csv, 8, 0) * 1000;
-			pet_db[pet_db_idx].hunger_increase = csv_get_int(&csv, 9, 0);
-			pet_db[pet_db_idx].r_hungry = csv_get_int(&csv, 9, 0);
-			pet_db[pet_db_idx].r_full = csv_get_int(&csv, 10, 0);
-			pet_db[pet_db_idx].intimate = csv_get_int(&csv, 11, 0);
-			pet_db[pet_db_idx].die = csv_get_int(&csv, 12, 0);
-			pet_db[pet_db_idx].hungry_intimacy_dec = csv_get_int(&csv, 13, 0);
-			pet_db[pet_db_idx].capture = csv_get_int(&csv, 13, 0);
-			pet_db[pet_db_idx].s_perfor = (char)csv_get_int(&csv, 15, 0);
-			pet_db[pet_db_idx].attack_rate = csv_get_int(&csv, 17, 0);
-			pet_db[pet_db_idx].defense_attack_rate = csv_get_int(&csv, 18, 0);
-			pet_db[pet_db_idx].change_target_rate = csv_get_int(&csv, 19, 0);
-			pet_db[pet_db_idx].allow_autofeed = csv_get_int(&csv, 20, 0);
-			pet_db[pet_db_idx].pet_bonus_script = NULL;
-			pet_db[pet_db_idx].pet_support_script = NULL;
+			pet_db[pet_db_idx].class_ = (short)csv_get_int(&csv, 0, 0); // Monster ID.
+			safestrncpy(pet_db[pet_db_idx].name,csv_get_str(&csv, 1), NAME_LENGTH); // Aegis Name.
+			safestrncpy(pet_db[pet_db_idx].jname,csv_get_str(&csv, 2), NAME_LENGTH); // J Name.
+			pet_db[pet_db_idx].itemID = csv_get_int(&csv, 3, 0); // Pet Tame Item.
+			pet_db[pet_db_idx].EggID = csv_get_int(&csv, 4, 0); // Egg Item Item.
+			pet_db[pet_db_idx].AcceID = csv_get_int(&csv, 5, 0); // Pet Accessory Item.
+			pet_db[pet_db_idx].FoodID = csv_get_int(&csv, 6, 0); // Pet Food Item.
+			pet_db[pet_db_idx].fullness = csv_get_int(&csv, 7, 0); // The amount of hunger is decreased every [HungryDelay] seconds.
+			pet_db[pet_db_idx].hungry_delay = csv_get_int(&csv, 8, 0) * 1000; // The amount of time in seconds it takes for hunger to decrease after feeding.
+			pet_db[pet_db_idx].hunger_increase = csv_get_int(&csv, 9, 0); // The amount of hunger that is increased every time the pet is fed.
+			pet_db[pet_db_idx].intimate = csv_get_int(&csv, 10, 0); // Amount of Intimacy the pet starts with.
+			pet_db[pet_db_idx].r_hungry = csv_get_int(&csv, 11, 0); // Amount of Intimacy that is increased when fed.
+			pet_db[pet_db_idx].r_full = csv_get_int(&csv, 12, 0); // Amount of Intimacy that is increased when over-fed.
+			pet_db[pet_db_idx].hungry_intimacy_dec = csv_get_int(&csv, 13, 0); // Amount of Intimacy that is increased when the pet is hungry.
+			pet_db[pet_db_idx].die = csv_get_int(&csv, 14, 0); // Amount of Intimacy that is increased when the pet owner dies.
+			pet_db[pet_db_idx].capture = csv_get_int(&csv, 15, 0); // Capture success rate.
+			pet_db[pet_db_idx].s_perfor = (char)csv_get_int(&csv, 16, 0); // If a pet has a Special Performance.
+			pet_db[pet_db_idx].attack_rate = csv_get_int(&csv, 17, 0); // Rate of which the pet will attack.
+			pet_db[pet_db_idx].defense_attack_rate = csv_get_int(&csv, 18, 0); // Rate of which the pet will retaliate when master is being attacked.
+			pet_db[pet_db_idx].change_target_rate = csv_get_int(&csv, 19, 0); // Rate of which the pet will change its attack target.
+			pet_db[pet_db_idx].allow_autofeed = csv_get_int(&csv, 20, 0); // Allows turning automatic pet feeding on.
+			pet_db[pet_db_idx].pet_bonus_script = NULL; // Bonus script to execute when the pet is alive.
+			pet_db[pet_db_idx].pet_support_script = NULL; // Bonus script to execute when pet_status_support is enabled.
 
 			if(pet_db[pet_db_idx].r_hungry <= 0)
 				pet_db[pet_db_idx].r_hungry = 1;
