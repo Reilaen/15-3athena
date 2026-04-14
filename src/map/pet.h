@@ -7,7 +7,7 @@
 #include "pc.h"
 
 #define MAX_PET_DB	300
-#define MAX_PETEVOLVE_ITEMS	5
+#define MAX_PET_EVOLUTION_ITEMS	5
 #define MAX_PETLOOT_SIZE	30
 
 /** Pet Evolution [Dastgir/Hercules] */
@@ -41,8 +41,8 @@ struct s_pet_db {
 	int attack_rate;
 	int defense_attack_rate;
 	int change_target_rate;
-	int allow_autofeed; // loyal  // pet_script
-	struct script_code *pet_support_script, *pet_bonus_script;
+	int allow_autofeed;
+	struct script_code *pet_bonus_script, *pet_support_script;
 
 	/* Pet Evolution */
 	VECTOR_DECL(struct pet_evolve_data) evolve_data;
@@ -185,7 +185,9 @@ int pet_endautobonus(int tid, int64 tick, int id, intptr_t data);
 #define pet_stop_walking(pd, type) unit_stop_walking(&(pd)->bl, type)
 #define pet_stop_attack(pd) unit_stop_attack(&(pd)->bl)
 
-void read_petdb(void);
+void read_pet_db(void);
+static void free_pet_db(void);
+static void read_pet_evolutions(void);
 void do_init_pet(void);
 void do_final_pet(void);
 

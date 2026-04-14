@@ -1491,78 +1491,65 @@ int pet_endautobonus(const int tid, int64 tick, const int id, const intptr_t aut
 	return 0;
 }
 
-void read_petdb(void) {
+void read_pet_db(void) {
 	char* filenames[] = {"pet_db.txt","pet_db2.txt"};
-	char line[CSV_MAX_LINE_LEN];
-	csv_result_t csv;
+
+	free_pet_db();
+
 	int pet_db_idx = 0;
-
-	for(uint j = 0; j < MAX_PET_DB; j++) {
-		if(pet_db[j].pet_bonus_script) {
-			script_free_code(pet_db[j].pet_bonus_script);
-			pet_db[j].pet_bonus_script = NULL;
-		}
-
-		if(pet_db[j].pet_support_script) {
-			script_free_code(pet_db[j].pet_support_script);
-			pet_db[j].pet_support_script = NULL;
-		}
-	}
-
-	memset(pet_db,0,sizeof(pet_db));
-
 	for (int file_idx = 0; file_idx < ARRAYLENGTH(filenames); file_idx++) {
-		sprintf(line, "%s/%s", db_path, filenames[file_idx]);
-		FILE *fp = fopen(line, "r");
+		char* filename = filenames[file_idx];
 
+		char line[CSV_MAX_LINE_LEN];
+		snprintf(line, CSV_MAX_LINE_LEN,"%s/%s", db_path, filename);
+		FILE *fp = fopen(line, "r");
 		if (fp == NULL) {
-			ShowError("Can't read %s\n", filenames[file_idx]);
+			ShowError("Can't read %s\n", filename);
 			continue;
 		}
 
-		char* filename = filenames[file_idx];
 		int line_num = 0;
 		int valid_file_db_entries = 0;
 
-		sprintf(line, "%s/%s", db_path, filename);
 		while(fgets(line, sizeof(line), fp) && pet_db_idx < MAX_PET_DB) {
 			line_num++;
-			const int ret = csv_parse_line(line, &csv, 23, ',',CSV_FLAG_BRACE_AWARE | CSV_FLAG_COMMENT_SKIP | CSV_FLAG_TRIM_WHITESPACE);
+			csv_result_t csv;
+			const int ret = csv_parse_line(line, &csv, 23, ',',CSV_FLAG_BRACE_AWARE | CSV_FLAG_TRIM_WHITESPACE);
 
 			if (ret != CSV_OK) {
 				if (ret != CSV_ERR_EMPTY_LINE)
-					ShowWarning("pet_db reading: File: %s on line %d: %s, skipping.\n", filename, line_num, csv.error_msg);
+					ShowWarning("read_pet_db reading: File: %s on line %d: %s, skipping.\n", filename, line_num, csv.error_msg);
 
 				continue;
 			}
 
-			const uint16 mob_id = (uint16)csv_get_int(&csv, 0, 0);
+			const uint16 mob_id = (uint16)csv_get_int(&csv, 0);
 			if(!mobdb_checkid(mob_id)) {
-				ShowWarning("pet_db reading: File: %s on line %d: Invalid mob-class %hu, pet not read.\n", mob_id);
+				ShowWarning("read_pet_db reading: File: %s on line %d: Invalid mob-class %hu, pet not read.\n", mob_id);
 				continue;
 			}
 
-			pet_db[pet_db_idx].class_ = (short)csv_get_int(&csv, 0, 0); // Monster ID.
+			pet_db[pet_db_idx].class_ = (short)csv_get_int(&csv, 0); // Monster ID.
 			safestrncpy(pet_db[pet_db_idx].name,csv_get_str(&csv, 1), NAME_LENGTH); // Aegis Name.
 			safestrncpy(pet_db[pet_db_idx].jname,csv_get_str(&csv, 2), NAME_LENGTH); // J Name.
-			pet_db[pet_db_idx].itemID = csv_get_int(&csv, 3, 0); // Pet Tame Item.
-			pet_db[pet_db_idx].EggID = csv_get_int(&csv, 4, 0); // Egg Item Item.
-			pet_db[pet_db_idx].AcceID = csv_get_int(&csv, 5, 0); // Pet Accessory Item.
-			pet_db[pet_db_idx].FoodID = csv_get_int(&csv, 6, 0); // Pet Food Item.
-			pet_db[pet_db_idx].fullness = csv_get_int(&csv, 7, 0); // The amount of hunger is decreased every [HungryDelay] seconds.
-			pet_db[pet_db_idx].hungry_delay = csv_get_int(&csv, 8, 0) * 1000; // The amount of time in seconds it takes for hunger to decrease after feeding.
-			pet_db[pet_db_idx].hunger_increase = csv_get_int(&csv, 9, 0); // The amount of hunger that is increased every time the pet is fed.
-			pet_db[pet_db_idx].intimate = csv_get_int(&csv, 10, 0); // Amount of Intimacy the pet starts with.
-			pet_db[pet_db_idx].r_hungry = csv_get_int(&csv, 11, 0); // Amount of Intimacy that is increased when fed.
-			pet_db[pet_db_idx].r_full = csv_get_int(&csv, 12, 0); // Amount of Intimacy that is increased when over-fed.
-			pet_db[pet_db_idx].hungry_intimacy_dec = csv_get_int(&csv, 13, 0); // Amount of Intimacy that is increased when the pet is hungry.
-			pet_db[pet_db_idx].die = csv_get_int(&csv, 14, 0); // Amount of Intimacy that is increased when the pet owner dies.
-			pet_db[pet_db_idx].capture = csv_get_int(&csv, 15, 0); // Capture success rate.
-			pet_db[pet_db_idx].s_perfor = (char)csv_get_int(&csv, 16, 0); // If a pet has a Special Performance.
-			pet_db[pet_db_idx].attack_rate = csv_get_int(&csv, 17, 0); // Rate of which the pet will attack.
-			pet_db[pet_db_idx].defense_attack_rate = csv_get_int(&csv, 18, 0); // Rate of which the pet will retaliate when master is being attacked.
-			pet_db[pet_db_idx].change_target_rate = csv_get_int(&csv, 19, 0); // Rate of which the pet will change its attack target.
-			pet_db[pet_db_idx].allow_autofeed = csv_get_int(&csv, 20, 0); // Allows turning automatic pet feeding on.
+			pet_db[pet_db_idx].itemID = csv_get_int(&csv, 3); // Pet Tame Item.
+			pet_db[pet_db_idx].EggID = csv_get_int(&csv, 4); // Egg Item Item.
+			pet_db[pet_db_idx].AcceID = csv_get_int(&csv, 5); // Pet Accessory Item.
+			pet_db[pet_db_idx].FoodID = csv_get_int(&csv, 6); // Pet Food Item.
+			pet_db[pet_db_idx].fullness = csv_get_int(&csv, 7); // The amount of hunger is decreased every [HungryDelay] seconds.
+			pet_db[pet_db_idx].hungry_delay = csv_get_int(&csv, 8) * 1000; // The amount of time in seconds it takes for hunger to decrease after feeding.
+			pet_db[pet_db_idx].hunger_increase = csv_get_int(&csv, 9); // The amount of hunger that is increased every time the pet is fed.
+			pet_db[pet_db_idx].intimate = csv_get_int(&csv, 10); // Amount of Intimacy the pet starts with.
+			pet_db[pet_db_idx].r_hungry = csv_get_int(&csv, 11); // Amount of Intimacy that is increased when fed.
+			pet_db[pet_db_idx].r_full = csv_get_int(&csv, 12); // Amount of Intimacy that is increased when over-fed.
+			pet_db[pet_db_idx].hungry_intimacy_dec = csv_get_int(&csv, 13); // Amount of Intimacy that is increased when the pet is hungry.
+			pet_db[pet_db_idx].die = csv_get_int(&csv, 14); // Amount of Intimacy that is increased when the pet owner dies.
+			pet_db[pet_db_idx].capture = csv_get_int(&csv, 15); // Capture success rate.
+			pet_db[pet_db_idx].s_perfor = (char)csv_get_int(&csv, 16); // If a pet has a Special Performance.
+			pet_db[pet_db_idx].attack_rate = csv_get_int(&csv, 17); // Rate of which the pet will attack.
+			pet_db[pet_db_idx].defense_attack_rate = csv_get_int(&csv, 18); // Rate of which the pet will retaliate when master is being attacked.
+			pet_db[pet_db_idx].change_target_rate = csv_get_int(&csv, 19); // Rate of which the pet will change its attack target.
+			pet_db[pet_db_idx].allow_autofeed = csv_get_int(&csv, 20); // Allows turning automatic pet feeding on.
 			pet_db[pet_db_idx].pet_bonus_script = NULL; // Bonus script to execute when the pet is alive.
 			pet_db[pet_db_idx].pet_support_script = NULL; // Bonus script to execute when pet_status_support is enabled.
 
@@ -1585,133 +1572,125 @@ void read_petdb(void) {
 		ShowStatus("Done reading '"CL_WHITE"%d"CL_RESET"' pets in '"CL_WHITE"%s"CL_RESET"'.\n", valid_file_db_entries, filename);
 
 		if(pet_db_idx >= MAX_PET_DB) {
-			ShowWarning("read_petdb: Reached max number of pets [%d]. Remaining pets were not read and further database files are skipped.\n ", MAX_PET_DB);
+			ShowWarning("read_pet_db: Reached max number of pets [%d]. Remaining pets were not read and further database files are skipped.\n ", MAX_PET_DB);
 			break;
 		}
 	}
+
+	read_pet_evolutions();
+}
+
+static void free_pet_db(void) {
+	for(int i = 0; i < MAX_PET_DB; i++) {
+		if(pet_db[i].pet_bonus_script ) {
+			script_free_code(pet_db[i].pet_bonus_script);
+			pet_db[i].pet_bonus_script = NULL;
+		}
+
+		if(pet_db[i].pet_support_script) {
+			script_free_code(pet_db[i].pet_support_script);
+			pet_db[i].pet_support_script = NULL;
+		}
+
+		for (int j = 0; j < VECTOR_LENGTH(pet_db[i].evolve_data); j++) {
+			VECTOR_CLEAR(VECTOR_INDEX(pet_db[i].evolve_data, j).items);
+		}
+
+		VECTOR_CLEAR(pet_db[i].evolve_data);
+	}
+
+	memset(pet_db,0,sizeof(pet_db));
 }
 
 /*==========================================
- * Read Pet Evolution database. [15peaces]
+ * Read Pet Evolutions. [15peaces]
  *------------------------------------------*/
-void read_petevolve_db()
-{
+static void read_pet_evolutions() {
 	char* filename = "pet_evolve_db.txt";
-	FILE *fp;
-	unsigned short mobid, eggid;
-	int nameids[MAX_PETEVOLVE_ITEMS];
-	int item_amts[MAX_PETEVOLVE_ITEMS];
-	int i;
-	int db_id = -1;
 
-	char line[1024];
-	int lines, entries;
-
-	sprintf(line, "%s/%s", db_path, filename);
-	fp = fopen(line, "r");
-	if (fp == NULL)
-	{
-		ShowError("can't read %s\n", line);
+	char line[CSV_MAX_LINE_LEN];
+	snprintf(line, CSV_MAX_LINE_LEN,"%s/%s", db_path, filename);
+	FILE *fp = fopen(line, "r");
+	if (fp == NULL) {
+		ShowError("Can't read %s\n", filename);
 		return;
 	}
 
-	lines = entries = 0;
-	while (fgets(line, sizeof(line), fp))
-	{
-		char *str[23], *p;
-		lines++;
+	int line_num = 0;
+	int valid_db_entries = 0;
 
-		if (line[0] == '/' && line[1] == '/')
+	while(fgets(line, sizeof(line), fp)) {
+		line_num++;
+		csv_result_t csv;
+		const int ret = csv_parse_line(line, &csv, 4, ',',CSV_FLAG_BRACE_AWARE | CSV_FLAG_TRIM_WHITESPACE);
+
+		if (ret != CSV_OK) {
+			if (ret != CSV_ERR_EMPTY_LINE)
+				ShowWarning("read_pet_evolution_db reading: File: %s on line %d: %s, skipping.\n", filename, line_num, csv.error_msg);
+
 			continue;
-		memset(str, 0, sizeof(str));
-		p = line;
-		while (ISSPACE(*p))
-			++p;
-		if (*p == '\0')
-			continue; // empty line
-		for (i = 0; i < 4; ++i)
-		{
-			str[i] = p;
-			p = strchr(p, ',');
-			if (p == NULL)
-				break;// comma not found
-			*p = '\0';
-			++p;
+		}
 
-			if (str[i] == NULL)
-			{
-				ShowError("read_petevolve_db: Insufficient columns in line %d, skipping...\n", lines);
-				return;
+		const int mob_id = csv_get_int(&csv, 0);
+		if (!mobdb_checkid(mob_id)) {
+			ShowWarning("read_pet_evolution_db: File: %s on line %d: Invalid mob-class %d, skipping...\n", filename, line_num, mob_id);
+			continue;
+		}
+
+		const int egg_id = csv_get_int(&csv, 1);
+		if (!itemdb_exists(egg_id)) {
+			ShowWarning("read_pet_evolution_db: File: %s on line %d: Invalid egg id %d for mob %d, skipping...\n", filename, line_num, egg_id, mob_id);
+			continue;
+		}
+
+		int name_ids[MAX_PET_EVOLUTION_ITEMS];
+		int item_amts[MAX_PET_EVOLUTION_ITEMS];
+		pc_split_atoi(csv_get_str_buffer(&csv, 2), name_ids, ':', MAX_PET_EVOLUTION_ITEMS);
+		pc_split_atoi(csv_get_str_buffer(&csv, 3), item_amts, ':', MAX_PET_EVOLUTION_ITEMS);
+
+		int db_idx = -1;
+		for (int i = 0; i < ARRAYLENGTH(pet_db); i++) {
+			if (pet_db[i].class_ == mob_id) {
+				db_idx = i;
+				break;
 			}
 		}
 
-		if ((mobid = atoi(str[0])) <= 0)
-			continue;
+		if (db_idx > -1) {
+			if(VECTOR_CAPACITY(pet_db[db_idx].evolve_data) == 0)
+				VECTOR_INIT(pet_db[db_idx].evolve_data);
 
-		if (!mobdb_checkid(mobid))
-		{
-			ShowWarning("read_petevolve_db: Invalid mob-class %hu, skipping...\n", mobid);
-			continue;
-		}
+			struct pet_evolve_data pet_evo_data;
 
-		if ((eggid = atoi(str[1])) <= 0)
-			continue;
+			pet_evo_data.petEggId = egg_id;
+			VECTOR_INIT(pet_evo_data.items);
 
-		if (!itemdb_exists(eggid))
-		{
-			ShowWarning("read_petevolve_db: Invalid egg id %hu, skipping...\n", mobid);
-			continue;
-		}
-
-		pc_split_atoi(str[2], nameids, ':', MAX_PETEVOLVE_ITEMS);
-		pc_split_atoi(str[3], item_amts, ':', MAX_PETEVOLVE_ITEMS);
-
-		for (i = 0; i < ARRAYLENGTH(pet_db); i++) {
-			if (pet_db[i].class_ == mobid)
-				db_id = i;
-		}
-
-		if (db_id > -1) {
-			if(sizeof(pet_db[db_id].evolve_data) == 0)
-				VECTOR_INIT(pet_db[db_id].evolve_data);
-
-			struct pet_evolve_data ped;
-
-			ped.petEggId = eggid;
-			VECTOR_INIT(ped.items);
-
-			for (i = 0; i < ARRAYLENGTH(nameids) && nameids[i] > 0; i++) {
+			for (int i = 0; i < ARRAYLENGTH(name_ids) && name_ids[i] > 0; i++) {
 				struct pet_itemlist_entry list = { 0 };
 
-				list.id = nameids[i];
-				list.amount = item_amts[i];
+				list.id = name_ids[i];
+				list.amount = (short)item_amts[i];
 
-				VECTOR_ENSURE(ped.items, 1, 1);
-				VECTOR_PUSH(ped.items, list);
+				VECTOR_ENSURE(pet_evo_data.items, 1, 1);
+				VECTOR_PUSH(pet_evo_data.items, list);
 			}
 
+			VECTOR_ENSURE(pet_db[db_idx].evolve_data, 1, 1);
+			VECTOR_PUSH(pet_db[db_idx].evolve_data, pet_evo_data);
 
-			VECTOR_ENSURE(pet_db[db_id].evolve_data, 1, 1);
-			VECTOR_PUSH(pet_db[db_id].evolve_data, ped);
+			valid_db_entries++;
 		}
-		db_id = -1;
-
-		entries++;
 	}
 
 	fclose(fp);
-	ShowStatus("Done reading '"CL_WHITE"%d"CL_RESET"' pet evolutions in '"CL_WHITE"%s"CL_RESET"'.\n", entries, filename);
-
-	return;
+	ShowStatus("Done reading '"CL_WHITE"%d"CL_RESET"' pet evolutions in '"CL_WHITE"%s"CL_RESET"'.\n", valid_db_entries, filename);
 }
 
 /*==========================================
  * �X�L���֌W����������
  *------------------------------------------*/
-void do_init_pet(void)
-{
-	read_petdb();
-	read_petevolve_db();
+void do_init_pet(void) {
+	read_pet_db();
 
 	item_drop_ers = ers_new(sizeof(struct item_drop), "pet.c::item_drop_ers", ERS_OPT_NONE);
 	item_drop_list_ers = ers_new(sizeof(struct item_drop_list), "pet.c::item_drop_list_ers", ERS_OPT_NONE);
@@ -1728,23 +1707,8 @@ void do_init_pet(void)
 }
 
 void do_final_pet(void) {
-	for(int i = 0; i < MAX_PET_DB; i++) {
-		if(pet_db[i].pet_bonus_script ) {
-			script_free_code(pet_db[i].pet_bonus_script);
-			pet_db[i].pet_bonus_script = NULL;
-		}
+	free_pet_db();
 
-		if( pet_db[i].pet_support_script) {
-			script_free_code(pet_db[i].pet_support_script);
-			pet_db[i].pet_support_script = NULL;
-		}
-
-		/* Pet Evolution [Dastgir/Hercules] */
-		for (int j = 0; j < VECTOR_LENGTH(pet_db[i].evolve_data); j++) {
-			VECTOR_CLEAR(VECTOR_INDEX(pet_db[i].evolve_data, j).items);
-		}
-		VECTOR_CLEAR(pet_db[i].evolve_data);
-	}
 	ers_destroy(item_drop_ers);
 	ers_destroy(item_drop_list_ers);
 }
