@@ -1513,7 +1513,7 @@ void read_pet_db(void) {
 
 			const uint16 mob_id = (uint16)csv_get_int(&csv, 0);
 			if(!mobdb_checkid(mob_id)) {
-				ShowWarning("read_pet_db reading: File: %s on line %d: Invalid mob-class %hu, pet not read.\n", mob_id);
+				ShowWarning("read_pet_db reading: File: %s on line %d: Invalid mob-class %d, pet not read.\n", filename, line_num, mob_id);
 				continue;
 			}
 
