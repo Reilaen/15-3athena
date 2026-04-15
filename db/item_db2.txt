@@ -4008,15 +4008,15 @@
 9113,Roost_Of_Skelion,Roost Of Skelion,7,20,,0,,,,,,,,,,,,,{},{},{}
 9114,Pouring_Egg,Pouring Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9115,Bacsojin2_Egg_,Bacsojin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9116,Rigid_Nightmare_Terror_Egg,Rigid Nightmare Terror Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9116,Nightmare_TerrorH_EGG,Rigid Nightmare Terror Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9117,Wanderer_H_EGG,Contaminated Wanderer Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9118,Aliot_Egg,Aliot Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9119,Alicel_Egg,Alicel Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9120,Aliza_Egg,Aliza Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9121,Orc_Hero_Egg_,Orc Hero Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9122,Gloom_Under_Egg,Gloom Under Night Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9123,Ep_17_2_C_Admin1_Egg,Child Admin Beta Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9124,Ep_17_2_C_Admin2_Egg,Child Admin Alpha Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9123,Ep17_2_C_Admin1_Egg,Child Admin Beta Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9124,Ep17_2_C_Admin2_Egg,Child Admin Alpha Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 15141,Rift_Ancient_Armor,Rift Ancient Armor,5,10,,500,,30,,1,0xFFFFFFFF,63,2,16,,100,1,,{ set .@r, getrefine(); bonus bMaxHP,(.@r >= 9 ? 1500 : .@r >= 7 ? 900 : 500); bonus bMaxSP,-100; },{},{}
 19033,Rift_Ancient_Decoration,Rift Ancient Decoration,5,20,,200,,2,,1,0xFFFFFFFF,63,2,256,,100,1,376,{ set .@r, getrefine(); bonus bMaxHP,1000+(.@r >= 9 ? 1000 : .@r >=7 ? 400 : 0); },{},{}
 20446,C_Bunny_Eggshell,Costume Bunny Eggshell,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1339,{},{},{}
@@ -4038,6 +4038,7 @@
 31099,C_JP_EV05,Costume Headdress of Ontama Aria,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1536,{},{},{}
 31100,C_JP_EV06,Costume Hat of Dumpty Alma,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1537,{},{},{}
 31101,C_JP_EV07,Costume Taini Hat Blue,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1538,{},{},{}
+9039,Bacsojin_Egg,Bacsojin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 
 // 3ceam stable
 11602,Catnip_Fruit,Catnip Fruit,0,15,,1,,,,,0xFFFFFFFF,7,2,,,,,,{ itemheal rand(36,40),0; },{},{}
@@ -4260,6 +4261,15 @@
 15117,Tarlock's_Armor,Tarlock's Armor,5,10,,750,,0,,0,0xFFFFFFFF,63,2,16,,125,1,,{ bonus bMaxHP,500; bonus bMaxSP,50; bonus bMdef,10; bonus bAllStats,1; if(getrefine()>=7) { bonus bMaxHP,500; bonus bMaxSP,50; } if(getrefine()>=9) { bonus bMaxHP,200; bonus bMaxSP,20; } if(getrefine()>=12) { bonus bMaxHP,300; bonus bMaxSP,30; } },{},{}
 15121,Sarah_Combat_Robe,Sarah Combat Robe,5,10,,800,,35,,1,0xFFFFFFFF,63,2,16,,145,1,,{ /*TODO: Confirm the real rate and additional MAtk*/ autobonus "{ bonus bMatk,20; }",100,(10+((getrefine()) ? getrefine()*8 : 0))*1000,BF_MAGIC;},{},{}
 25290,Sweets_Coin,Sweets Festival Coin,3,0,,0,,,,,,,,,,,,,{},{},{}
+10040,Red_Chorker_Bell,Red Bell Necklace,8,20,,0,,,,,,,,,,,,,{},{},{}
+10042,Dark_Mane,Dark Mane,8,20,,0,,,,,,,,,,,,,{},{},{}
+516,Sweet_Potato,Potato,0,15,,20,,,,,0xFFFFFFFF,7,2,,,,,,{ itemheal rand(15,23),0; },{},{}
+11616,Yummy_Meat,Delicious Meat,0,1400,,50,,,,,0xFFFFFFFF,7,2,,,,,,{ itemheal rand(100,150),0; },{},{}
+25408,Memory_Of_Gyol,Memories of Gyoll,3,0,,0,,,,,,,,,,,,,{},{},{}
+1000227,Cloud_Cotton,Cloud Cotton,3,0,,0,,,,,,,,,,,,,{},{},{}
+10043,Ep_17_2_C_Admin1_Acc,Little Headdress Alpha,8,20,,0,,,,,,,,,,,,,{},{},{}
+10044,Ep_17_2_C_Admin2_Acc,Little Headdress Alpha,8,20,,0,,,,,,,,,,,,,{},{},{}
+1000103,BarMealTicket,Barmil Ticket,3,0,,0,,,,,,,,,,,,,{},{},{}
 
 //===================================================================
 // More Rental Boxes
