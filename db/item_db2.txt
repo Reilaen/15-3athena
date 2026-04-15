@@ -3517,6 +3517,8 @@
 27169,Payon_Soldier_Card,Payon Soldier Card,6,20,,10,,,,,,,,2,,,,,{ set .@atk, 5; set .@r, getrefine(); if(getiteminfo(getequipid(EQI_HAND_R),11) == W_SPEAR && .@r >= 10){ set .@atk, .@atk + 20; if(.@r >= 14){ set .@atk, .@atk + 20; } } bonus bAtk,.@atk; bonus bMatk,.@atk; },{},{}
 28391,S_Thief_Earring,Thief Shadow Earring,12,0,,0,,,,0,0xFFFFFFFF,63,2,1048576,,1,1,,{ autobonus3 "{ set .@val, 30+(getrefine()*10); bonus bBaseAtk,.@val; bonus bFlee,.@val; }",200,5000,"TF_THROWSTONE","{ specialeffect2 EF_ENHANCE; }"; },{},{}
 28392,S_Archer_Earring,Archer Shadow Earring,12,0,,0,,,,0,0xFFFFFFFF,63,2,1048576,,1,1,,{ autobonus3 "{ set .@val, 30+(getrefine()*10); bonus bBaseAtk,.@val; bonus bHit,.@val; }",200,5000,"AC_DOUBLE","{ specialeffect2 EF_ENHANCE; }"; },{},{}
+25375,Mightysoul_Essence,Powerful Soul Essence,3,0,,0,,,,,,,,,,,,,{},{},{}
+25377,High_Class_Pet_Food,Luxurious Pet Food,3,10000,,10,,,,,,,,,,,,,{},{},{}
 
 // more costumes (renewal)
 31394,C_Magician_White_Hat,C Magician White Hat,5,0,,0,,0,,0,0xFFFFFFFF,63,2,1024,,1,0,283,{},{},{}
@@ -3989,7 +3991,7 @@
 9095,Nine_Tail_Egg,Nine Tail Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9096,Cat_o_Nine_Tail_Egg,Cat o Nine Tail Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9097,Diabolic_2_Egg,Diabolic Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9098,Fire_Deleter_Egg,Fire Deleter Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9098,Red_Deleter_Egg2,Fire Deleter Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9099,Teddy_Bear_Egg,Teddy Bear Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9100,Gremlin_Egg,Gremlin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9101,Scatletoncarrier,Scatleton's Cage,7,20,,0,,,,,,,,,,,,,{},{},{}
@@ -4007,7 +4009,7 @@
 9114,Pouring_Egg,Pouring Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9115,Bacsojin2_Egg_,Bacsojin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9116,Rigid_Nightmare_Terror_Egg,Rigid Nightmare Terror Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9117,Contaminated_Wanderer_Egg,Contaminated Wanderer Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9117,Wanderer_H_EGG,Contaminated Wanderer Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9118,Aliot_Egg,Aliot Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9119,Alicel_Egg,Alicel Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9120,Aliza_Egg,Aliza Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
@@ -4257,6 +4259,8 @@
 14753,Hero_Midgard_Egg,Hero Midgard Egg,18,0,,10,,,,0,,,,,,,,,{ getitempackage(IP_Hero_Midgard_Egg); },{},{}
 15117,Tarlock's_Armor,Tarlock's Armor,5,10,,750,,0,,0,0xFFFFFFFF,63,2,16,,125,1,,{ bonus bMaxHP,500; bonus bMaxSP,50; bonus bMdef,10; bonus bAllStats,1; if(getrefine()>=7) { bonus bMaxHP,500; bonus bMaxSP,50; } if(getrefine()>=9) { bonus bMaxHP,200; bonus bMaxSP,20; } if(getrefine()>=12) { bonus bMaxHP,300; bonus bMaxSP,30; } },{},{}
 15121,Sarah_Combat_Robe,Sarah Combat Robe,5,10,,800,,35,,1,0xFFFFFFFF,63,2,16,,145,1,,{ /*TODO: Confirm the real rate and additional MAtk*/ autobonus "{ bonus bMatk,20; }",100,(10+((getrefine()) ? getrefine()*8 : 0))*1000,BF_MAGIC;},{},{}
+25290,Sweets_Coin,Sweets Festival Coin,3,0,,0,,,,,,,,,,,,,{},{},{}
+
 //===================================================================
 // More Rental Boxes
 //===================================================================

@@ -18,22 +18,22 @@
 1063,9094,7198:705:706:4663,100:250:30:1 // Lunatic -> Leaf Lunatic | Leaf Lunatic Card is an unknown item in the client.
 1090,9088,503:2282:509:909,20:1:50:200 // Mastering -> Angeling
 1109,9097,641:1039:1009:4122,3:250:30:1 // Deviruchi -> Diabolic
-//1110,9089,637:981:1021:969,3:3:300:3
-//1113,9092,7032:7031:531:4659,20:10:3:1
-//1113,9109,Sweets_Coin:529:530:4004,500:50:50:1
-//1155,Earth_Deleter_Egg,Shining_Stone:Petti_Tail:Aloebera:Deleter_Card,3:100:150:1
-//1167,9070,537:627:517:949,10:3:100:50
-//1188,9093,5367:7277:7014:4328,1:100:50:1
-//1208,9117,7005:1009:1059:4210,500:50:100:1
-//1213,9121,968:4066:Orc_Baby_Card_Card:Mightysoul_Essence,10:10:10:30
-//1275,9120,Alices_Apron:511:985:4253,500:200:30:1
-//1379,9116,7120:510:935:4166,500:100:100:1
-//1416,9115,Mightysoul_Essence:4202:4265:4272,30:10:10:10
+1110,9089,637:981:1021:969,3:3:300:3 // Dokebi -> Am Mut
+1113,9092,7032:7031:531:4659,20:10:3:1 // Drops -> Eggring | Eggring Card is an unknown item in the client.
+1113,9109,25290:529:530:4004,500:50:50:1 // Drops -> Sweet Drops | Sweets Festival Coin and Sweet Drops Egg are unknown items in the client.
+1155,9098,640:6260:606:4279,3:100:150:1 // Petit -> Earth Deleter | The Earth Deleter Egg is an unknown item in the client.
+1167,9070,537:627:517:949,10:3:100:50 // Savage Babe -> Savage
+1188,9093,5367:7277:7014:4328,1:100:50:1 // Bongun -> Hyegun
+1208,9117,7005:1009:1059:4210,500:50:100:1 // Wanderer Man -> Corrupted Wanderer
+1213,9121,968:4066:4375:25375,10:10:10:30 // High Orc -> Orc Hero | Orc Hero Egg is an unknown item in the client.
+1275,9120,7047:511:985:4253,500:200:30:1 // Alice -> Aliza | Aliza Egg is an unknown item in the client.
+1379,9116,7120:510:935:4166,500:100:100:1 // Nightmare Terror -> Rigid Nightmare Terror
+1416,9115,25375:4202:4265:4272,30:10:10:10 // Wicked Nymph -> Bacsojin | Bacsojin relies on High_Class_Pet_Food and Mightysoul_Essence which are unknown items just like its egg.
 1180,9096,23187:1022:10008:4159,3:999:1:1 // Nine Tail -> Cat O' Nine Tail
-//1307,Moonlight_Flower_Egg,Mightysoul_Essence:Nine_Tail_Card:Sohee_Card:Munak_Card,30:10:10:10
-//1622,Abandoned_Teddy_Bear_Egg,SmallDoll_Needle:Cursed_Seal:Cardinal_Jewel_:4340,3:300:50:1
-//1622,9118,7317:518:727:4340,500:100:10:1
-//1622,9119,7317:518:7449:4340,500:100:50:1
+1307,9112,25375:4159:4100:4090,30:10:10:10 // Cat O' Nine Tail -> Moonlight Flower | Moonlight Flower egg is an unknown item in the client.
+1622,9108,23189:7442:724:4340,3:300:50:1 // Teddy Bear -> Abandoned Teddy Bear | Abandoned Teddy Bear Egg is an unknown item in the client.
+1622,9118,7317:518:727:4340,500:100:10:1 // Teddy Bear -> Aliot | Aliot Egg is an unknown item in the client.
+1622,9119,7317:518:7449:4340,500:100:50:1 // Teddy Bear -> Alicel | Alicel Egg is an unknown item in the client.
 //1632,9105,23188:6100:7340:4413,3:50:200:1
 //1773,Gloom_Under_Night_Egg,4413:Isilla_Card:Agav_Card:Mightysoul_Essence,10:10:10:30
 //3731,Skelion_Egg,Memory_Of_Gyol:Yummy_Meat:Cookie_Bat,2:100:100
