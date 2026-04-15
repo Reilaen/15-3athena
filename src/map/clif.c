@@ -15374,6 +15374,8 @@ void clif_parse_ChangePetName(int fd, struct map_session_data *sd)
 void clif_parse_pet_evolution(const int fd, struct map_session_data *sd) {
 	int i = 0, idx, petIndex;
 
+	RFIFOW(fd,4);
+
 	if (sd->status.pet_id == 0) {
 		clif_pet_evolution_result(fd, PET_EVOL_NO_CALLPET);
 		return;
