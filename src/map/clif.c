@@ -15372,7 +15372,7 @@ void clif_parse_ChangePetName(int fd, struct map_session_data *sd)
 /// Request to Evolve the pet (CZ_PET_EVOLUTION) [Dastgir/Hercules]
 /// 09fb <Length>.W <EvolvedPetEggID>.W {<index>.W <amount>.W}*items
 void clif_parse_pet_evolution(const int fd, struct map_session_data *sd) {
-	int i = 0, idx, petIndex;
+	int idx = 0, petIndex = 0;
 
 	RFIFOW(fd,4);
 
@@ -15403,32 +15403,41 @@ void clif_parse_pet_evolution(const int fd, struct map_session_data *sd) {
 		return;
 	}
 
+	if (VECTOR_LENGTH(pet_db[petIndex].evolve_data) == 0) {
+		ShowDebug("clif_pet_evolution_result: No evolution data found for pet class %d...\n", sd->pd->pet.class_);
+		clif_pet_evolution_result(fd, PET_EVOL_UNKNOWN);
+		return;
+	}
+
 	// Client side validation is not done as it is insecure.
-	for (i = 0; i < VECTOR_LENGTH(pet_db[petIndex].evolve_data); i++) {
+	for (int i = 0; i < VECTOR_LENGTH(pet_db[petIndex].evolve_data); i++) {
 		const struct pet_evolve_data *ped = &VECTOR_INDEX(pet_db[petIndex].evolve_data, i);
-		int j;
+		bool has_materials = true;
 
 		if (VECTOR_LENGTH(ped->items) == 0) {
-			clif_pet_evolution_result(fd, PET_EVOL_NO_RECIPE);
-			return;
+			continue;
 		}
 
-		for (j = 0; j < VECTOR_LENGTH(ped->items); j++) {
+		for (int j = 0; j < VECTOR_LENGTH(ped->items); j++) {
 			const struct pet_itemlist_entry *list = &VECTOR_INDEX(ped->items, j);
 			const int n = pc_search_inventory(sd, list->id);
 
-			if (n == -1) {
-				clif_pet_evolution_result(fd, PET_EVOL_NO_MATERIAL);
-				return;
+			if (n == -1 || sd->inventory.u.items_inventory[n].amount < list->amount) {
+				has_materials = false;
+				break;
 			}
 		}
 
-		for (j = 0; j < VECTOR_LENGTH(ped->items); j++) {
-			struct pet_itemlist_entry *list = &VECTOR_INDEX(ped->items, j);
-			int n = pc_search_inventory(sd, list->id);
+		if (!has_materials) {
+			continue;
+		}
+
+		for (int j = 0; j < VECTOR_LENGTH(ped->items); j++) {
+			const struct pet_itemlist_entry *list = &VECTOR_INDEX(ped->items, j);
+			const int n = pc_search_inventory(sd, list->id);
 
 			if (pc_delitem(sd, n, list->amount, 0, 0, LOG_TYPE_OTHER) == 1) {
-				clif_pet_evolution_result(fd, PET_EVOL_NO_MATERIAL);
+				clif_pet_evolution_result(fd, PET_EVOL_UNKNOWN);
 				return;
 			}
 		}
@@ -15451,15 +15460,11 @@ void clif_parse_pet_evolution(const int fd, struct map_session_data *sd) {
 				(short)pet_db[pet_id].EggID, 0, (short)pet_db[pet_id].intimate,
 				100, 0, 1, pet_db[pet_id].jname);
 			clif_pet_evolution_result(fd, PET_EVOL_SUCCESS);
+			return;
 		}
-		else {
-			clif_pet_evolution_result(fd, PET_EVOL_UNKNOWN);
-		}
-		return;
 	}
 
-	clif_pet_evolution_result(fd, PET_EVOL_UNKNOWN);
-	ShowDebug("clif_pet_evolution_result: No evolution data found for pet class %d...\n", sd->pd->pet.class_);
+	clif_pet_evolution_result(fd, PET_EVOL_NO_MATERIAL);
 }
 
 /**
