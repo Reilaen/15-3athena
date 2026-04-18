@@ -2037,7 +2037,7 @@ enum e_char_del_response delete_char_sql(struct char_session_data* sd, uint32 ch
 
 	/* delete char's pet */
 	//Delete the hatched pet if you have one...
-	if( SQL_ERROR == Sql_Query(sql_handle, "DELETE FROM `%s` WHERE `char_id`='%d' AND `incuvate` = '0'", pet_db, char_id) )
+	if( SQL_ERROR == Sql_Query(sql_handle, "DELETE FROM `%s` WHERE `char_id`='%d' AND `incubate` = '0'", pet_db, char_id) )
 		Sql_ShowDebug(sql_handle);
 
 	//Delete all pets that are stored in eggs (inventory + cart)
@@ -4263,7 +4263,7 @@ int search_mapserver(unsigned short map, uint32 ip, uint16 port)
 	return -1;
 }
 
-// char_mapif‚Ì‰Šú‰»ˆ—iŒ»Ý‚Íinter_mapif‰Šú‰»‚Ì‚Ýj
+// char_mapifï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ý‚ï¿½inter_mapifï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Ýj
 static int char_mapif_init(int fd)
 {
 	return inter_mapif_init(fd);
@@ -6235,7 +6235,7 @@ int do_init(int argc, char **argv)
 
 	ShowInfo("Finished reading the char-server configuration.\n");
 
-	inter_init_sql((argc > 2) ? argv[2] : inter_cfgName); // inter server ÃÊ±âÈ­
+	inter_init_sql((argc > 2) ? argv[2] : inter_cfgName); // inter server ï¿½Ê±ï¿½È­
 	ShowInfo("Finished reading the inter-server configuration.\n");
 	
 	ShowInfo("Initializing char server.\n");
