@@ -3996,7 +3996,7 @@
 9100,Gremlin_Egg,Gremlin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9101,Scatletoncarrier,Scatleton's Cage,7,20,,0,,,,,,,,,,,,,{},{},{}
 9102,Mummy_Egg,Mummy Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9103,Willow_Egg,Willow Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9103,Wilow_Egg,Willow Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9104,Roween_Egg,Roween Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9105,Hodremlin_Egg,Hodremlin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9106,Metaller_Egg,Metaller Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
@@ -4039,6 +4039,10 @@
 31100,C_JP_EV06,Costume Hat of Dumpty Alma,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1537,{},{},{}
 31101,C_JP_EV07,Costume Taini Hat Blue,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1538,{},{},{}
 9039,Bacsojin_Egg,Bacsojin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9131,Fire_Golem_Egg,Fire Golem Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+9125,E_Duckling_Egg,Wandering Duck Doll Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
+27029,Fire_Golem_Card,Fire Golem Card,6,10,,10,,,,,,,,32,,,,,{ bonus2 bSubEle,Ele_Fire,20; bonus2 bAddEle,Ele_Fire,5; },{},{}
+9140,Blue_Moon_Loli_Ruri_Egg,Blue Moon Loli Ruri Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 
 // 3ceam stable
 11602,Catnip_Fruit,Catnip Fruit,0,15,,1,,,,,0xFFFFFFFF,7,2,,,,,,{ itemheal rand(36,40),0; },{},{}
@@ -4270,6 +4274,7 @@
 10043,Ep_17_2_C_Admin1_Acc,Little Headdress Alpha,8,20,,0,,,,,,,,,,,,,{},{},{}
 10044,Ep_17_2_C_Admin2_Acc,Little Headdress Alpha,8,20,,0,,,,,,,,,,,,,{},{},{}
 1000103,BarMealTicket,Barmil Ticket,3,0,,0,,,,,,,,,,,,,{},{},{}
+10045,C_Twinkle_Star_Button,Twinkle Star Button,8,20,,0,,,,,,,,,,,,,{},{},{}
 
 //===================================================================
 // More Rental Boxes
@@ -5605,9 +5610,12 @@
 // New Madogear
 100158,Mado_Box02,Mado Strengthening Suit,2,10000,,300,,,,,0x00000400,8,2,,,100,,,{ setmadogear 1, 2; },{ },{ }
 
-// missing Taming item
+// missing Taming items
 23187,Sap_Jelly,Sap Jelly,2,10,,0,,,,,0xFFFFFFFF,7,2,,,,,,{pet(1180);},{},{}
-23256,Elixir_Bandage,Spiritual Bandage,2,10,,0,,,,,0xFFFFFFFF,7,2,,,,,,{pet(1041);},{},{}
+23256,Elixir_Bandage,Spiritual Bandage,2,10,,0,,,,,0xFFFFFFFF,7,2,,,,,,{ pet(1041); },{},{}
+23257,Dew_Of_Old_Tree,Old Tree's Dew,2,2500,,50,,,,,0xFFFFFFFF,7,2,,,,,,{ pet(1010); },{},{}
+23258,Foul_Rotten_Meat,Stinky Rotten Meat,2,2500,,50,,,,,0xFFFFFFFF,7,2,,,,,,{ pet(1782); },{},{}
+9897,E_Glittering_Doll_B,Shiny Doll Button,2,10,,50,,,,,0xFFFFFFFF,7,2,,,,,,{ pet(21089); },{},{}
 
 // renewal (WIP)
 490319,aegis_490319,Y.S.F. Ring,5,10,,10,,0,,1,0x00000080,48,2,8,,100,0,0,{ bonus bVit,20; bonus bMaxHPrate,15; bonus bLongAtkRate,10; bonus bPerfectHitAddRate,15; bonus2 bSubRace,RC_Player_Human,3; bonus2 bSubRace,RC_Player_Doram,3; bonus2 bSkillCooldown,"RK_HUNDREDSPEAR",-1000; bonus2 bSkillAtk,"RK_DRAGONBREATH_WATER",BaseLevel/2; bonus2 bSkillAtk,"RK_DRAGONBREATH",BaseLevel/2; bonus2 bSkillAtk,"RK_HUNDREDSPEAR",3*(BaseLevel/2); },{},{}

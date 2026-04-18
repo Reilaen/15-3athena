@@ -38,3 +38,5 @@
 1773,9122,4413:4412:4409:25375,10:10:10:30 // Hodremlin -> Gloom Under Night | Gloom Under Night Egg is an unknown item in the client.
 3731,9113,25408:11616:11605,2:100:100 // Scatleton -> Skelion | Scatleton Egg, Skelion Egg, Yummy_Meat, Cookie_Bats and Memory_of_Gyoll are unknown items in the client.
 20696,9124,1000103:7095:7094,500:50:10 // Child Admin Beta -> Child Admin Alpha // Probably works, but they aren't in the jobname.lub, so the client does crash. Needs to be fixed and confirmed working later.
+1040,9131,953:12371:27029:990,500:3:1:20 // Golem -> Fire Golem
+1505,9140,7214:510:7019:4191,500:50:1:10 // Loli Ruri -> Blue Moon Loli Ruri | The evolution itself works but sprites for Blue Moon Loli Ruri are not found.
