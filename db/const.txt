@@ -682,6 +682,7 @@ bFixedCastRate	2101
 bCooldownRate	2102
 bMatk	2103
 bNoMadoFuel	2104
+bVariableCastrate 2105
 
 Eff_Stone	0
 Eff_Freeze	1
