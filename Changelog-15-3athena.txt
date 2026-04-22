@@ -5,6 +5,36 @@
 // 		- Details.
 //			--More Details.
 //========================================
+04/21/2026
+	r563 [15peaces]
+		*SO_SPELLFIST; SO_VARETYR_SPEAR
+			-Updated skills to latest official versions.
+		*Fixed some wrong checks with SKILL_FLAG_REPLACED_LV_0.
+			-This should also fix the deletion of skill tree bug...
+		*Some pet updates:
+			-Added LITTLE_ISIS, MUMMY and ANCIENT_MUMMY pets.
+			-Added ISIS -> LITTLE_ISIS evolution.
+			-Added MUMMY -> ANCIENT_MUMMY evolution.
+			-Added missing items.
+
+04/03/2026
+	r562 [15peaces]
+		*Some fixes, thanks to @Reilaen
+			-Fixed inconsistencies in npc_parse_warp handling, added memory cleanup for tokens in achievement.c, ensured proper cleanup of Lapine upgrades, and addressed iterator destruction in guild.c.
+			-Added missing memory deallocation for map in map.c
+			-Removed unused party include from achievement.c and adjusted pc.h to declare pc_sc_display_ers as an external variable.
+			-Lots of fixes regarding array access, possible null pointer dereferencings and many other small things.
+			-Updated CMake configurations:
+				--Added new headers/sources, removed unused files and set the runtime output directory, enabled -fcommon flag for newer compiler support.
+				--Enforced C11 standard, added new compiler/linker flags for Debug and Release builds, and enabled IPO/LTO when supported
+
+03/07/2026
+	r561 [15peaces]
+		*Re-Added some cases in bonus function I removed by accident.
+		*Fixed Tyr's_Blessing trading restrictions.
+		*Fixed some possible overflows memleaks on char server.
+			-Thanks to @Reilaen
+
 02/12/2026
 	r560 [15peaces]
 		*Fixed some issues in lasagna npcs file.

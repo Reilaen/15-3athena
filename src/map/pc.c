@@ -1790,7 +1790,7 @@ static int pc_calc_skillpoint(struct map_session_data* sd)
 				if(sd->status.skill[i].flag == SKILL_FLAG_PERMANENT)
 					skill_point += skill_lv;
 				else
-					if (sd->status.skill[i].flag == SKILL_FLAG_REPLACED_LV_0)
+					if (sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0)
 					skill_point += (sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0);
 			}
 		}
@@ -1913,7 +1913,7 @@ int pc_calc_skilltree(struct map_session_data *sd)
 						if (sd->status.skill[k].id == 0 || sd->status.skill[k].flag == SKILL_FLAG_TEMPORARY || sd->status.skill[k].flag == SKILL_FLAG_PLAGIARIZED)
 							k = 0; //Not learned.
 						else
-						if (sd->status.skill[k].flag == SKILL_FLAG_REPLACED_LV_0) //Real lerned level
+						if (sd->status.skill[k].flag >= SKILL_FLAG_REPLACED_LV_0) //Real lerned level
 							k = sd->status.skill[skill_tree[c][i].need[j].id].flag - SKILL_FLAG_REPLACED_LV_0;
 						else
 							k = pc_checkskill(sd,k);
@@ -2066,12 +2066,12 @@ void pc_clean_skilltree(struct map_session_data *sd)
 		{
 			sd->status.skill[i].id = 0;
 			sd->status.skill[i].lv = 0;
-			sd->status.skill[i].flag = 0;
+			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
 		}
 		else
-		if (sd->status.skill[i].flag == SKILL_FLAG_REPLACED_LV_0){
+		if (sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0){
 			sd->status.skill[i].lv = sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0;
-			sd->status.skill[i].flag = 0;
+			sd->status.skill[i].flag = SKILL_FLAG_PERMANENT;
 		}
 	}
 }
@@ -2335,7 +2335,7 @@ static int pc_bonus_addeff(struct s_addeffect* effect, int max_value, enum sc_ty
 		}
 	}
 	if (i == max_value) {
-		ShowWarning("pc_bonus: Reached max (%d) number of add effects per character!\n", max);
+		ShowWarning("pc_bonus: Reached max (%d) number of add effects per character!\n", max_value);
 		return 0;
 	}
 	effect[i].sc = sc;
@@ -2369,8 +2369,8 @@ static int pc_bonus_addeff_onskill(struct s_addeffectonskill* effect, int max_va
 			return 1;
 		}
 	}
-	if( i == max_value ) {
-		ShowWarning("pc_bonus: Reached max (%d) number of add effects on skill per character!\n", max);
+	if( i == max_value) {
+		ShowWarning("pc_bonus: Reached max (%d) number of add effects on skill per character!\n", max_value);
 		return 0;
 	}
 	effect[i].sc = sc;
@@ -2381,7 +2381,7 @@ static int pc_bonus_addeff_onskill(struct s_addeffectonskill* effect, int max_va
 	return 1;
 }
 
-static void pc_bonus_item_drop(struct s_add_drop *drop, const short max, t_itemid nameid, uint16 group, int class_, short race, int rate)
+static void pc_bonus_item_drop(struct s_add_drop *drop, const short max_value, t_itemid nameid, uint16 group, int class_, short race, int rate)
 {
 	uint8 i;
 	struct item_group *group_ = NULL;
@@ -2414,7 +2414,7 @@ static void pc_bonus_item_drop(struct s_add_drop *drop, const short max, t_itemi
 			rate = -1;
 	}
 	//Find match entry, and adjust the rate only
-	for (i = 0; i < max; i++) {
+	for (i = 0; i < max_value; i++) {
 		if (!&drop[i] || (!drop[i].nameid && !drop[i].group))
 			continue;
 		if (drop[i].nameid == nameid &&
@@ -2432,9 +2432,9 @@ static void pc_bonus_item_drop(struct s_add_drop *drop, const short max, t_itemi
 			}
 		}
 	}
-	ARR_FIND(0, max, i, !&drop[i] || (drop[i].nameid == 0 && drop[i].group == 0));
-	if (i >= max) {
-		ShowWarning("pc_bonus_item_drop: Reached max (%d) number of added drops per character! (nameid:%d group:%d race:%d rate:%d)\n", max, nameid, group, race, rate);
+	ARR_FIND(0, max_value, i, !&drop[i] || (drop[i].nameid == 0 && drop[i].group == 0));
+	if (i >= max_value) {
+		ShowWarning("pc_bonus_item_drop: Reached max (%d) number of added drops per character! (nameid:%d group:%d race:%d rate:%d)\n", max_value, nameid, group, race, rate);
 		return;
 	}
 	drop[i].nameid = nameid;
@@ -4133,7 +4133,7 @@ int pc_skill(TBL_PC* sd, int id, int level, int flag)
 {
 	nullpo_ret(sd);
 
-	if( id <= 0 || id >= MAX_SKILL || skill_db[id].name == NULL) {
+	if( id <= 0 || id >= MAX_SKILL || skill_db[id].name[0] == '\0') {
 		ShowError("pc_skill: Skill with id %d does not exist in the skill database\n", id);
 		return 0;
 	}
@@ -5499,7 +5499,7 @@ int pc_steal_item(struct map_session_data *sd,struct block_list *bl, int lv)
 		struct item_data *i_data;
 		char message[128];
 		i_data = itemdb_search(itemid);
-		sprintf (message, msg_txt(sd,542), (sd->status.name != NULL)?sd->status.name :"GM", md->db->jname, i_data->jname, (float)md->db->dropitem[i].p/100);
+		sprintf (message, msg_txt(sd,542), (sd->status.name[0] != '\0')?sd->status.name :"GM", md->db->jname, i_data->jname, (float)md->db->dropitem[i].p/100);
 		//MSG: "'%s' stole %s's %s (chance: %0.02f%%)"
 		intif_broadcast(message,strlen(message)+1,BC_DEFAULT);
 	}
@@ -7544,7 +7544,7 @@ int pc_allskillup(struct map_session_data *sd)
 					continue;
 				default:
 					if (!(skill_get_inf2(i)&(INF2_NPC_SKILL | INF2_GUILD_SKILL | INF2_SUB_SKILL)))
-						if (sd->status.skill[i].lv = skill_get_max(i))//Nonexistant skills should return a max of 0 anyway.
+						if (sd->status.skill[i].lv == skill_get_max(i))//Nonexistant skills should return a max of 0 anyway.
 							sd->status.skill[i].id = i;
 			}
 		}
@@ -7814,7 +7814,7 @@ int pc_resetskill(struct map_session_data* sd, int flag)
 		if( sd->status.skill[i].flag == SKILL_FLAG_PERMANENT )
 			skill_point += lv;
 		else
-		if( sd->status.skill[i].flag == SKILL_FLAG_REPLACED_LV_0 )
+		if( sd->status.skill[i].flag >= SKILL_FLAG_REPLACED_LV_0 )
 			skill_point += (sd->status.skill[i].flag - SKILL_FLAG_REPLACED_LV_0);
 
 		if( !(flag&2) )
@@ -9209,7 +9209,7 @@ bool pc_jobchange(struct map_session_data *sd,int job, char upper)
 		clif_updatestatus(sd, SP_STATUSPOINT);
 	}
 
-	if ((b_class&&MAPID_UPPERMASK) != (sd->class_&MAPID_UPPERMASK))
+	if ((b_class&MAPID_UPPERMASK) != (sd->class_&MAPID_UPPERMASK))
 	{ //Things to remove when changing class tree.
 		const int class_ = pc_class2idx(sd->status.class_);
 		short id;
@@ -11032,7 +11032,7 @@ struct map_session_data *pc_get_partner(struct map_session_data *sd)
 
 struct map_session_data *pc_get_father (struct map_session_data *sd)
 {
-	if (!sd || !sd->class_&JOBL_BABY || !sd->status.father)
+	if (!sd || !(sd->class_&JOBL_BABY) || !sd->status.father)
 		// charid2sd returns NULL if not found
 		return NULL;
 	return map_charid2sd(sd->status.father);
@@ -11040,7 +11040,7 @@ struct map_session_data *pc_get_father (struct map_session_data *sd)
 
 struct map_session_data *pc_get_mother (struct map_session_data *sd)
 {
-	if (!sd || sd->class_&JOBL_BABY || !sd->status.mother)
+	if (!sd || (sd->class_&JOBL_BABY) || !sd->status.mother)
 		// charid2sd returns NULL if not found
 		return NULL;
 	return map_charid2sd(sd->status.mother);
