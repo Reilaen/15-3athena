@@ -1,0 +1,143 @@
+-	script	CARD_RECYCLER_CONFIGURATION	-1,{
+	OnInit:
+		$@reward_npc_name$ = "[Card Treasury Keeper]");
+		$@trader_npc_name$ = "[Card Collector]");
+
+		$@currency_id = 512;
+		$@exchange_price = 10;
+
+		// Item ID, Currency Item Amount
+		setarray($@card_exchange_infos,
+			4001, 5
+		);
+
+		// Item ID, Amount, Percent Chance (10000 = 100%)
+		setarray($@reward_price_infos,
+			512, 1, 5000,
+			513, 1, 5000
+		);
+}
+
+prontera,150,150,4	script	Card Treasury Keeper	616,{
+	mes($@reward_npc_name$);
+	mes("Welcome, adventurer! I exchange ^0000FF" + callfunc("F_InsertPlural", $@exchange_price, getitemname($@currency_id)) + "^000000 for wonderful prices! Do you want to trade with me for a nice price or do you have any questions?");
+	next;
+	switch(select("Yes!", "Tell me more about the prices.", "No, thank you.")) {
+		case 1:
+			if(countitem($@currency_id) < $@exchange_price) {
+				mes(.name$);
+				mes("It seems you do not have enough ^0000FF" + callfunc("F_GetPlural", getitemname($@currency_id)) + "^000000.");
+				close;
+			}
+
+			delitem($@currency_id, $@exchange_price);
+
+			.@roll = rand(1, 10000);
+			for (.@i = 0; .@i < getarraysize($@reward_price_infos); .@i += 3) {
+				.@current += $@reward_price_infos[.@i + 2];
+				if (.@roll <= .@current) {
+			        .@price_info_idx = .@i;
+			        break;
+			    }
+			}
+
+			getitem($@reward_price_infos[.@price_info_idx], $@reward_price_infos[.price_info_idx + 1]);
+			mes($@reward_npc_name$);
+			mes("There you go. Enjoy your price and come back any time!");
+			close;
+		case 2:
+			mes($@reward_npc_name$);
+			mes("Here are the possible prices you can win:");
+			for(.@i = 0; .@i < getarraysize($@reward_price_infos); .@i += 3) {
+				mes("^0000FF" + callfunc("F_InsertPlural", $@reward_price_infos[.@i + 1], getitemname($@reward_price_infos[.@i])) + "^000000 (" + callfunc("F_FormatDecimal", $@reward_price_infos[.@i + 2]) + "%)");
+			}
+			close;
+		default:
+			mes($@reward_npc_name$);
+			mes("What a shame. Maybe next time! Please come back if you need my assistance.");
+			close;
+	}
+}
+
+prontera,152,150,4	script	Card Collector	408,{
+	mes($@trader_npc_name$);
+	mes("Welcome, adventurer! I trade your cards for ^0000FF" + callfunc("F_GetPlural", getitemname($@currency_id)) + "^000000. How may i help you today?");
+	next;
+	switch(select("I want to trade in a card,  please", "Which cards do you accept?", "Nothing, thank you.")) {
+		case 1:
+			mes($@trader_npc_name$);
+			mes("Very well. Which card do you want to trade in?");
+			next;
+
+			getinventorylist;
+
+			for (.@i = 0; .@i < @inventorylist_count; .@i++) {
+				if (getiteminfo(@inventorylist_id[.@i], ITEMINFO_TYPE) == 6) {
+					.@menu$ += getitemname(@inventorylist_id[.@i]) + ":";
+					.@card_ids[.@card_count] = @inventorylist_id[.@i];
+					.@card_count++;
+				}
+			}
+
+			if (.@card_count == 0) {
+				mes($@trader_npc_name$);
+				mes("Sadly it seems like you do not have any cards on you.");
+				close;
+			}
+
+			.@chosen_card_id = .@card_ids[select(.@menu$) - 1];
+
+			for(.@i = 0; .@i < getarraysize($@card_exchange_infos); .@i += 2) {
+				if(.@chosen_card_id == $@card_exchange_infos[.@i]) {
+					.@currency_amount = $@card_exchange_infos[.@i + 1];
+					break;
+				}
+			}
+
+			if(.@currency_amount == 0) {
+				mes($@trader_npc_name$);
+				mes("Sadly i can not find ^0000FF" + getitemname(.@chosen_card_id) + "^000000 on my list of accepted cards.");
+				close;
+			}
+
+			mes($@trader_npc_name$);
+			mes("For your ^0000FF" + getitemname(.@chosen_card_id) + "^000000 i can offer you ^0000FF" + callfunc("F_InsertPlural", .@currency_amount, getitemname($@currency_id)) + "^000000. Do you want to trade?");
+			next;
+			if(select("Yes,  please", "No, thank you.") == 2) {
+				goto(OnCancel);
+			}
+
+			delitem(.@chosen_card_id, 1);
+			getitem($@currency_id, .@currency_amount);
+
+			mes($@trader_npc_name$);
+			mes("Here you go. It was a pleasure to do business with you. Please come back any time!");
+			close;
+		case 2:
+			mes($@trader_npc_name$);
+			mes("Here are the cards i accept and how many ^0000FF" + callfunc("F_GetPlural", getitemname($@currency_id)) + "^000000 you get for each:");
+			for(.@i = 0; .@i < getarraysize($@card_exchange_infos); .@i += 2) {
+				mes("^0000FF" + getitemname($@card_exchange_infos[.@i])  + "^000000: ^0000FF" + callfunc("F_InsertPlural", $@card_exchange_infos[.@i + 1], getitemname($@currency_id)) + "^000000");
+			}
+			close;
+		default:
+			goto(OnCancel);
+	}
+
+	OnCancel:
+		mes(.name$);
+		mes("What a shame. I would have loved for us to make a trade. Please come back if you need my assistance.");
+		close;
+}
+
+function	script	F_FormatDecimal	{
+    .@val = getarg(0);
+    .@int = .@val / 100;
+    .@dec = .@val % 100;
+
+    if (.@dec < 10) {
+        return .@int + ",0" + .@dec;
+    }
+
+    return .@int + "," + .@dec;
+}
