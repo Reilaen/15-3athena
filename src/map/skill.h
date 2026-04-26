@@ -7,6 +7,8 @@
 #include "../common/mmo.h" // MAX_SKILL, struct square
 #include "../common/db.h"
 #include "map.h" // struct block_list
+#include "clif.h"
+
 struct map_session_data;
 struct homun_data;
 struct skill_unit;
@@ -169,7 +171,7 @@ struct s_skill_db {
 extern struct s_skill_db skill_db[MAX_SKILL_DB];
 
 #define MAX_SKILL_UNIT_LAYOUT	60
-#define MAX_SQUARE_LAYOUT		5	// 11*11‚Ìƒ†ƒjƒbƒg”z’u‚ªÅ‘å
+#define MAX_SQUARE_LAYOUT		5	// 11*11ï¿½Ìƒï¿½ï¿½jï¿½bï¿½gï¿½zï¿½uï¿½ï¿½ï¿½Å‘ï¿½
 #define MAX_SKILL_UNIT_COUNT ((MAX_SQUARE_LAYOUT*2+1)*(MAX_SQUARE_LAYOUT*2+1))
 struct s_skill_unit_layout {
 	int count;
@@ -277,7 +279,7 @@ struct s_skill_arrow_db {
 };
 extern struct s_skill_arrow_db skill_arrow_db[MAX_SKILL_ARROW_DB];
 
-// ƒAƒuƒ‰ƒJƒ_ƒuƒ‰ƒf?ƒ^ƒx?ƒX
+// ï¿½Aï¿½uï¿½ï¿½ï¿½Jï¿½_ï¿½uï¿½ï¿½ï¿½f?ï¿½^ï¿½x?ï¿½X
 struct s_skill_abra_db {
 	int skill_id;
 	int req_lv;
@@ -375,13 +377,13 @@ int skill_castend_map( struct map_session_data *sd,short skill_id, const char *m
 int skill_cleartimerskill(struct block_list *src);
 int skill_addtimerskill(struct block_list *src,int64 tick,int target,int x,int y,int skill_id,int skill_lv,int type,int flag);
 
-// ’Ç‰Á?‰Ê
+// ï¿½Ç‰ï¿½?ï¿½ï¿½
 int skill_additional_effect( struct block_list* src, struct block_list *bl,uint16 skill_id,uint16 skill_lv,int attack_type,int dmg_lv,int64 tick);
 int skill_counter_additional_effect( struct block_list* src, struct block_list *bl,uint16 skill_id,uint16 skill_lv,int attack_type,int64 tick);
 int skill_blown(struct block_list* src, struct block_list* target, int count, int direction, unsigned char flag);
 int skill_break_equip(struct block_list *bl, unsigned short where, int rate, int flag);
 int skill_strip_equip(struct block_list *bl, unsigned short where, int rate, int lv, int time);
-// ƒ†ƒjƒbƒgƒXƒLƒ‹
+// ï¿½ï¿½ï¿½jï¿½bï¿½gï¿½Xï¿½Lï¿½ï¿½
 struct skill_unit_group* skill_id2group(int group_id);
 struct skill_unit_group *skill_unitsetting(struct block_list* src, short skill_id, short skill_lv, short x, short y, int flag);
 struct skill_unit *skill_initunit (struct skill_unit_group *group, int idx, int x, int y, int val1, int val2, bool hidden);
@@ -425,7 +427,7 @@ int skill_calc_heal(struct block_list *src, struct block_list *target, int skill
 bool skill_check_cloaking(struct block_list *bl, struct status_change_entry *sce);
 bool skill_check_camouflage(struct block_list *bl, struct status_change_entry *sce);
 
-// ƒXƒe?ƒ^ƒXˆÙí
+// ï¿½Xï¿½e?ï¿½^ï¿½Xï¿½Ùï¿½
 void skill_enchant_elemental_end(struct block_list *bl, int type);
 int skillnotok(int skill_id, struct map_session_data *sd);
 int skillnotok_homun(int skill_id, struct homun_data *hd);
@@ -454,7 +456,7 @@ int skill_summoner_power(struct map_session_data *sd, unsigned char power_type);
 
 int skill_stasis_check(struct block_list *bl, int skill_id);// Stasis skill usage check. [LimitLine]
 
-// mobƒXƒLƒ‹‚Ì‚½‚ß
+// mobï¿½Xï¿½Lï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ï¿½
 int skill_castend_nodamage_id( struct block_list *src, struct block_list *bl,int skill_id,int skill_lv,int64 tick,int flag );
 int skill_castend_damage_id( struct block_list* src, struct block_list *bl,int skill_id,int skill_lv,int64 tick,int flag );
 int skill_castend_pos2( struct block_list *src, int x,int y,int skill_id,int skill_lv,int64 tick,int flag);
@@ -464,7 +466,7 @@ int skill_blockpc_get (struct map_session_data *sd, int skill_id);
 int skill_blockhomun_start (struct homun_data*,int,int);
 int skill_blockmerc_start (struct mercenary_data*,int,int);
 
-// ƒXƒLƒ‹U?ˆêŠ‡?—
+// ï¿½Xï¿½Lï¿½ï¿½ï¿½U?ï¿½êŠ‡?ï¿½ï¿½
 int64 skill_attack( int attack_type, struct block_list* src, struct block_list *dsrc,struct block_list *bl,int skill_id,int skill_lv,int64 tick,int flag );
 
 // Skill Unit Save
