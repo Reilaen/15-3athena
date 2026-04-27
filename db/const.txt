@@ -823,6 +823,10 @@ IG_Candy_Holder	57 //389
 IG_Lucky_Bag	58 //390
 IG_Holy_Egg_2	59 //391
 IG_TOKEN_OF_SIEGFRIED	60 //490
+IG_VelcardeAlbum	61
+IG_VelcardeRecycle	62
+IG_SealedCardAlbum	63
+IG_SealedCardAlbum2	64
 
 //Item Packages
 IP_Aspersio_5_Scroll_Box	1		// 92
