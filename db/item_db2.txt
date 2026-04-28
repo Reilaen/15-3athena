@@ -3353,9 +3353,9 @@
 6548,Piece_Of_Lapine_Wing,Piece Of Lapine Wing,3,0,,0,,,,,,,,,,,,,{},{},{}
 6549,Courtesy_Ticket,Courtesy Ticket,3,0,,0,,,,,,,,,,,,,{},{},{}
 6550,Brownie_Ticket,Brownie Ticket,3,20,,0,,,,,,,,,,,,,{},{},{}
-1002433,Card_Fragment_US,[Event] Card Fragment,3,,,,,,,,,,,,,,,,{},{},{}
-105529,Velcarde_Album_US,[Event] Velcarde MVP Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_VelcardeAlbum),1; },{},{}
-105530,Card_Recycle_US,[Event] Velcarde Card Recycle,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ if(countitem(1002433) < 20) { dispbottom("You do not have enough " + callfunc("F_GetPlural", getitemname(1002433)) + "."); end; } delitem(1002433, 20); getitem(groupranditem(IG_VelcardeRecycle),1); },{},{}
+1002433,Card_Fragment_US,Card Fragment,3,,,,,,,,,,,,,,,,{},{},{}
+105529,Velcarde_Album_US,Velcarde MVP Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_VelcardeAlbum),1; },{},{}
+105530,Card_Recycle_US,Velcarde Card Recycler,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ if(countitem(1002433) < 20) { dispbottom("You do not have enough " + callfunc("F_GetPlural", getitemname(1002433)) + "."); getitem(105530, 1); end; } delitem(1002433, 20); getitem(groupranditem(IG_VelcardeRecycle),1); },{},{}
 22829,Sealed_Card,Sealed Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_SealedCardAlbum),1; },{},{}
 23719,Sealed_Card2,Sealed Card Album II,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_SealedCardAlbum2),1; },{},{}
 
