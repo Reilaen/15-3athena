@@ -12,9 +12,17 @@
 		$@captains = 3; // How many captains spawn as base value.
 		$@captain_advantage = 2; // How many captains are added if the guild fails to kill all scouts.
 
-		$@kpm_threshold = 30; // Kills per minute that trigger a tier upgrade.
-		$@avg_lvl_threshold = 110; // Average guild member level that triggers an tier upgrade.
-		$@member_count_threshold = 4; // Minimum guild member count on map that triggers an tier upgrade.
+		$@medium_offense_threshold = 10000;
+		$@high_offense_threshold = 20000;
+
+		$@member_count_tier2_threshold = 12;
+		$@member_count_tier3_threshold = 22;
+
+		$@kpm_tier2_threshold = 30;
+		$@kpm_tier3_threshold = 50;
+
+		$@scout_tier2_time = 3 * 60000;
+		$@scout_tier3_time = 1 * 60000;
 
 		// LOW TIER //
 		// Raiders: 1st Class Clone Mobs (lhz_dun02)
@@ -29,18 +37,31 @@
 		// 1658 (Boss Egnigem), 1646 (MVP Seyren), 1647 (MVP Eremes), 1648 (MVP Howard), 1649 (MVP Margaretha), 1650 (MVP Cecil), 1651 (MVP Kathryne)
 		setarray($@low_tier_leaders[0], 1658, 1646, 1647, 1648, 1649, 1650, 1651);
 
-		// HIGH TIER //
+		// MEDIUM TIER //
 		// Raiders: Bio 4 Normals (lhz_dun04)
-		// 2228 (Randel), 2229 (Flamel), 2230 (Celia), 2231 (Chen), 2232 (Gertie), 2233 (Alphoccio), 2234 (Trentini)
-		setarray($@high_tier_raiders[0], 2228, 2229, 2230, 2231, 2232, 2233, 2234);
+		// 2221 (Randel), 2222 (Flamel), 2223 (Celia), 2224 (Chen), 2225 (Gertie), 2226 (Alphoccio), 2227 (Trentini)
+		setarray($@medium_tier_raiders[0], 2221, 2222, 2223, 2224, 2225, 2226, 2227);
 
 		// Captains: Bio 3 Mini-Bosses
-		// 1640 (Seyren Mini), 1641 (Eremes Mini), 1642 (Howard Mini), 1643 (Margaretha Mini), 1644 (Cecil Mini), 1645 (Kathryne Mini)
-		setarray($@high_tier_captains[0], 1640, 1641, 1642, 1643, 1644, 1645);
+		// 1640 (Seyren), 1641 (Eremes), 1642 (Howard), 1643 (Margaretha), 1644 (Cecil), 1645 (Kathryne)
+		setarray($@medium_tier_captains[0], 1640, 1641, 1642, 1643, 1644, 1645);
 
 		// Leaders: Bio 4 MVPs (lhz_dun04)
 		// 2235 (MVP Randel), 2236 (MVP Flamel), 2237 (MVP Celia), 2238 (MVP Chen), 2239 (MVP Gertie), 2240 (MVP Alphoccio), 2241 (MVP Trentini)
-		setarray($@high_tier_leaders[0], 2235, 2236, 2237, 2238, 2239, 2240, 2241);
+		setarray($@medium_tier_leaders[0], 2235, 2236, 2237, 2238, 2239, 2240, 2241);
+
+		// HIGH TIER //
+		// Raiders: Bio 5 Normals (3rd Class Clones, lhz_dun05)
+		// 3183 (Rune Knight Seyren), 3184 (Warlock Kathryne), 3185 (Ranger Cecil), 3186 (Arch Bishop Margaretha), 3187 (Mechanic Howard), 3188 (Guillotine Cross Eremes)
+		setarray($@high_tier_raiders[0], 3183, 3184, 3185, 3186, 3187, 3188);
+
+		// Captains: Bio 4 MVPs (Captains)
+		// 2235 (MVP Randel), 2236 (MVP Flamel), 2237 (MVP Celia), 2238 (MVP Chen), 2239 (MVP Gertie), 2240 (MVP Alphoccio), 2241 (MVP Trentini)
+		setarray($@high_tier_captains[0], 2235, 2236, 2237, 2238, 2239, 2240, 2241);
+
+		// Leaders: Bio 5 MVPs (3rd Class Clones MVPs, lhz_dun05)
+		// 3221 (MVP Margaretha), 3222 (MVP Cecil), 3223 (MVP Howard), 3224 (MVP Kathryne), 3225 (MVP Seyren), 3226 (MVP Randel)
+		setarray($@high_tier_leaders[0], 3221, 3222, 3223, 3224, 3225, 3226);
 }
 
 -	script	Castle_Raid	-1,{
@@ -113,8 +134,7 @@
 		.main_phase_kills = 0;
 		.captain_kills = 0;
 		.member_count = getmapguildusers(.castle_map$, .owning_guild_id);
-		.avg_member_lvl = guild_info(.owning_guild_id, 4);
-		.tier = callsub(S_CalcTierByGuildStats, .member_count, .avg_member_lvl);
+		.tier = callsub(S_CalcBaselineTier, .owning_guild_id, 1, .member_count);
 
 		.captains = $@captains;
 		.scouts = $@scouts + .member_count * $@scouts_per_player;
@@ -152,9 +172,13 @@
 		.main_phase_kills++;
 
 		if (mobcount(.castle_map$, strnpcinfo(0) + "::OnRaidScoutKilled") == 0) {
-			mapannounce(.castle_map$, "All Raid Scouts have been defeated!", bc_map, 0xFF0000);
-			if (getnpctimer(0) < $@scout_alarm_time && .tier < $@scout_next_tier) {
-				.tier = $@scout_next_tier;
+			mapannounce(.castle_map$, "All Raid Scouts have been defeated! Use the earned time to prepare.", bc_map, 0xFF0000);
+			.@elapsed_ms = getnpctimer(0) - 300000;
+
+			if (.@elapsed_ms <= $@scout_tier3_time && .tier < 3) {
+				.tier = 3;
+			} else if (.@elapsed_ms <= $@scout_tier2_time && .tier < 2) {
+				.tier = 2;
 			}
 			end;
 		}
@@ -209,17 +233,45 @@
 		.event_active = 0;
 		return;
 
-	S_CalcTierByGuildStats:
-		.@member_count = getarg(0);
-		.@avg_member_lvl = getarg(1);
-		.@min_tier = getarg(2, 1);
-		.@calc_tier = 1;
+		S_CalcBaselineTier:
+		    .@guild_id = getarg(0);
+		    .@min_tier = getarg(1, 1);
+		    .@member_count = getarg(2, 1);
+		    .@total_power = 0;
 
-		if (.@member_count > $@member_count_threshold || .@avg_member_lvl > $@avg_lvl_threshold) {
-			.@calc_tier = 2;
-		}
+		    getmapunits(BL_PC, .castle_map$, .@players$[0]);
+		    for (.@i = 0; .@i < getarraysize(.@players$); .@i++ ) {
+		        if (getcharid(2, .@players$[.@i]) == .@guild_id) {
+		            .@member_count++;
 
-		if (.@min_tier > .@calc_tier) return .@min_tier;
+		            .@atk = readparam(bAtk, .@players[.@i]) + readparam(bAtk2, .@players[.@i]);
+		            .@matk = readparam(bMatk, .@players[.@i]) + readparam(bMatk2, .@players[.@i]);
+		            .@total_power += (.@atk + .@matk);
+		        }
+		    }
+
+		    .@tier_by_members = 1;
+		    if (.@member_count >= $@member_count_tier3_threshold) {
+				.@tier_by_members = 3;
+		    } else if (.@member_count >= $@member_count_tier2_threshold) {
+				.@tier_by_members = 2;
+			}
+
+		    .@tier_by_offense = 1;
+		    if (.@total_power >= $@high_offense_threshold) {
+				.@tier_by_offense = 3;
+			} else if (.@total_power >= $@medium_offense_threshold) {
+				.@tier_by_offense = 2;
+			}
+
+		    .@calc_tier = .@tier_by_members;
+		    if (.@tier_by_offense > .@calc_tier) {
+		        .@calc_tier = .@tier_by_offense;
+		    }
+
+		    if (.@min_tier > .@calc_tier) {
+				return .@min_tier;
+			}
 
 		return .@calc_tier;
 
@@ -228,13 +280,15 @@
 		.@calc_tier = 1;
 
 		.@elapsed_ms = getnpctimer(0) - 300000;
-		if (.@elapsed_ms > 0) {
-			.@kills_per_minute = (.main_phase_kills * 60000) / .@elapsed_ms;
+	    if (.@elapsed_ms > 0) {
+	        .@kills_per_minute = (.main_phase_kills * 60000) / .@elapsed_ms;
 
-			if (.@kills_per_minute >= $@kpm_threshold) {
-				.@calc_tier = 2;
-			}
-		}
+	        if (.@kills_per_minute >= $@kpm_tier3_threshold) {
+	            .@calc_tier = 3;
+	        } else if (.@kills_per_minute >= $@kpm_tier2_threshold) {
+	            .@calc_tier = 2;
+	        }
+	    }
 
 		if (.@min_tier > .@calc_tier) return .@min_tier;
 
@@ -252,10 +306,16 @@
 		.@name$ = getarg(2);
 		.@label$ = getarg(3);
 
-		if(getarg(1) == 1) {
-			copyarray(.@raider_ids[0], $@low_tier_raiders[0], getarraysize($@low_tier_raiders));
-		} else {
-			copyarray(.@raider_ids[0], $@high_tier_raiders[0], getarraysize($@high_tier_raiders));
+		switch(getarg(1)) {
+			case 1:
+				copyarray(.@raider_ids[0], $@low_tier_raiders[0], getarraysize($@low_tier_raiders));
+				break;
+			case 2:
+				copyarray(.@raider_ids[0], $@medium_tier_raiders[0], getarraysize($@medium_tier_raiders));
+				break;
+			case 3:
+				copyarray(.@raider_ids[0], $@high_tier_raiders[0], getarraysize($@high_tier_raiders));
+				break;
 		}
 
 		.@raider_amount = getarg(0);
@@ -266,10 +326,16 @@
 		return;
 
 	S_SpawnCaptains:
-		if(getarg(1) == 1) {
-			copyarray(.@captain_ids[0], $@low_tier_captains[0], getarraysize($@low_tier_captains));
-		} else {
-			copyarray(.@captain_ids[0], $@high_tier_captains[0], getarraysize($@high_tier_captains));
+		switch(getarg(1)) {
+			case 1:
+				copyarray(.@captain_ids[0], $@low_tier_captains[0], getarraysize($@low_tier_captains));
+				break;
+			case 2:
+				copyarray(.@captain_ids[0], $@medium_tier_captains[0], getarraysize($@medium_tier_captains));
+				break;
+			case 3:
+				copyarray(.@captain_ids[0], $@high_tier_captains[0], getarraysize($@high_tier_captains));
+				break;
 		}
 
 		.@captain_amount = getarg(0);
@@ -279,10 +345,16 @@
 		return;
 
 	S_SpawnLeader:
-		if(getarg(0) == 1) {
-			copyarray(.@leader_ids[0], $@low_tier_leaders[0], getarraysize($@low_tier_leaders));
-		} else {
-			copyarray(.@leader_ids[0], $@high_tier_leaders[0], getarraysize($@high_tier_leaders));
+		switch(getarg(0)) {
+			case 1:
+				copyarray(.@leader_ids[0], $@low_tier_leaders[0], getarraysize($@low_tier_leaders));
+				break;
+			case 2:
+				copyarray(.@leader_ids[0], $@medium_tier_leaders[0], getarraysize($@medium_tier_leaders));
+				break;
+			case 3:
+				copyarray(.@leader_ids[0], $@high_tier_leaders[0], getarraysize($@high_tier_leaders));
+				break;
 		}
 
 		monster(.castle_map$, .emproom[0], .emproom[1], "Raid Leader", .@leader_ids[rand(0, getarraysize(.@leader_ids) - 1)], 1, strnpcinfo(0) + "::OnRaidLeaderKilled");
