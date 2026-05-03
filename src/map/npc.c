@@ -224,7 +224,7 @@ bool npc_enable(struct npc_data* nd, int flag)
 }
 
 /*==========================================
- * NPC‚ğ–¼‘O‚Å’T‚·
+ * NPCï¿½ğ–¼‘Oï¿½Å’Tï¿½ï¿½
  *------------------------------------------*/
 struct npc_data* npc_name2id(const char* name)
 {
@@ -232,7 +232,7 @@ struct npc_data* npc_name2id(const char* name)
 }
 
 /*==========================================
- * ƒCƒxƒ“ƒgƒLƒ…[‚ÌƒCƒxƒ“ƒgˆ—
+ * ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½Lï¿½ï¿½ï¿½[ï¿½ÌƒCï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int npc_event_dequeue(struct map_session_data* sd)
 {
@@ -297,7 +297,7 @@ static int npc_event_export(struct npc_data *nd, int i)
 
 int npc_event_sub(struct map_session_data* sd, struct event_data* ev, const char* eventname); //[Lance]
 /*==========================================
- * ‘S‚Ä‚ÌNPC‚ÌOn*ƒCƒxƒ“ƒgÀs
+ * ï¿½Sï¿½Ä‚ï¿½NPCï¿½ï¿½On*ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½s
  *------------------------------------------*/
 int npc_event_doall_sub(DBKey key, DBData *data, va_list ap)
 {
@@ -373,7 +373,7 @@ int npc_event_doall_id(const char* name, int rid)
 }
 
 /*==========================================
- * ŒvƒCƒxƒ“ƒgÀs
+ * ï¿½ï¿½ï¿½vï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½s
  *------------------------------------------*/
 int npc_event_do_clock(int tid, int64 tick, int id, intptr_t data)
 {
@@ -421,7 +421,7 @@ int npc_event_do_clock(int tid, int64 tick, int id, intptr_t data)
 }
 
 /*==========================================
- * OnInitƒCƒxƒ“ƒgÀs(&ŒvƒCƒxƒ“ƒgŠJn)
+ * OnInitï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½s(&ï¿½ï¿½ï¿½vï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½Jï¿½n)
  *------------------------------------------*/
 void npc_event_do_oninit(void)
 {
@@ -431,7 +431,7 @@ void npc_event_do_oninit(void)
 }
 
 /*==========================================
- * ƒ^ƒCƒ}[ƒCƒxƒ“ƒg—pƒ‰ƒxƒ‹‚Ìæ‚è‚İ
+ * ï¿½^ï¿½Cï¿½}ï¿½[ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Ìï¿½èï¿½ï¿½
  * called from npc_parse_script
  *------------------------------------------*/
 int npc_timerevent_export(struct npc_data *nd, int i)
@@ -773,7 +773,7 @@ int npc_event_sub(struct map_session_data* sd, struct event_data* ev, const char
 }
 
 /*==========================================
- * ƒCƒxƒ“ƒgŒ^‚ÌNPCˆ—
+ * ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½^ï¿½ï¿½NPCï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int npc_event(struct map_session_data* sd, const char* eventname, int ontouch)
 {
@@ -1086,7 +1086,7 @@ struct npc_data* npc_checknear(struct map_session_data* sd, struct block_list* b
 }
 
 /*==========================================
- * NPC‚ÌƒI[ƒvƒ“ƒ`ƒƒƒbƒg”­Œ¾
+ * NPCï¿½ÌƒIï¿½[ï¿½vï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½bï¿½gï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int npc_globalmessage(const char* name, const char* mes)
 {
@@ -2761,7 +2761,7 @@ bool npc_shop_discount(enum npc_subtype type, bool discount) {
 }
 
 /*==========================================
- * NPC‚Ìƒ‰ƒxƒ‹ƒf[ƒ^ƒRƒ“ƒo[ƒg
+ * NPCï¿½Ìƒï¿½ï¿½xï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½Rï¿½ï¿½ï¿½oï¿½[ï¿½g
  *------------------------------------------*/
 int npc_convertlabel_db(DBKey key, DBData *data, va_list ap)
 {
@@ -3273,6 +3273,18 @@ int npc_instanceinit(struct npc_data* nd)
 	return 0;
 }
 
+int npc_instancedestroy(struct npc_data* nd) {
+	struct event_data *ev;
+	char evname[EVENT_NAME_LENGTH];
+
+	snprintf(evname, ARRAYLENGTH(evname), "%s::OnInstanceDestroy", nd->exname);
+
+	if( ( ev = (struct event_data*)strdb_get(ev_db, evname) ) )
+		run_script(nd->u.scr.script,ev->pos,0,ev->nd->bl.id);
+
+	return 0;
+}
+
 void npc_setcells(struct npc_data* nd)
 {
 	int m = nd->bl.m, x = nd->bl.x, y = nd->bl.y, xs, ys;
@@ -3695,7 +3707,7 @@ static const char* npc_parse_mob(char* w1, char* w2, char* w3, char* w4, const c
 }
 
 /*==========================================
- * ƒ}ƒbƒvƒtƒ‰ƒOs‚Ì‰ğÍ
+ * ï¿½}ï¿½bï¿½vï¿½tï¿½ï¿½ï¿½Oï¿½sï¿½Ì‰ï¿½ï¿½
  *------------------------------------------*/
 static const char* npc_parse_mapflag(char* w1, char* w2, char* w3, char* w4, const char* start, const char* buffer, const char* filepath)
 {

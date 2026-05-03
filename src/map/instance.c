@@ -324,14 +324,24 @@ int instance_map_npcsub(struct block_list* bl, va_list args)
 	return 1;
 }
 
-int instance_init_npc(struct block_list* bl, va_list args) {
+int instance_init_npc(struct block_list* bl, va_list ap) {
 	struct npc_data* nd;
 
 	nullpo_retr(0, bl);
-	nullpo_retr(0, args);
+	nullpo_retr(0, ap);
 	nullpo_retr(0, nd = (struct npc_data *)bl);
 
 	return npc_instanceinit(nd);
+}
+
+int instance_npcdestroy(struct block_list *bl, va_list ap) {
+	struct npc_data* nd;
+
+	nullpo_retr(0, bl);
+	nullpo_retr(0, ap);
+	nullpo_retr(0, nd = (struct npc_data *)bl);
+
+	return npc_instancedestroy(nd);
 }
 
 /*--------------------------------------
@@ -522,6 +532,7 @@ void instance_destroy(int instance_id)
 	{
 		while (instances[instance_id].num_map && last != instances[instance_id].map[0]) { // Remove all maps from instance
 			last = instances[instance_id].map[0];
+			map_foreachininstance(instance_npcdestroy, instance_id, BL_NPC);
 			instance_del_map(instances[instance_id].map[0]);
 		}
 	}
