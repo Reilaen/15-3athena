@@ -2966,14 +2966,14 @@ int char_parse_Registry(uint32 account_id, uint32 char_id, unsigned char *buf, i
 		int copy_len = actual_len > 32 ? 32 : actual_len;
 		strncpy(char_dat[i].global[j].str, (char*)WBUFP(buf, p), copy_len);
 		char_dat[i].global[j].str[copy_len] = '\0';
-
+		
 		p += actual_len + 1;
-
+		
 		actual_len = strlen((char*)WBUFP(buf, p));
 		copy_len = actual_len > 255 ? 255 : actual_len;
 		strncpy(char_dat[i].global[j].value, (char*)WBUFP(buf, p), copy_len);
 		char_dat[i].global[j].value[copy_len] = '\0';
-
+		
 		p += actual_len + 1;
 	}
 	char_dat[i].global_num = j;

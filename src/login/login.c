@@ -759,16 +759,17 @@ int parse_fromchar(int fd)
 					int copy_len = actual_len > 32 ? 32 : actual_len;
 					strncpy(acc.account_reg2[j].str, (char*)RFIFOP(fd, p), copy_len);
 					acc.account_reg2[j].str[copy_len] = '\0';
-
+					
 					p += actual_len + 1;
-
-					if (p >= RFIFOW(fd,2)) break;
-
+					
+					if (p >= RFIFOW(fd, 2))
+						break;
+					
 					actual_len = strlen((char*)RFIFOP(fd, p));
 					copy_len = actual_len > 255 ? 255 : actual_len;
 					strncpy(acc.account_reg2[j].value, (char*)RFIFOP(fd, p), copy_len);
 					acc.account_reg2[j].value[copy_len] = '\0';
-
+					
 					p += actual_len + 1;
 
 					remove_control_chars(acc.account_reg2[j].str);

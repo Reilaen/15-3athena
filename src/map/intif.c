@@ -1003,19 +1003,20 @@ int intif_parse_Registers(int fd)
 	for(j=0,p=13;j<max && p<RFIFOW(fd,2);j++){
 		int actual_len = strlen((char*)RFIFOP(fd, p));
 		int copy_len = actual_len > 32 ? 32 : actual_len;
-
+		
 		strncpy(reg[j].str, (char*)RFIFOP(fd, p), copy_len);
 		reg[j].str[copy_len] = '\0';
-
+		
 		p += actual_len + 1;
-
-		if (p >= RFIFOW(fd,2)) break;
-
+		
+		if (p >= RFIFOW(fd, 2))
+			break;
+		
 		actual_len = strlen((char*)RFIFOP(fd, p));
 		copy_len = actual_len > 255 ? 255 : actual_len;
 		strncpy(reg[j].value, (char*)RFIFOP(fd, p), copy_len);
 		reg[j].value[copy_len] = '\0';
-
+		
 		p += actual_len + 1;
 	}
 	*qty = j;
