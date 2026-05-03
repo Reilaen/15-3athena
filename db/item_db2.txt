@@ -3975,16 +3975,6 @@
 9091,Choco_Egg,Choco Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9092,Eggring_Egg,Eggring Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9093,Hyegun_Egg,Hyegun Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9094,Dr_Lunatic_Egg,Leaf Lunatic Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9095,Nine_Tail_Egg,Nine Tail Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9096,Cat_o_Nine_Tail_Egg,Cat o Nine Tail Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9097,Diabolic_2_Egg,Diabolic Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9098,Red_Deleter_Egg2,Fire Deleter Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9099,Teddy_Bear_Egg,Teddy Bear Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9100,Gremlin_Egg,Gremlin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9101,Scatletoncarrier,Scatleton's Cage,7,20,,0,,,,,,,,,,,,,{},{},{}
-9102,Mummy_Egg,Mummy Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
-9103,Wilow_Egg,Willow Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9104,Roween_Egg,Roween Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9105,Hodremlin_Egg,Hodremlin Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
 9106,Metaller_Egg,Metaller Egg,7,20,,0,,,,,,,,,,,,,{},{},{}
