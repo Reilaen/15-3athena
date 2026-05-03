@@ -5,6 +5,36 @@
 // 		- Details.
 //			--More Details.
 //========================================
+05/03/2026
+	r567 [15peaces]
+		*Renamed the pet intimacy constants for parity with rathena to easier transfer their pet bonus scripts.
+		*Another fix to the registry parser (cutting of permanent global string variables after the first whitespace on save).
+			-Thanks to @Reilaen
+
+05/02/2026
+	r566 [15peaces]
+		*Updated MH_LAVA_SLIDE to latest official version.
+		*Updated SR_RAMPAGEBLASTER.
+			-Now only consumes 3 spirit spheres.
+		*Updated getpetinfo script command.
+			-It will now support constants.
+			-Also there are more informations available.
+		*Fixed the registry parser cutting of permanent global string variables after the first whitespace on save.
+			-Thanks to @Reilaen
+
+05/01/2026
+	r565 [15peaces]
+		*Some updates to item databases:
+			-Balanced some items.
+			-Added some missing items.
+			-Some cleaning.
+			-Added some more missing items to episode 6 item database.
+		*Some potential crash fixes & more, thanks to @Reilaen
+			-Applied a fix for a map server crash if an item group only contains one item.
+			-Fixed a check in npc_do_atcmd_event that would otherwise lead to a server crash.
+			-Added compatibility for MySQL version 5.0.13+ with updated reconnect option handling.
+		*Rebuild mapcache to fix some issues and update some map data.
+
 04/26/2026
 	r564 [15peaces]
 		*Added missing check if instances currently exist, before iterating them.
