@@ -3473,14 +3473,16 @@ This command does not count skills which are set as flag 3 (permament granted) (
 This function will return pet information for the pet the invoking character
 currently has active. Valid types are:
 
- 0 - Pet Game ID
- 1 - Pet class number as per 'db/pet_db.txt' - will tell you what kind of a pet it
-     is.
- 2 - Pet name. Will return "null" if there's no pet.
- 3 - Pet friendly level (intimacy score). 1000 is full loyalty.
- 4 - Pet hungry level. 100 is completely full.
- 5 - Pet rename flag. 0 means this pet has not been named yet.
-
+ (0) PETINFO_ID 		- Pet Game ID
+ (1) PETINFO_CLASS		- Pet class number as per 'db/pet_db.txt' - will tell you what kind of a pet it is.
+ (2) PETINFO_NAME		- Pet name. Will return "null" if there's no pet.
+ (3) PETINFO_INTIMATE	- Pet friendly level (intimacy score). 1000 is full loyalty.
+ (4) PETINFO_HUNGRY		- Pet hungry level. 100 is completely full.
+ (5) PETINFO_RENAMED	- Pet rename flag. 0 means this pet has not been named yet.
+ (6) PETINFO_LEVEL		- Pet level.
+ (7) PETINFO_BLOCKID	- Pet bl ID.
+ (8) PETINFO_EGGID		- Pet egg ID.
+ (9) PETINFO_FOODID		- Pet food item ID.
 ---------------------------------------
 
 *gethominfo(<type>)
@@ -7354,21 +7356,21 @@ Example(s):
 
 *debugmes "<message>";
 
-This command will send the message to the server console (map-server window). It
+This command will send the message to the server console (map-server window). It 
 will not be displayed anywhere else.
 
     debugmes strcharinfo(0)+" has just done this that and the other";
-    // You would see in the map-server window "NAME has just done this that and
+    // You would see in the map-server window "NAME has just done this that and 
     // the other"
 
 ---------------------------------------
 
 *logmes "<message>";
 
-This command will write the message given to the map server NPC log file, as
-specified in 'conf/log_athena.conf'. In the TXT version of the server, the log
-file is 'log/npclog.log' by default. In the SQL version, if SQL logging is
-enabled, the message will go to the 'npclog' table, otherwise, it will go to the
+This command will write the message given to the map server NPC log file, as 
+specified in 'conf/log_athena.conf'. In the TXT version of the server, the log 
+file is 'log/npclog.log' by default. In the SQL version, if SQL logging is 
+enabled, the message will go to the 'npclog' table, otherwise, it will go to the 
 same log file.
 
 If logs are not enabled, nothing will happen.
@@ -7377,7 +7379,7 @@ If logs are not enabled, nothing will happen.
 
 *globalmes "<message>"{,"<NPC name>"};
 
-This command will send a message to the chat window of all currently connected
+This command will send a message to the chat window of all currently connected 
 characters.
 
 If NPC name is specified, the message will be sent as if the sender would be
@@ -7400,21 +7402,21 @@ rand(2,5) would result in 2,3,4 or 5
 
 *viewpoint <action>,<x>,<y>,<point number>,<color>;
 
-This command will mark places on the mini map in the client connected to the
-invoking character. It uses the normal X and Y coordinates from the main map.
-The colors of the marks are defined using a hexadecimal number, same as the ones
-used to color text in 'mes' output, but are written as hexadecimal numbers in C.
+This command will mark places on the mini map in the client connected to the 
+invoking character. It uses the normal X and Y coordinates from the main map. 
+The colors of the marks are defined using a hexadecimal number, same as the ones 
+used to color text in 'mes' output, but are written as hexadecimal numbers in C. 
 (They look like 0x<six numbers>.)
 
-Action is what you want to do with a point, 1 will set it, while 2 will clear
+Action is what you want to do with a point, 1 will set it, while 2 will clear 
 it. 0 will also set it, but automatically removes the point after 15 seconds.
-Point number is the number of the point - you can have several. If more than
-one point is drawn at the same coordinates, they will cycle, which can be used
+Point number is the number of the point - you can have several. If more than 
+one point is drawn at the same coordinates, they will cycle, which can be used 
 to create flashing marks.
 
-    // This command will show a mark at coordinates X 30 Y 40, is mark number 1,
+    // This command will show a mark at coordinates X 30 Y 40, is mark number 1, 
     // and will be red.
-
+    
     viewpoint 1,30,40,1,0xFF0000;
 
 This will create three points:
@@ -7428,8 +7430,8 @@ And this is how you remove them:
     viewpoint 2,30,40,1,0xFF0000;
     viewpoint 2,35,45,2,0xFF0000;
     viewpoint 2,40,50,3,0xFF0000;
-
-The client determines what it does with the points entirely, the server keeps no
+    
+The client determines what it does with the points entirely, the server keeps no 
 memory of where the points are set whatsoever.
 
 ---------------------------------------
@@ -7475,9 +7477,9 @@ must be used.
 
 *pet <pet id>;
 
-This command is used in all the item scripts for taming items. Running this
-command will make the pet catching cursor appear on the client connected to the
-invoking character, usable on the monsters with the specified pet ID number. It
+This command is used in all the item scripts for taming items. Running this 
+command will make the pet catching cursor appear on the client connected to the 
+invoking character, usable on the monsters with the specified pet ID number. It 
 will still work outside an item script.
 
 A full list of pet IDs can be found inside 'db/pet_db.txt'
@@ -7486,9 +7488,9 @@ A full list of pet IDs can be found inside 'db/pet_db.txt'
 
 *emotion <emotion number>{,<target>{,"<target name>"}};
 
-This command makes an object display an emotion sprite above their own as
-if they were doing that emotion. For a full list of emotion numbers,
-see 'db/const.txt' under 'e_'. The not so obvious ones are 'e_what' (a question mark)
+This command makes an object display an emotion sprite above their own as 
+if they were doing that emotion. For a full list of emotion numbers, 
+see 'db/const.txt' under 'e_'. The not so obvious ones are 'e_what' (a question mark) 
 and 'e_gasp' (the exclamation mark).
 
 The optional target parameter specifies who will get the emotion on top of
@@ -7502,14 +7504,14 @@ event labels. If specified name is not found, command does nothing.
 
 *misceffect <effect number>;
 
-This command, if run from an NPC object that has a sprite, will call up a
-specified effect number, centered on the NPC sprite. If the running code does
-not have an object ID (a 'floating' NPC) or is not running from an NPC object at
-all (an item script) the effect will be centered on the character who's RID got
-attached to the script, if any. For usable item scripts, this command will
+This command, if run from an NPC object that has a sprite, will call up a 
+specified effect number, centered on the NPC sprite. If the running code does 
+not have an object ID (a 'floating' NPC) or is not running from an NPC object at 
+all (an item script) the effect will be centered on the character who's RID got 
+attached to the script, if any. For usable item scripts, this command will 
 create an effect centered on the player using the item.
 
-A full list of known effects is found in 'doc/effect_list.txt'. The list of
+A full list of known effects is found in 'doc/effect_list.txt'. The list of 
 those that actually work may differ greatly between client versions.
 
 ---------------------------------------
@@ -7517,16 +7519,16 @@ those that actually work may differ greatly between client versions.
 *soundeffect "<effect filename>",<type>
 *soundeffectall "<effect filename>",<type>{,"<map name>"}{,<x0>,<y0>,<x1>,<y1>}
 
-These two commands will play a sound effect to either the invoking character
-only ('soundeffect') or multiple characters ('soundeffectall'). If the running
-code does not have an object ID (a 'floating' NPC) or is not running from an NPC
-object at all (an item script) the sound will be centered on the character who's
-RID got attached to the script, if any. If it does, it will be centered on that
+These two commands will play a sound effect to either the invoking character 
+only ('soundeffect') or multiple characters ('soundeffectall'). If the running 
+code does not have an object ID (a 'floating' NPC) or is not running from an NPC 
+object at all (an item script) the sound will be centered on the character who's 
+RID got attached to the script, if any. If it does, it will be centered on that 
 object. (an NPC sprite)
 
 Effect filename is the filename in a GRF. It must have the .wav extension.
 
-It's not quite certain what the 'type' actually does, it is sent to the client
+It's not quite certain what the 'type' actually does, it is sent to the client 
 directly. It probably determines which directory to play the effect from.
 It's certain that giving 0 for the number will play sound files from 'data/wav',
 but where the other numbers will read from is unclear.
@@ -7538,7 +7540,7 @@ You can add your own effects this way, naturally.
 *playBGM "<BGM filename>"
 *playBGMall "<BGM filename>"{,"<map name>"{,<x0>,<y0>,<x1>,<y1>}}
 
-These two commands will play a Background Music to either the invoking character
+These two commands will play a Background Music to either the invoking character 
 only ('playBGM') or multiple characters ('playBGMall').
 
 BGM filename is the filename in /BGM/ folder. It has to be in .mp3 extension.
@@ -7554,16 +7556,16 @@ You can add your own BGMs this way, naturally.
 *pvpon "<map name>";
 *pvpoff "<map name>";
 
-These commands will turn PVP mode for the specified maps on and off. Beside
-setting the flags referred to in 'setmapflag', 'pvpon' will also create a PVP
+These commands will turn PVP mode for the specified maps on and off. Beside 
+setting the flags referred to in 'setmapflag', 'pvpon' will also create a PVP 
 timer and ranking as will @pvpon GM command do.
 
 ---------------------------------------
 
 *atcommand "<command line>";
 
-This command will run the given command line exactly as if it was typed in from
-the keyboard by the player connected to the invoking character, and that
+This command will run the given command line exactly as if it was typed in from 
+the keyboard by the player connected to the invoking character, and that 
 character belonged to an account which had GM level 99.
 
     // This will ask the invoker for a character name and then use the '@nuke'
@@ -7571,14 +7573,14 @@ character belonged to an account which had GM level 99.
     input @player$;
     atcommand "@nuke "+@player$;
 
-This command has a lot of good uses, I am sure you can have some fun with this
+This command has a lot of good uses, I am sure you can have some fun with this 
 one.
 
 ---------------------------------------
 
 *charcommand <command>;
 
-This command will run the given command line exactly as if it was typed in from
+This command will run the given command line exactly as if it was typed in from 
 the keyboard from a character that belonged to an account which had GM level 99.
 
 The commands can also run without an attached rid.
@@ -7643,34 +7645,34 @@ used.
 *deactivatepset <set number>;
 *deletepset <set number>;
 
-This set of commands is only available if the server is compiled with regular
-expressions library enabled. Default compilation and most binary distributions
-aren't, which is probably bad, since these, while complex to use, are quite
+This set of commands is only available if the server is compiled with regular 
+expressions library enabled. Default compilation and most binary distributions 
+aren't, which is probably bad, since these, while complex to use, are quite 
 fascinating.
 
-They will make the NPC object listen for text spoken publicly by players and
-match it against regular expression patterns, then trigger labels associated
+They will make the NPC object listen for text spoken publicly by players and 
+match it against regular expression patterns, then trigger labels associated 
 with these regular expression patterns.
 
-Patterns are organized into sets, which are referred to by a set number. You can
-have multiple sets patterns, and multiple patterns may be active at once.
+Patterns are organized into sets, which are referred to by a set number. You can 
+have multiple sets patterns, and multiple patterns may be active at once. 
 Numbers for pattern sets start at 1.
 
-'defpattern' will associate a given regular expression pattern with an event
-label. This event will be triggered whenever something a player says is matched
+'defpattern' will associate a given regular expression pattern with an event 
+label. This event will be triggered whenever something a player says is matched 
 by this regular expression pattern, if the pattern is currently active.
 
-'activatepset' will make the pattern set specified active. An active pattern
-will enable triggering labels defined with 'defpattern', which will not happen
+'activatepset' will make the pattern set specified active. An active pattern 
+will enable triggering labels defined with 'defpattern', which will not happen 
 by default.
-'deactivatepset' will deactivate a specified pattern set. Giving -1 as a pattern
+'deactivatepset' will deactivate a specified pattern set. Giving -1 as a pattern 
 set number in this case will deactivate all pattern sets defined.
 
-'deletepset' will delete a pattern set from memory, so you can create a new
+'deletepset' will delete a pattern set from memory, so you can create a new 
 pattern set in it's place.
 
-Using regular expressions is high wizardry. But with this high wizardry comes
-unparalleled power of text manipulation. For an explanation of what a regular
+Using regular expressions is high wizardry. But with this high wizardry comes 
+unparalleled power of text manipulation. For an explanation of what a regular 
 expression pattern is, see a few web pages:
 
 http://www.regular-expressions.info/
@@ -7678,8 +7680,8 @@ http://www.weitz.de/regex-coach/
 
 For an example of this in use, see 'npc\sample\npc_pcre.txt'.
 
-With this you could, for example, automatically punish players for asking for
-Zeny in public places, or alternatively, automatically give them Zeny instead if
+With this you could, for example, automatically punish players for asking for 
+Zeny in public places, or alternatively, automatically give them Zeny instead if 
 they want it so much.
 
 ---------------------------------------
@@ -7721,12 +7723,12 @@ Example:
 	.@minimum = min( 1, -6, -2, 8, 2 ); // .@minimum will be equal to -6
 	.@maximum = max( 0, 5, 10, 4 ); // .@maximum will be equal to 10
 	.@level = min( BaseLevel, 70 ); // .@level will be the character's base level, capped to 70
-
+	
 	setarray .@testarray, 4, 5, 12, 6, 7, 3, 8, 9, 10;
-
+	
 	.@minimum = min( .@testarray ); // .@minimum will be equal to 3
 	.@maximum = max( .@testarray ); // .@maximum will be equal to 12
-
+	
 	.@minimum = min( -6, 1, 2, 3, .@testarray ); // .@minimum will be equal to -6
 	.@maximum = max( -6, 1, 2, 3, .@testarray ); // .@maximum will be equal to 12
 
@@ -7805,7 +7807,7 @@ Example:
 
 	mes atoi("11"); 		// Will display 11 (can also be used to set a @var to 11)
 	set @var, axtoi("FF"); 	// Will set the @var to 255
-	mes axtoi("11"); 		// Will display 17 (1 = 1, 10 = 16,
+	mes axtoi("11"); 		// Will display 17 (1 = 1, 10 = 16, 
 							// hexadecimal number set: {0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F})
 
 ---------------------------------------
@@ -7828,20 +7830,20 @@ Example(s):
 
 *charisalpha("<string>",<position>)
 
-This function will return 1 if the character number Position in the given string
+This function will return 1 if the character number Position in the given string 
 is a letter, 0 if it isn't a letter but a digit or a space.
 The first letter is position 0.
 
 ---------------------------------------
 *charat(<string>,<index>)
 
-	Returns char at specified index. If index is out of range,
+	Returns char at specified index. If index is out of range, 
 	returns empty string.
-
+	
 	Example:
-
+	
 	charat("This is a string", 10); //returns "s"
-
+	
 ---------------------------------------
 *setchar(<string>,<char>,<index>)
 
@@ -7849,34 +7851,34 @@ The first letter is position 0.
 	index set to the specified char. If index out of range, the
 	original string will be returned.
 	Only the 1st char in the <char> parameter will be used.
-
+	
 	Example:
-
+	
 	setchar("Cat", "B", 0); //returns "Bat"
-
+	
 ---------------------------------------
 *insertchar(<string>,<char>,<index>)
-
+	
 	Returns the original string with the specified char inserted
-	at the specified index. If index is out of range, the char
+	at the specified index. If index is out of range, the char 
 	will be inserted on the end of the string that it is closest.
 	Only the 1st char in the <char> parameter will be used.
-
+	
 	Example:
-
+	
 	insertchar("laughter", "s", 0); //returns "slaughter"
-
+	
 ---------------------------------------
 
 *delchar(<string>,<index>)
 
 	Returns the original string with the char at the specified index
 	removed. If index is out of range, original string will be returned.
-
+	
 	Example:
-
+	
 	delchar("Diet", 3); //returns "Die"
-
+	
 ---------------------------------------
 
 *strtoupper(<string>)
@@ -7884,9 +7886,9 @@ The first letter is position 0.
 
 	Returns the specified string in it's uppercase/lowercase form.
 	All non-alpha characters will be preserved
-
+	
 	Example:
-
+	
 	strtoupper("The duck is blue!!"); //returns "THE DUCK IS BLUE!!"
 
 ---------------------------------------
@@ -7899,22 +7901,22 @@ The first letter is position 0.
 	will return 0.
 
 	Example:
-
+	
 	charisupper("rAthena", 1); //returns 1
-
+	
 ---------------------------------------
 
 *substr(<string>,<start_index>,<end_index>)
-
+	
 	Returns the sub-string of the specified string inclusively between
 	the set indexes.
 	If indexes are out of range, or the start index is after the end
 	index, an empty string will be returned.
 
 	Example:
-
+	
 	substr("foobar", 3, 5); //returns "bar"
-
+	
 ---------------------------------------
 *explode(<dest_array>,<string>,<delimiter>)
 
@@ -7923,9 +7925,9 @@ The first letter is position 0.
 	Only the 1st char of the delimiter parameter will be used.
 	If an empty string is passed as a delimiter, the string will be placed
 	in the array in it's original form.
-
+	
 	Example:
-
+	
 	explode(.@my_array$, "Explode:Test:1965:red:PIE", ":");
 	//.@my_array$ contents will be...
 	//.@my_array$[0]: "Explode"
@@ -7940,7 +7942,7 @@ The first letter is position 0.
 
 	Combines all substrings within the specified string array into a single string.
 	If the glue parameter is specified, it will be inserted inbetween each substring.
-
+	
 	Example:
 	setarray .@my_array$[0], "This", "is", "a", "test";
 	implode(.@my_array$, " "); //returns "This is a test"
@@ -7949,8 +7951,8 @@ The first letter is position 0.
 
 *sprintf(<format>[,param[,param[,...]]])
 
-C style sprintf. The resulting string is returned same as in PHP. All C format
-specifiers are supported except %n. More info: sprintf @ www.cplusplus.com.
+C style sprintf. The resulting string is returned same as in PHP. All C format 
+specifiers are supported except %n. More info: sprintf @ www.cplusplus.com. 
 The number of params is only limited by rA's script engine.
 
 Example:
@@ -8043,44 +8045,44 @@ script command does not have the optional parameter.
 
 * The Pet AI commands
 
-These commands will only work if the invoking character has a pet, and are meant
-to be executed from pet scripts. They will modify the pet AI decision-making for
-the current pet of the invoking character, and will NOT have any independent
-effect by themselves, which is why only one of them each may be in effect at any
-time for a specific pet. A pet may have 'petloot', 'petskillbonus',
-'petskillattack' OR 'petpetskillattack2' and 'petskillsupport' OR 'petheal' at
-the same time. 'petheal' is deprecated and is no longer used in the default pet
-scripts.
+These commands will only work if the invoking character has a pet, and are meant 
+to be executed from pet scripts. They will modify the pet AI decision-making for 
+the current pet of the invoking character, and will NOT have any independent 
+effect by themselves, which is why only one of them each may be in effect at any 
+time for a specific pet. A pet may have 'petloot', 'petskillbonus', 
+'petskillattack' OR 'petpetskillattack2' and 'petskillsupport' OR 'petheal' at 
+the same time. 'petheal' is deprecated and is no longer used in the default pet 
+scripts. 
 
 *petskillbonus <bonus type>,<value>,<duration>,<delay>;
 
 This command will make the pet give a bonus to the owner's stat (bonus type -
-bInt,bVit,bDex,bAgi,bLuk,bStr,bSpeedRate - for a full list, see the values
+bInt,bVit,bDex,bAgi,bLuk,bStr,bSpeedRate - for a full list, see the values 
 starting with 'b' in 'db/const.txt')
 
 *petrecovery <status type>,<delay>;
 
-This command will make the pet cure a specified status condition. The curing
-actions will occur once every Delay seconds. For a full list of status
-conditions that can be cured, see the list of 'SC_' status condition constants
+This command will make the pet cure a specified status condition. The curing 
+actions will occur once every Delay seconds. For a full list of status 
+conditions that can be cured, see the list of 'SC_' status condition constants 
 in 'db/const.txt'
 
 *petloot <max items>;
 
-This command will turn on pet looting, with a maximum number of items to loot
-specified. Pet will store items and return them when the maximum is reached or
+This command will turn on pet looting, with a maximum number of items to loot 
+specified. Pet will store items and return them when the maximum is reached or 
 when pet performance is activated.
 
 *petskillsupport <skill id>,<skill level>,<delay>,<percent hp>,<percent sp>;
 *petskillsupport "<skill name>",<skill level>,<delay>,<percent hp>,<percent sp>;
 *petheal <level>,<delay>,<percent hp>,<percent sp>;
 
-This will make the pet use a specified support skill on the owner whenever the
-HP and SP are below the given percent values, with a specified delay time
+This will make the pet use a specified support skill on the owner whenever the 
+HP and SP are below the given percent values, with a specified delay time 
 between activations. The skill numbers are as per 'db/skill_db.txt'.
-'petheal' works the same as 'petskillsupport' but has the skill ID hard-coded to
+'petheal' works the same as 'petskillsupport' but has the skill ID hard-coded to 
 28 (Heal). This command is deprecated.
-It's not quite certain who's stats will be used for the skills cast, the
+It's not quite certain who's stats will be used for the skills cast, the 
 character's or the pets. Probably, Skotlex can answer that question.
 
 *petskillattack <skill id>,<skill level>,<rate>,<bonusrate>;
@@ -8088,29 +8090,29 @@ character's or the pets. Probably, Skotlex can answer that question.
 *petskillattack2 <skill id>,<damage>,<number of attacks>,<rate>,<bonusrate>;
 *petskillattack2 "<skill name>",<damage>,<number of attacks>,<rate>,<bonusrate>;
 
-These two commands will make the pet cast an attack skill on the enemy the pet's
-owner is currently fighting. Skill IDs and levels are as per 'petskillsupport'.
-'petskillattack2' will make the pet cast the skill with a fixed amount of damage
+These two commands will make the pet cast an attack skill on the enemy the pet's 
+owner is currently fighting. Skill IDs and levels are as per 'petskillsupport'. 
+'petskillattack2' will make the pet cast the skill with a fixed amount of damage 
 inflicted and the specified number of attacks.
 
-All commands with delays and durations will only make the behavior active for
-the specified duration of seconds, with a delay of the specified number of
-seconds between activations. Rates are a chance of the effect occurring and are
-given in percent. 'bonusrate' is added to the normal rate if the pet intimacy is
+All commands with delays and durations will only make the behavior active for 
+the specified duration of seconds, with a delay of the specified number of 
+seconds between activations. Rates are a chance of the effect occurring and are 
+given in percent. 'bonusrate' is added to the normal rate if the pet intimacy is 
 at the maximum possible.
 
-The behavior modified with the above mentioned commands will only be exhibited if
-the pet is loyal and appropriate configuration options are set in
+The behavior modified with the above mentioned commands will only be exhibited if 
+the pet is loyal and appropriate configuration options are set in 
 'battle_athena.conf'.
 
-Pet scripts in the database normally run whenever a pet of that type hatches
-from the egg. Other commands usable in item scripts (see 'bonus') will also
-happily run from pet scripts. Apparently, the pet-specific commands will also
-work in NPC scripts and modify the behavior of the current pet up until the pet
-is hatched again. (Which will also occur when the character is logged in again
-with the pet still out of the egg.) It is not certain for how long the effect of
-such command running from an NPC script will eventually persist, but apparently,
-it is possible to usefully employ them in usable item scripts to create pet
+Pet scripts in the database normally run whenever a pet of that type hatches 
+from the egg. Other commands usable in item scripts (see 'bonus') will also 
+happily run from pet scripts. Apparently, the pet-specific commands will also 
+work in NPC scripts and modify the behavior of the current pet up until the pet 
+is hatched again. (Which will also occur when the character is logged in again 
+with the pet still out of the egg.) It is not certain for how long the effect of 
+such command running from an NPC script will eventually persist, but apparently, 
+it is possible to usefully employ them in usable item scripts to create pet 
 buffing items.
 
 Nobody tried this before, so you're essentially on your own here.
@@ -8119,9 +8121,9 @@ Nobody tried this before, so you're essentially on your own here.
 
 *bpet;
 
-This command opens up a pet hatching window on the client connected to the
-invoking character. It is used in item script for the pet incubators and will
-let the player hatch an owned egg. If the character has no eggs, it will just
+This command opens up a pet hatching window on the client connected to the 
+invoking character. It is used in item script for the pet incubators and will 
+let the player hatch an owned egg. If the character has no eggs, it will just 
 open up an empty incubator window.
 This is still usable outside item scripts.
 
@@ -8129,23 +8131,23 @@ This is still usable outside item scripts.
 
 *makepet <pet id>;
 
-This command will create a pet egg and put it in the invoking character's
-inventory. The kind of pet is specified by pet ID numbers listed in
-'db/pet_db.txt'. The egg is created exactly as if the character just successfully
+This command will create a pet egg and put it in the invoking character's 
+inventory. The kind of pet is specified by pet ID numbers listed in 
+'db/pet_db.txt'. The egg is created exactly as if the character just successfully 
 caught a pet in the normal way.
 
     // This will make you a poring:
     makepet 1002;
 
-Notice that you absolutely have to create pet eggs with this command. If you try
-to give a pet egg with 'getitem', pet data will not be created by the char
+Notice that you absolutely have to create pet eggs with this command. If you try 
+to give a pet egg with 'getitem', pet data will not be created by the char 
 server and the egg will disappear when anyone tries to hatch it.
 
 ---------------------------------------
 
 *homshuffle;
 
-This will recalculate the homunculus stats according to its level, of the
+This will recalculate the homunculus stats according to its level, of the 
 current invoking character.
 
 ---------------------------------------
@@ -8187,7 +8189,7 @@ OnBarricadeBreak:
 This could be a part of the WoE:SE script, where attackers are not allowed
 to proceed until all barricades are destroyed. This script would place and
 remove a nonwalkable row of cells after the barricade mobs.
-
+	
 ---------------------------------------
 
 *checkcell ("<map name>",<x>,<y>,<type>);
@@ -8231,7 +8233,7 @@ Example:
 
 Creates an invisible wall, an array of "setcell" starting from x,y and doing a
 line of the given size in the given direction. The difference with setcell is
-this one update client part too to avoid the glitch problem. Directions are the
+this one update client part too to avoid the glitch problem. Directions are the 
 same as NPC sprite facing directions: 0=north, 1=northwest, 2=west, etc.
 
 ---------------------------------------
@@ -8260,7 +8262,7 @@ Valid <owner_type> values:
 - IOT_PARTY (2) - <owner_id> is party ID.
 - IOT_GUILD (3) - <owner_id> is guild ID.
 
-Example:
+Example: 
 	// Store the Party ID of the invoking character.
 	set .@party_id, getcharid(1);
 	// Attempt to create an instance using that party ID.
@@ -8376,13 +8378,13 @@ Both timeout values are in seconds.
 
 *instance_check_party(<party id>{,<amount>{,<min>{,<max>}}});
 
-This function checks if a party meets certain requirements, returning 1 if
-all conditions are met and 0 otherwise. It will only check online
+This function checks if a party meets certain requirements, returning 1 if 
+all conditions are met and 0 otherwise. It will only check online 
 characters.
 
 amount - number of online party members (default is 1).
 min    - minimum level of all characters in the party (default is 1).
-max    - maximum level of all characters in the party (default is max
+max    - maximum level of all characters in the party (default is max 
          level in conf).
 
 Example:
@@ -8395,7 +8397,7 @@ if (instance_check_party(getcharid(1),2,2,149)) {
 	mes "Sorry, your party does not meet requirements.";
 	close;
  }
-
+ 
 ---------------------------------------
 
 *instance_set_respawn(<map_name>,<x>,<y>{,<instance_id>});
@@ -8527,18 +8529,18 @@ Add quest of the <ID2> to the the quest log, and the state is "active".
 
 *checkquest(<ID>{,PLAYTIME|HUNTING})
 
-If no additional argument supplied, return the state of the quest:
+If no additional argument supplied, return the state of the quest: 
 	-1 = Quest not started (not in quest log)
 	0  = Quest has been given, but the state is "inactive"
 	1  = Quest has been given, and the state is "active"
 	2  = Quest completed
-
+	
 If parameter "PLAYTIME" is supplied:
 	-1 = Quest not started (not in quest log)
 	0  = the time limit has not yet been reached
 	1  = the time limit has not been reached but the quest is marked as complete
 	2  = the time limit has been reached
-
+	
 If parameter "HUNTING" is supplied:
 	-1 = Quest not started (not in quest log)
 	0  = you haven't killed all of the target monsters and the time limit has not been reached.
@@ -8549,7 +8551,7 @@ If parameter "HUNTING" is supplied:
 
 *isbegin_quest(<ID>)
 
-Return the state of the quest:
+Return the state of the quest: 
 	0  = Quest not started (not in quest log)
 	1  = Quest has been given (state is either "inactive" or "active")
 	2  = Quest completed
@@ -8595,7 +8597,7 @@ given map.
 <On Quit Event> refers to an NPC label that attaches to the character and is run when they relog.
 <On Death Event> refers to an NPC label that attaches to the character and is run when they die. Can be "" for empty.
 
-Unlike the prior command, the latter will attach a GROUP in a waiting room to the battleground, and
+Unlike the prior command, the latter will attach a GROUP in a waiting room to the battleground, and 
 sets the array $@arenamembers[0] where 0 holds the IDs of the first group, and 1 holds the IDs of the second.
 
 If the option parameter is left out, the waiting room of the current NPC is used.
@@ -8868,7 +8870,7 @@ Valid flags are:
  NAV_KAFRA_AND_AIRSHIP - Kafra and Airship
  NAV_KAFRA_AND_SCROLL - Kafra and Scroll
  NAV_ALL - All services
-
+ 
 
 When flag is not specified, the default value is NAV_KAFRA_AND_AIRSHIP.
 
