@@ -21,6 +21,7 @@
 #include "vending.h" // struct s_vending
 #include "mob.h"
 #include "log.h"
+#include "instance.h"
 
 #define MAX_PC_BONUS 10
 #define MAX_PC_SKILL_REQUIRE 5
@@ -635,8 +636,8 @@ struct map_session_data {
 	struct sc_display_entry **sc_display;
 	unsigned char sc_display_count;
 
-	short *instance;
-	unsigned short instances;
+	int instance_id;
+	enum e_instance_mode instance_mode; ///< Mode of instance player last leaves from (used for instance destruction button)
 
 	unsigned char delayed_damage; //[Ind]
 

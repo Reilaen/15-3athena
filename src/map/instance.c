@@ -51,11 +51,10 @@ bool instance_is_valid(int instance_id) {
  *--------------------------------------*/
 int instance_create(const int owner_id, const char *name, const enum e_instance_mode mode) {
 	struct map_session_data *sd = NULL;
-	unsigned short *icptr = NULL;
-	struct party_data *p = NULL;
-	struct guild *g = NULL;
-	short *iptr = NULL;
-	int i, j;
+	struct party_data *pd = NULL;
+	struct guild *gd = NULL;
+	struct clan* cd = 0;
+	int instance_id = 0;
 
 	nullpo_retr(-1, name);
 
@@ -63,87 +62,95 @@ int instance_create(const int owner_id, const char *name, const enum e_instance_
 		case IM_NONE:
 			break;
 		case IM_CHAR:
-			if ((sd = map_id2sd(owner_id)) == NULL) {
+			if ((sd = map_charid2sd(owner_id)) == NULL) {
 				ShowError("instance_create: character %d not found for instance '%s'.\n", owner_id, name);
 				return -2;
 			}
-			iptr = sd->instance;
-			icptr = &sd->instances;
+			if (sd->instance_id >= 0)
+				return -3; // Player already instancing
 			break;
 		case IM_PARTY:
-			if ((p = party_search(owner_id)) == NULL) {
+			if ((pd = party_search(owner_id)) == NULL) {
 				ShowError("instance_create: party %d not found for instance '%s'.\n", owner_id, name);
 				return -2;
 			}
-			iptr = p->instance;
-			icptr = &p->instances;
+			if (pd->instance_id >= 0)
+				return -3; // Party already instancing
 			break;
 		case IM_GUILD:
-			if ((g = guild_search(owner_id)) == NULL) {
-				ShowError("instance_create: guild %d not found for instance '%s'.\n", owner_id, name);
+			if (!((gd = guild_search(owner_id)))) {
+				ShowError("instance_create: Guild %d not found for instance '%s'.\n", owner_id, name);
 				return -2;
 			}
-			iptr = g->instance;
-			icptr = &g->instances;
+			if (gd->instance_id >= 0)
+				return -3; // Guild already instancing
+			break;
+		case IM_CLAN:
+			if (!((cd = clan_search(owner_id)))) {
+				ShowError("instance_create: Clan %d not found for instance '%s'.\n", owner_id, name);
+				return -2;
+			}
+			if (cd->instance_id >= 0)
+				return -3; // Clan already instancing
 			break;
 		default:
-			ShowError("instance_create: unknown type %d for owner_id %d and name %s.\n", mode, owner_id, name);
-			return -1;
+			ShowError("instance_create: Unknown mode %u for owner_id %d and name %s.\n", mode, owner_id, name);
+			return -2;
 	}
 
-	if (mode != IM_NONE && *icptr) {
-		ARR_FIND(0, *icptr, i, iptr[i] != -1 && strcmp(instances[iptr[i]].name, name) == 0);
-		if (i != *icptr)
-			return -4;/* already got this instance */
+	if (instance_count < 0)
+		return -4;
+
+	ARR_FIND(0, instance_count, instance_id, instances[instance_id].state == INSTANCE_FREE);
+	if (instance_id == instance_count) {
+		++instance_count;
+		RECREATE(instances, struct instance_data, instance_count);
 	}
 
-	ARR_FIND(0, instance_count, i, instances[i].state == INSTANCE_FREE);
+	instances[instance_id].state = INSTANCE_IDLE;
+	instances[instance_id].id = instance_id;
+	instances[instance_id].idle_timer = INVALID_TIMER;
+	instances[instance_id].idle_timeout = instances[instance_id].idle_timeoutval = 0;
+	instances[instance_id].progress_timer = INVALID_TIMER;
+	instances[instance_id].progress_timeout = 0;
+	instances[instance_id].users = 0;
+	instances[instance_id].map = NULL;
+	instances[instance_id].num_map = 0;
+	instances[instance_id].owner_id = owner_id;
+	instances[instance_id].mode = mode;
+	instances[instance_id].vars = idb_alloc(DB_OPT_RELEASE_DATA);
+	instances[instance_id].respawn.map = 0;
+	instances[instance_id].respawn.y = 0;
+	instances[instance_id].respawn.x = 0;
 
-	if (i == instance_count)
-		RECREATE(instances, struct instance_data, ++instance_count);
+	safestrncpy(instances[instance_id].name, name, sizeof(instances[instance_id].name));
 
-	instances[i].state = INSTANCE_IDLE;
-	instances[i].id = i;
-	instances[i].idle_timer = INVALID_TIMER;
-	instances[i].idle_timeout = instances[i].idle_timeoutval = 0;
-	instances[i].progress_timer = INVALID_TIMER;
-	instances[i].progress_timeout = 0;
-	instances[i].users = 0;
-	instances[i].map = NULL;
-	instances[i].num_map = 0;
-	instances[i].owner_id = owner_id;
-	instances[i].mode = mode;
-	instances[i].vars = idb_alloc(DB_OPT_RELEASE_DATA);
-	instances[i].respawn.map = 0;
-	instances[i].respawn.y = 0;
-	instances[i].respawn.x = 0;
+	switch(mode) {
+		case IM_CHAR:
+			sd->instance_id = instance_id;
+			break;
+		case IM_PARTY:
+			pd->instance_id = instance_id;
+			int i;
+			ARR_FIND(0, MAX_PARTY, i, pd->party.member[i].leader);
 
-	safestrncpy(instances[i].name, name, sizeof(instances[i].name));
-
-	if (mode != IM_NONE) {
-		ARR_FIND(0, *icptr, j, iptr[j] == -1);
-		if (j == *icptr) {
-			switch (mode) {
-				case IM_CHAR:
-					RECREATE(sd->instance, short, ++*icptr);
-					sd->instance[sd->instances - 1] = i;
-					break;
-				case IM_PARTY:
-					RECREATE(p->instance, short, ++*icptr);
-					p->instance[p->instances - 1] = i;
-					break;
-				case IM_GUILD:
-					RECREATE(g->instance, short, ++*icptr);
-					g->instance[g->instances - 1] = i;
-					break;
-				}
-		}
-		else
-			iptr[j] = i;
+			if (i < MAX_PARTY)
+				sd = map_charid2sd(pd->party.member[i].char_id);
+			break;
+		case IM_GUILD:
+			gd->instance_id = instance_id;
+			sd = map_charid2sd(gd->member[0].char_id);
+			break;
+		case IM_CLAN:
+			cd->instance_id = instance_id;
+			break;
 	}
 
-	clif_instance(i, 1, 0); // Start instancing window
-	return i;
+	if (sd != NULL)
+		sd->instance_mode = mode;
+
+	clif_instance(instance_id, 1, 0); // Start instancing window
+	return instance_id;
 }
 
 /*--------------------------------------
@@ -257,17 +264,15 @@ int instance_add_map(const char *name, int instance_id, bool usebasename, const 
  * party_id : source party of this instance
  * type : result (0 = map id | 1 = instance id)
  *--------------------------------------*/
-int instance_map2imap(int m, int instance_id)
-{
- 	int i;
-
-	if( !instance_is_valid(instance_id) )
+int instance_map2imap(const int m, const int instance_id) {
+	if(!instance_is_valid(instance_id) )
 		return -1;
 
-	for( i = 0; i < instances[instance_id].num_map; i++ ){
-		if( instances[instance_id].map[i] && map[instances[instance_id].map[i]].instance_src_map == m )
+	for(int i = 0; i < instances[instance_id].num_map; i++){
+		if(instances[instance_id].map[i] && map[instances[instance_id].map[i]].instance_src_map == m)
 			return instances[instance_id].map[i];
  	}
+
  	return -1;
 }
 
@@ -467,21 +472,18 @@ int instance_destroy_timer(int tid, int64 tick, int id, intptr_t data)
 /*--------------------------------------
  * Removes a instance, all its maps and npcs.
  *--------------------------------------*/
-void instance_destroy(int instance_id)
-{
+void instance_destroy(const int instance_id) {
 	struct map_session_data *sd = NULL;
-	unsigned short *icptr = NULL;
-	struct party_data *p = NULL;
-	struct guild *g = NULL;
-	short *iptr = NULL;
-	int j, last = 0;
-	unsigned int now = (unsigned int)time(NULL);
+	struct party_data *pd = NULL;
+	struct guild *gd = NULL;
+	struct clan *cd = NULL;
+	const unsigned int now = (unsigned int)time(NULL);
 
 	if (!instance_is_valid(instance_id))
 		return; // nothing to do
 
 	int type = 3; // other reason (default)
-	bool idle = (instances[instance_id].users == 0);
+	const bool idle = instances[instance_id].users == 0;
 
 	if (!idle && instances[instance_id].progress_timeout && instances[instance_id].progress_timeout <= now)
 		type = 1; // progress timeout
@@ -490,46 +492,36 @@ void instance_destroy(int instance_id)
 
 	clif_instance(instance_id, 5, type); // Report users this instance has been destroyed
 
-	switch (instances[instance_id].mode) {
-	case IM_NONE:
-		break;
-	case IM_CHAR:
-		if ((sd = map_id2sd(instances[instance_id].owner_id)) == NULL) {
+	switch(instances[instance_id].mode) {
+		case IM_NONE:
 			break;
-		}
-		iptr = sd->instance;
-		icptr = &sd->instances;
-		break;
-	case IM_PARTY:
-		if ((p = party_search(instances[instance_id].owner_id)) == NULL) {
-			break;
-		}
-		iptr = p->instance;
-		icptr = &p->instances;
-		break;
-	case IM_GUILD:
-		if ((g = guild_search(instances[instance_id].owner_id)) == NULL) {
-			break;
-		}
-		iptr = g->instance;
-		icptr = &g->instances;
-		break;
-	default:
-		ShowError("instance_destroy: unknown mode %d for owner_id %d and name '%s'.\n", instances[instance_id].mode, instances[instance_id].owner_id, instances[instance_id].name);
-		break;
-	}
+		case IM_CHAR:
+			if ((sd = map_charid2sd(instances[instance_id].owner_id)))
+				sd->instance_id = -1;
 
-	if (iptr != NULL) {
-		ARR_FIND(0, *icptr, j, iptr[j] == instance_id);
-		if (j != *icptr)
-			iptr[j] = -1;
+			break;
+		case IM_PARTY:
+			if ((pd = party_search(instances[instance_id].owner_id)))
+				pd->instance_id = -1;
+
+			break;
+		case IM_GUILD:
+			if ((gd = guild_search(instances[instance_id].owner_id)))
+				gd->instance_id = -1;
+
+			break;
+		case IM_CLAN:
+			if ((cd = clan_search(instances[instance_id].owner_id)))
+				cd->instance_id = -1;
+
+			break;
 	}
 
 	// mark it as being destroyed so server doesn't try to give players more information about it
 	instances[instance_id].state = INSTANCE_DESTROYING;
 
-	if (instances[instance_id].map)
-	{
+	if (instances[instance_id].map) {
+		int last = 0;
 		while (instances[instance_id].num_map && last != instances[instance_id].map[0]) { // Remove all maps from instance
 			last = instances[instance_id].map[0];
 			map_foreachininstance(instance_npcdestroy, instance_id, BL_NPC);
@@ -549,7 +541,6 @@ void instance_destroy(int instance_id)
 
 	if (instances[instance_id].map)
 		aFree(instances[instance_id].map);
-
 
 	// Clean up remains of the old instance and mark it as available for a new one
 	memset(&instances[instance_id], 0x0, sizeof(instances[0]));

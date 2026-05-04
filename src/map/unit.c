@@ -342,7 +342,7 @@ static int unit_walktoxy_timer(int tid, int64 tick, int id, intptr_t data)
 		return 0;
 	}
 	ud->walktimer = INVALID_TIMER;
-	if( bl->prev == NULL ) return 0; // block_list ‚©‚ç”²‚¯‚Ä‚¢‚é‚Ì‚ÅˆÚ“®’âŽ~‚·‚é
+	if( bl->prev == NULL ) return 0; // block_list ï¿½ï¿½ï¿½ç”²ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ì‚ÅˆÚ“ï¿½ï¿½ï¿½~ï¿½ï¿½ï¿½ï¿½
 
 	if(ud->walkpath.path_pos>=ud->walkpath.path_len)
 		return 0;
@@ -1618,7 +1618,7 @@ int unit_skilluse_id2(struct block_list *src, int target_id, uint16 skill_id, ui
 
 	nullpo_ret(src);
 	if(status_isdead(src))
-		return 0; // Ž€‚ñ‚Å‚¢‚È‚¢‚©
+		return 0; // ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½
 
 	sd = BL_CAST(BL_PC, src);
 	ud = unit_bl2ud(src);
@@ -1739,7 +1739,7 @@ int unit_skilluse_id2(struct block_list *src, int target_id, uint16 skill_id, ui
 		return 0;
 
 	tstatus = status_get_status_data(target);
-	//’¼‘O‚ÌƒXƒLƒ‹ó‹µ‚Ì‹L˜^
+	//ï¿½ï¿½ï¿½Oï¿½ÌƒXï¿½Lï¿½ï¿½ï¿½ó‹µ‚Ì‹Lï¿½^
 	if(sd) {
 		if( skill_get_inf2(skill_id)&INF2_CHORUS_SKILL )
 		{
@@ -2075,7 +2075,7 @@ int unit_skilluse_pos2( struct block_list *src, short skill_x, short skill_y, ui
 
 	nullpo_ret(src);
 
-	if(!src->prev) return 0; // map ã‚É‘¶Ý‚·‚é‚©
+	if(!src->prev) return 0; // map ï¿½ï¿½É‘ï¿½ï¿½Ý‚ï¿½ï¿½é‚©
 	if(status_isdead(src)) return 0;
 
 	sd = BL_CAST(BL_PC, src);
@@ -2098,7 +2098,7 @@ int unit_skilluse_pos2( struct block_list *src, short skill_x, short skill_y, ui
 	if (!status_check_skilluse(src, NULL, skill_id, skill_lv, 0))
 		return 0;
 
-	/* ŽË’ö‚ÆáŠQ•¨ƒ`ƒFƒbƒN */
+	/* ï¿½Ë’ï¿½ï¿½Æï¿½Qï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N */
 	bl.type = BL_NUL;
 	bl.m = src->m;
 	bl.x = skill_x;
@@ -2416,7 +2416,7 @@ bool unit_can_reach_pos(struct block_list *bl,int x,int y, int easy)
 {
 	nullpo_retr(false, bl);
 
-	if( bl->x==x && bl->y==y )	// “¯‚¶ƒ}ƒX
+	if( bl->x==x && bl->y==y )	// ï¿½ï¿½ï¿½ï¿½ï¿½}ï¿½X
 		return true;
 
 	return path_search(NULL,bl->m,bl->x,bl->y,x,y,easy,CELL_CHKNOREACH);
@@ -3289,9 +3289,8 @@ int unit_free(struct block_list *bl, clr_type clrtype)
 				aFree(sd->qi_display);
 				sd->qi_display = NULL;
 			}
-			if (sd->instance != NULL) {
-				aFree(sd->instance);
-				sd->instance = NULL;
+			if (sd->instance_id >= 0) {
+				sd->instance_id = -1;
 			}
 			sd->qi_count = 0;
 #if PACKETVER >= 20150513

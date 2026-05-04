@@ -778,8 +778,7 @@ struct guild {
 
 	unsigned short save_flag; // for TXT saving
 
-	short *instance;
-	unsigned short instances;
+	int instance_id;
 };
 
 struct guild_castle {
@@ -1085,6 +1084,7 @@ struct clan {
 	short max_member, connect_member;
 	struct map_session_data *members[MAX_CLAN];
 	struct clan_alliance alliance[MAX_CLANALLIANCE];
+	int instance_id;
 };
 
 // Race values sent by client for character creation.

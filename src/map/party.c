@@ -118,11 +118,6 @@ static TBL_PC* party_sd_check(int party_id, uint32 account_id, uint32 char_id)
 }
 
 int party_db_final(DBKey key, DBData *data, va_list ap) {
-	struct party_data *p;
-
-	if ((p = db_data2ptr(data)) && p->instance)
-		aFree(p->instance);
-
 	return 0;
 }
 
@@ -135,7 +130,7 @@ void do_final_party(void)
 	party_db->destroy(party_db, party_db_final);
 	party_booking_db->destroy(party_booking_db,NULL); // Party Booking [Spiria]
 }
-// ‰Šú‰»
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void do_init_party(void)
 {
 	party_db = idb_alloc(DB_OPT_RELEASE_DATA);
@@ -345,8 +340,7 @@ int party_recv_info(struct party* sp, uint32 char_id)
 			if( sp->member[member_id].char_id != 0 )
 				added[added_count++] = member_id;
 		CREATE(p, struct party_data, 1);
-		p->instance = NULL;
-		p->instances = 0;
+		p->instance_id = -1;
 		idb_put(party_db, sp->party_id, p);
 	}
 	while( removed_count > 0 )// no longer in party
@@ -378,13 +372,12 @@ int party_recv_info(struct party* sp, uint32 char_id)
 		clif_party_member_info(p, member_id, PARTY);
 		clif_party_option(p, member_id, SELF);
 		clif_party_info(p,NULL);
-		for (j = 0; j < p->instances; j++) {
-			if (p->instance[j] >= 0) {
-				if (instances[p->instance[j]].idle_timer == INVALID_TIMER && instances[p->instance[j]].progress_timer == INVALID_TIMER)
-					continue;
-				clif_instance_join(sd->fd, p->instance[j]);
-				break;
-			}
+		if (p->instance_id >= 0) {
+			if (instances[p->instance_id].idle_timer == INVALID_TIMER && instances[p->instance_id].progress_timer == INVALID_TIMER)
+				continue;
+
+			clif_instance_join(sd->fd, p->instance_id);
+			break;
 		}
 	}
 	if( char_id != 0 )// requester
@@ -504,18 +497,10 @@ void party_member_joined(struct map_session_data *sd)
 		return;
 	}
 	ARR_FIND( 0, MAX_PARTY, i, p->party.member[i].account_id == sd->status.account_id && p->party.member[i].char_id == sd->status.char_id );
-	if (i < MAX_PARTY)
-	{
-		int j;
-
+	if (i < MAX_PARTY) {
 		p->data[i].sd = sd;
-		for (j = 0; j < p->instances; j++) {
-			if (p->instance[j] >= 0) {
-				if (instances[p->instance[j]].idle_timer == INVALID_TIMER && instances[p->instance[j]].progress_timer == INVALID_TIMER)
-					continue;
-				clif_instance_join(sd->fd, p->instance[j]);
-				break;
-			}
+		if (p->instance_id >= 0 && instances[p->instance_id].idle_timer != INVALID_TIMER || instances[p->instance_id].progress_timer != INVALID_TIMER) {
+			clif_instance_join(sd->fd, p->instance_id);
 		}
 	}
 	else
@@ -574,13 +559,8 @@ int party_member_added(int party_id,uint32 account_id,uint32 char_id, int flag)
 	clif_party_xy(sd);
 	clif_name_area(&sd->bl); //Update char name's display [Skotlex]
 
-	for (j = 0; j < p->instances; j++) {
-		if (p->instance[j] >= 0) {
-			if (instances[p->instance[j]].idle_timer == INVALID_TIMER && instances[p->instance[j]].progress_timer == INVALID_TIMER)
-				continue;
-			clif_instance_join(sd->fd, p->instance[j]);
-			break;
-		}
+	if (p->instance_id >= 0 && instances[p->instance_id].idle_timer != INVALID_TIMER || instances[p->instance_id].progress_timer != INVALID_TIMER) {
+		clif_instance_join(sd->fd, p->instance_id);
 	}
 
 	return 0;
@@ -665,7 +645,7 @@ int party_member_withdraw(int party_id, uint32 account_id, uint32 char_id, char 
 		sd->status.party_id = 0;
 		clif_name_area(&sd->bl); //Update name display [Skotlex]
 		//TODO: hp bars should be cleared too
-		if (p->instances)
+		if (p != NULL && p->instance_id >= 0)
 			instance_check_kick(sd);
 	}
 
@@ -681,12 +661,10 @@ int party_broken(int party_id)
 	p = party_search(party_id);
 	if( p == NULL )
 		return 0;
-		
-	for (j = 0; j < p->instances; j++) {
-		if (p->instance[j] >= 0) {
-			instance_destroy(p->instance[j]);
-			instances[p->instance[j]].owner_id = 0;
-		}
+
+	if (p->instance_id >= 0) {
+		instance_destroy(p->instance_id);
+		instances[p->instance_id].owner_id = -1;
 	}
 
 	for( i = 0; i < MAX_PARTY; i++ )

@@ -62,6 +62,7 @@ struct npc_data {
 	int chat_id;
 	int touching_id;
 	int64 next_walktime;
+	int instance_id;
 
 	unsigned size : 2;
 

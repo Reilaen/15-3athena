@@ -3185,6 +3185,11 @@ const char* npc_parse_duplicate(char* w1, char* w2, char* w3, char* w4, const ch
 		npc_timerevent_export(nd, i);
 	}
 
+	if(!strcmp(filepath,"INSTANCING")) {
+		const struct map_data *mapdata = map_getmapdata(m);
+		nd->instance_id = mapdata->instance_id;  //Instance NPCs will use this for commands
+	}
+
 	nd->u.scr.timerid = INVALID_TIMER;
 
 	return end;

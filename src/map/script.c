@@ -410,6 +410,7 @@ static struct linkdb_node* sleep_db;// int oid -> struct script_state*
  *------------------------------------------*/
 const char* parse_subexpr(const char* p,int limit);
 int run_func(struct script_state *st);
+static int script_instancegetid(const struct script_state *st, const enum e_instance_mode mode);
 
 enum {
 	MF_NOMEMO,	//0
@@ -18810,46 +18811,111 @@ BUILDIN_FUNC(bg_get_data)
 }
 
 /*==========================================
+ * Instancing System
+ *------------------------------------------*/
+/**
+ * Returns an Instance ID.
+ * @param st: Script state
+ * @param mode: Instance mode
+ * @return instance ID on success or 0 otherwise
+ */
+int script_instancegetid(const struct script_state* st, const enum e_instance_mode mode) {
+	int instance_id = -1;
+
+	if (mode == IM_NONE) {
+		const struct npc_data *nd = map_id2nd(st->oid);
+
+		if (nd && nd->instance_id >= 0)
+			instance_id = nd->instance_id;
+	} else {
+		const struct map_session_data *sd = map_id2sd(st->rid);
+
+		if (sd) {
+			switch (mode) {
+				case IM_CHAR:
+					if (sd->instance_id >= 0)
+						instance_id = sd->instance_id;
+					break;
+				case IM_PARTY: {
+					struct party_data *pd = party_search(sd->status.party_id);
+
+					if (pd && pd->instance_id >= 0)
+						instance_id = pd->instance_id;
+					}
+					break;
+				case IM_GUILD: {
+					const struct guild* gd = guild_search(sd->status.guild_id);
+
+					if (gd && gd->instance_id >= 0)
+						instance_id = gd->instance_id;
+					}
+					break;
+				case IM_CLAN: {
+					const struct clan *cd = clan_search(sd->status.clan_id);
+
+					if (cd && cd->instance_id >= 0)
+						instance_id = cd->instance_id;
+					}
+					break;
+				default: // Unsupported type
+					break;
+			}
+		}
+	}
+
+	return instance_id;
+}
+
+/*==========================================
  * Instancing Script Commands
  *------------------------------------------*/
 
-BUILDIN_FUNC(instance_create)
-{
-	const char *name;
-	int owner_id, res;
-	int mode = IM_PARTY;
+BUILDIN_FUNC(instance_create) {
+	enum e_instance_mode mode = IM_PARTY;
+	int32 owner_id = 0;
 
-	name = script_getstr(st, 2);
-	owner_id = script_getnum(st, 3);
-	if (script_hasdata(st, 4)) {
-		mode = script_getnum(st, 4);
+	if (script_hasdata(st, 3)) {
+		mode = (enum e_instance_mode)script_getnum(st, 3);
+
 		if (mode < IM_NONE || mode >= IM_MAX) {
-			ShowError("buildin_instance_create: unknown instance mode %d for '%s'\n", mode, name);
-			return true;
+			ShowError("buildin_instance_create: Unknown instance mode %d for '%s'\n", mode, script_getstr(st, 2));
+			return 1;
 		}
 	}
 
-	res = instance_create(owner_id, name, (enum e_instance_mode) mode);
-	if (res == -4) { // Already exists
-		script_pushint(st, -1);
-		return 0;
-	}
-	else if( res < 0 )
-	{
-		const char *err;
-		switch(res)
-		{
-		case -3: err = "No free instances"; break;
-		case -2: err = "Invalid party ID"; break;
-		case -1: err = "Invalid type"; break;
-		default: err = "Unknown"; break;
+	if (script_hasdata(st, 4))
+		owner_id = script_getnum(st, 4);
+	else {
+		const struct map_session_data *sd = NULL;
+
+		switch(mode) {
+			case IM_NONE:
+				owner_id = st->oid;
+				break;
+			case IM_CHAR:
+				if ((sd = script_rid2sd(st)))
+					owner_id = sd->status.char_id;
+				break;
+			case IM_PARTY:
+				if ((sd = script_rid2sd(st)))
+					owner_id = sd->status.party_id;
+				break;
+			case IM_GUILD:
+				if ((sd = script_rid2sd(st)))
+					owner_id = sd->status.guild_id;
+				break;
+			case IM_CLAN:
+				if ((sd = script_rid2sd(st)))
+					owner_id = sd->status.clan_id;
+				break;
+			default:
+				ShowError("buildin_instance_create: Invalid instance mode (instance name: %s)\n", script_getstr(st, 2));
+				return 1;
 		}
-		ShowError("buildin_instance_create: %s [%d].\n", err, res);
-		script_pushint(st, -2);
-		return 0;
 	}
-	
-	script_pushint(st, res);
+
+	script_pushint(st, instance_create(owner_id, script_getstr(st, 2), mode));
+
 	return 0;
 }
 
@@ -18934,9 +19000,20 @@ BUILDIN_FUNC(instance_attach)
 	return 0;
 }
 
-BUILDIN_FUNC(instance_id)
-{
-	script_pushint(st, st->instance_id);
+BUILDIN_FUNC(instance_id) {
+	int mode = IM_NONE;
+
+	if (script_hasdata(st, 2)) {
+		mode = script_getnum(st, 2);
+
+		if (mode <= IM_NONE || mode >= IM_MAX) {
+			ShowError("buildin_instance_id: Unknown instance mode %d.\n", mode);
+			script_pushint(st, 0);
+			return 0;
+		}
+	}
+
+	script_pushint(st, script_instancegetid(st, (enum e_instance_mode) mode));
 	return 0;
 }
 
@@ -19036,14 +19113,12 @@ BUILDIN_FUNC(instance_npcname)
 	return 0;
 }
 
-BUILDIN_FUNC(has_instance)
-{
+BUILDIN_FUNC(has_instance) {
 	struct map_session_data *sd;
- 	const char *str;
 	int m;
 	int instance_id = -1;
  
- 	str = script_getstr(st, 2);
+ 	const char *str = script_getstr(st, 2);
 
 	if ((m = map_mapname2mapid(str)) < 0) {
 		script_pushconststr(st, "");
@@ -19052,47 +19127,28 @@ BUILDIN_FUNC(has_instance)
 
 	if( script_hasdata(st, 3) )
 		instance_id = script_getnum(st, 3);
-	else if( st->instance_id >= 0 )
+	else if(st->instance_id >= 0)
 		instance_id = st->instance_id;
 	else if ((sd = script_rid2sd(st)) != NULL) {
 		struct party_data *p;
-		int i = 0, j = 0;
-		if (sd->instances) {
-			for (i = 0; i < sd->instances; i++) {
-				if (sd->instance[i] >= 0) {
-					ARR_FIND(0, instances[sd->instance[i]].num_map, j, map[instances[sd->instance[i]].map[j]].instance_src_map == m);
-					if (j != instances[sd->instance[i]].num_map)
-						break;
-				}
-			}
-			if (i != sd->instances)
-				instance_id = sd->instance[i];
+		if (sd->instance_id >= 0) {
+			instance_id = sd->instance_id;
 		}
-		if (instance_id == -1 && sd->status.party_id && (p = party_search(sd->status.party_id)) && p->instances) {
-			for (i = 0; i < p->instances; i++) {
-				if (p->instance[i] >= 0) {
-					ARR_FIND(0, instances[p->instance[i]].num_map, j, map[instances[p->instance[i]].map[j]].instance_src_map == m);
-					if (j != instances[p->instance[i]].num_map)
-						break;
-				}
-			}
-			if (i != p->instances)
-				instance_id = p->instance[i];
+
+		if (instance_id == -1 && sd->status.party_id && ((p = party_search(sd->status.party_id))) && p->instance_id >= 0) {
+			instance_id = p->instance_id;
 		}
-		if (instance_id == -1 && sd->guild && sd->guild->instances) {
-			for (i = 0; i < sd->guild->instances; i++) {
-				if (sd->guild->instance[i] >= 0) {
-					ARR_FIND(0, instances[sd->guild->instance[i]].num_map, j, map[instances[sd->guild->instance[i]].map[j]].instance_src_map == m);
-					if (j != instances[sd->guild->instance[i]].num_map)
-						break;
-				}
-			}
-			if (i != sd->guild->instances)
-				instance_id = sd->guild->instance[i];
+
+		if (instance_id == -1 && sd->guild && sd->guild->instance_id >= 0) {
+			instance_id = sd->guild->instance_id;
+		}
+
+		if (instance_id == -1 && sd->clan && sd->clan->instance_id >= 0) {
+			instance_id = sd->clan->instance_id;
 		}
 	}
 
-	if (!instance_is_valid(instance_id) || (m = instance_map2imap(m, instance_id)) < 0) {
+	if ((m = instance_map2imap(m, instance_id)) < 0) {
 		script_pushconststr(st, "");
 		return 0;
 	}
@@ -21809,12 +21865,12 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(bg_getareausers,"isiiii"),
 	BUILDIN_DEF(bg_updatescore,"sii"),
 	// Instancing
-	BUILDIN_DEF(instance_create,"si?"),
+	BUILDIN_DEF(instance_create,"s??"),
 	BUILDIN_DEF(instance_destroy,"?"),
 	BUILDIN_DEF(instance_attachmap,"si??"),
 	BUILDIN_DEF(instance_detachmap,"s?"),
 	BUILDIN_DEF(instance_attach,"i"),
-	BUILDIN_DEF(instance_id,""),
+	BUILDIN_DEF(instance_id,"?"),
 	BUILDIN_DEF(instance_set_timeout,"ii?"),
 	BUILDIN_DEF(instance_init,"i"),
 	BUILDIN_DEF(instance_announce,"isi?????"),

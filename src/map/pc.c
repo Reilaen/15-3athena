@@ -1473,8 +1473,7 @@ bool pc_authok(struct map_session_data *sd, int login_id2, time_t expiration_tim
 
 	unit_dataset(&sd->bl);
 
-	sd->instance = NULL;
-	sd->instances = 0;
+	sd->instance_id = -1;
 
 	sd->guild_x = -1;
 	sd->guild_y = -1;
@@ -5644,50 +5643,59 @@ int pc_setpos(struct map_session_data* sd, unsigned short mapindex, int x, int y
 	if (map[m].flag.src4instance) {
 		struct party_data *p;
 		bool stop = false;
-		int i = 0, j = 0;
 
-		if (sd->instances) {
-			for (i = 0; i < sd->instances; i++) {
-				if (sd->instance[i] >= 0) {
-					ARR_FIND(0, instances[sd->instance[i]].num_map, j, map[instances[sd->instance[i]].map[j]].instance_src_map == m && !map[instances[sd->instance[i]].map[j]].custom_name);
-					if (j != instances[sd->instance[i]].num_map)
-						break;
-				}
-			}
-			if (i != sd->instances) {
-				m = instances[sd->instance[i]].map[j];
+		if (sd->instance_id >= 0) {
+			const struct instance_data *inst = &instances[sd->instance_id];
+			int j = 0;
+
+			ARR_FIND(0, inst->num_map, j, map[inst->map[j]].instance_src_map == m && !map[inst->map[j]].custom_name);
+
+			if (j < inst->num_map) {
+				m = inst->map[j];
 				mapindex = map_id2index(m);
 				stop = true;
 			}
 		}
-		if (!stop && sd->status.party_id && (p = party_search(sd->status.party_id)) && p->instances) {
-			for (i = 0; i < p->instances; i++) {
-				if (p->instance[i] >= 0) {
-					ARR_FIND(0, instances[p->instance[i]].num_map, j, map[instances[p->instance[i]].map[j]].instance_src_map == m && !map[instances[p->instance[i]].map[j]].custom_name);
-					if (j != instances[p->instance[i]].num_map)
-						break;
-				}
-			}
-			if (i != p->instances) {
-				m = instances[p->instance[i]].map[j];
+
+		if (!stop && sd->status.party_id && ((p = party_search(sd->status.party_id))) && p->instance_id >= 0) {
+			const struct instance_data *inst = &instances[p->instance_id];
+			int j;
+
+			ARR_FIND(0, inst->num_map, j, map[inst->map[j]].instance_src_map == m && !map[inst->map[j]].custom_name);
+
+			if (j < inst->num_map) {
+				m = inst->map[j];
 				mapindex = map_id2index(m);
 				stop = true;
 			}
 		}
-		if (!stop && sd->status.guild_id && sd->guild && sd->guild->instances) {
-			for (i = 0; i < sd->guild->instances; i++) {
-				if (sd->guild->instance[i] >= 0) {
-					ARR_FIND(0, instances[sd->guild->instance[i]].num_map, j, map[instances[sd->guild->instance[i]].map[j]].instance_src_map == m && !map[instances[sd->guild->instance[i]].map[j]].custom_name);
-					if (j != instances[sd->guild->instance[i]].num_map)
-						break;
-				}
-			}
-			if (i != sd->guild->instances) {
-				m = instances[sd->guild->instance[i]].map[j];
+
+		if (!stop && sd->status.guild_id && sd->guild && sd->guild->instance_id >= 0) {
+			const struct instance_data *inst = &instances[sd->guild->instance_id];
+			int j;
+
+			ARR_FIND(0, inst->num_map, j, map[inst->map[j]].instance_src_map == m && !map[inst->map[j]].custom_name);
+
+			if (j < inst->num_map) {
+				m = inst->map[j];
 				mapindex = map_id2index(m);
 				stop = true;
 			}
 		}
+
+		if (!stop && sd->status.clan_id && sd->clan && sd->clan->instance_id >= 0) {
+			const struct instance_data *inst = &instances[sd->clan->instance_id];
+			int j;
+
+			ARR_FIND(0, inst->num_map, j, map[inst->map[j]].instance_src_map == m && !map[inst->map[j]].custom_name);
+
+			if (j < inst->num_map) {
+				m = inst->map[j];
+				mapindex = map_id2index(m);
+				stop = true;
+			}
+		}
+
 		/* we hit a instance, if empty we populate the spawn data */
 		if (map[m].instance_id >= 0 && instances[map[m].instance_id].respawn.map == 0 &&
 			instances[map[m].instance_id].respawn.x == 0 &&

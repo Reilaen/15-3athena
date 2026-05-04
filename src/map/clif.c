@@ -11581,9 +11581,7 @@ void clif_parse_LoadEndAck(int fd,struct map_session_data *sd)
 			&& instances[i].mode == IM_CHAR && instances[i].owner_id == sd->status.account_id);
 
 		if (i < instance_count) {
-			sd->instances = 1;
-			CREATE(sd->instance, short, 1);
-			sd->instance[0] = instances[i].id;
+			sd->instance_id = instances[i].id;
 			clif_instance_join(sd->fd, instances[i].id);
 		}
 	}
@@ -19868,20 +19866,24 @@ int clif_instance(int instance_id, int type, int flag)
 	enum send_target target = PARTY;
 
 	switch (instances[instance_id].mode) {
-	case IM_NONE:
-		return 0;
-	case IM_GUILD:
-		target = GUILD;
-		sd = guild_getavailablesd(guild_search(instances[instance_id].owner_id));
-		break;
-	case IM_PARTY:
-		/* default is already PARTY */
-		sd = party_getavailablesd(party_search(instances[instance_id].owner_id));
-		break;
-	case IM_CHAR:
-		target = SELF;
-		sd = map_id2sd(instances[instance_id].owner_id);
-		break;
+		case IM_NONE:
+			return 0;
+		case IM_CHAR:
+			target = SELF;
+			sd = map_id2sd(instances[instance_id].owner_id);
+			break;
+		case IM_PARTY:
+			/* default is already PARTY */
+			sd = party_getavailablesd(party_search(instances[instance_id].owner_id));
+			break;
+		case IM_GUILD:
+			target = GUILD;
+			sd = guild_getavailablesd(guild_search(instances[instance_id].owner_id));
+			break;
+		case IM_CLAN:
+			target = CLAN;
+			sd = clan_getavailablesd(clan_search(instances[instance_id].owner_id));
+			break;
 	}
 
 	if(!sd)
