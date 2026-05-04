@@ -167,6 +167,18 @@ int enable_grf = 0;	//To enable/disable reading maps from GRF files, bypassing m
 
 char *map_cache_buffer = NULL; // Has the uncompressed gat data of all maps, so just one allocation has to be made
 
+/**
+ * Get the map data
+ * @param mapid: Map ID to lookup
+ * @return map_data on success or nullptr on failure
+ */
+struct map_data *map_getmapdata(const int16 mapid) {
+	if (mapid < 0 || mapid >= MAX_MAP_PER_SERVER)
+		return NULL;
+
+	return &map[mapid];
+}
+
 /*==========================================
  * server player count (of all mapservers)
  *------------------------------------------*/

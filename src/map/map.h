@@ -29,6 +29,7 @@ struct item_data;
 /// but is not the official behaviour.
 //#define CIRCULAR_AREA
 
+struct map_data *map_getmapdata(int16 mapid);
 #define msg_config_read(cfgName,isnew) map_msg_config_read(cfgName,isnew)
 #define msg_txt(sd,msg_number) map_msg_txt(sd,msg_number)
 #define do_final_msg() map_do_final_msg()
