@@ -2850,14 +2850,25 @@ void get_val(struct script_state* st, struct script_data* data)
 				data->u.str = NULL;
 			}
 			break;
-		case '\'':
-			if( st->instance_id >=0 )
-				data->u.str = (char*)i64db_get(instances[st->instance_id].vars,reference_getuid(data));
+		case '\'': {
+			DBMap* n = NULL;
+			if (data->ref)
+				n = *data->ref;
+			else {
+				const struct instance_data* idata = &instances[script_instancegetid(st, IM_NONE)];
+
+				if (idata)
+					n = idata->vars;
+			}
+
+			if(n)
+				data->u.str = (char*)i64db_get(n,reference_getuid(data));
 			else {
 				ShowWarning("script:get_val: cannot access instance variable '%s', defaulting to \"\"\n", name);
 				data->u.str = NULL;
 			}
 			break;
+		}
 		default:
 			data->u.str = pc_readglobalreg_str(sd, name);
 			break;
@@ -2915,19 +2926,29 @@ void get_val(struct script_state* st, struct script_data* data)
 				data->u.num = 0;
 			}
 			break;
-		case '\'':
-			if( st->instance_id >=0 )
-				data->u.num = i64db_i64get(instances[st->instance_id].vars, reference_getuid(data));
+		case '\'': {
+			DBMap* n = NULL;
+			if (data->ref)
+				n = *data->ref;
+			else {
+				const struct instance_data* idata = &instances[script_instancegetid(st, IM_NONE)];
+
+				if (idata)
+					n = idata->vars;
+			}
+
+			if(n)
+				data->u.num = i64db_i64get(n, reference_getuid(data));
 			else {
 				ShowWarning("script:get_val: cannot access instance variable '%s', defaulting to 0\n", name);
 				data->u.num = 0;
 			}
 			break;
+		}
 		default:
 			data->u.num = pc_readglobalreg(sd, name);
 			break;
 		}
-
 	}
 
 	return;
@@ -19157,6 +19178,113 @@ BUILDIN_FUNC(has_instance) {
 	return 0;
 }
 
+/// Returns a reference to a variable of the specific instance ID.
+/// Returns 0 if an error occurs.
+///
+/// getinstancevar(<variable>, <instance ID>) -> <reference>
+BUILDIN_FUNC(getinstancevar) {
+	struct script_data* data = script_getdata(st, 2);
+
+	if (!data_isreference(data)) {
+		ShowError("buildin_getinstancevar: %s is not a variable.\n", script_getstr(st, 2));
+		script_reportdata(data);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	const char* name = reference_getname(data);
+
+	if (*name != '\'') {
+		ShowError("buildin_getinstancevar: Invalid scope. %s is not an instance variable.\n", name);
+		script_reportdata(data);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	const int instance_id = script_getnum(st, 3);
+
+	if (instance_id < 0) {
+		ShowError("buildin_getinstancevar: Invalid instance ID %d.\n", instance_id);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	struct instance_data* im = &instances[instance_id];
+
+	if (im->state != INSTANCE_BUSY) {
+		ShowError("buildin_getinstancevar: Unknown instance ID %d.\n", instance_id);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	if (!im->vars)
+		im->vars = i64db_alloc(DB_OPT_RELEASE_DATA);
+
+	push_val2(st->stack, C_NAME, reference_getuid(data), &im->vars);
+	return 0;
+}
+
+/// Sets the value of an instance variable.
+///
+/// setinstancevar(<variable>,<value>,<instance ID>)
+BUILDIN_FUNC(setinstancevar)
+{
+	const char *command = script_getfuncname(st);
+	struct script_data* data = script_getdata(st, 2);
+
+	if (!data_isreference(data)) {
+		ShowError("buildin_%s: %s is not a variable.\n", command, script_getstr(st, 2));
+		script_reportdata(data);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	const char* name = reference_getname(data);
+
+	if (*name != '\'') {
+		ShowError("buildin_%s: Invalid scope. %s is not an instance variable.\n", command, name);
+		script_reportdata(data);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	const int instance_id = script_getnum(st, 4);
+
+	if (instance_id < 0) {
+		ShowError("buildin_%s: Invalid instance ID %d.\n", command, instance_id);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	struct instance_data* im = &instances[instance_id];
+
+	if (im->state != INSTANCE_BUSY) {
+		ShowError("buildin_%s: Unknown instance ID %d.\n", command, instance_id);
+		script_pushnil(st);
+		st->state = END;
+		return 1;
+	}
+
+	script_pushcopy(st, 2);
+
+	struct map_session_data* sd = NULL;
+
+	if(is_string_variable(name))
+		set_reg(st, sd, reference_getuid(data), name, script_getstr(st, 3), &im->vars);
+	else
+		set_reg(st, sd, reference_getuid(data), name, (void*)(intptr_t)script_getnum(st, 3), &im->vars);
+
+	return 0;
+}
+
+
 static int buildin_instance_warpall_sub(struct block_list *bl, va_list ap) {
 	struct map_session_data *sd = ((TBL_PC*)bl);
 	int mapindex = va_arg(ap, int);
@@ -21938,6 +22066,8 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(getequiprefinecost, "iii?"),
 	BUILDIN_DEF(camerainfo, "iii?"),
 	BUILDIN_DEF(identifyall, "??"),
+	BUILDIN_DEF(getinstancevar,"ri"),
+	BUILDIN_DEF(setinstancevar,"rvi"),
 	BUILDIN_DEF(openlapineddukddakboxui, "i"),
 	BUILDIN_DEF(openlapineupgradeui, "i"),
 	{NULL,NULL,NULL},

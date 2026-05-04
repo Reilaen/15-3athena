@@ -8380,6 +8380,35 @@ the instance the script is attached to is used. If the script is not attached to
 an instance, the instance of the currently attached player's party is used. If
 that fails, the command returns an empty string instead.
 
+---------------------------------------
+
+*getinstancevar(<variable>,<instance id>);
+
+Returns a reference to an instance variable (' prefix) of the specific instance ID.
+This can only be used to get ' variables.
+
+Examples:
+	// This will set the .@s variable to the value of 'var variable of the specific instance ID.
+	set .@s, getinstancevar('var, instance_id(IM_PARTY));
+
+	// This will set the 'var variable of the specific instance ID to 1.
+	set getinstancevar('var, instance_id(IM_GUILD)), 1;
+
+---------------------------------------
+
+*setinstancevar(<variable>,<value>,<instance id>);
+
+This command will set an instance variable to the value that the expression results in.
+See 'set' command for more information.
+
+Returns the variable reference.
+
+Examples:
+	// This will set the 'var variable of the specific instance ID to 9.
+	setinstancevar('var, 9, instance_id(IM_GUILD));
+
+---------------------------------------
+
 =========================
 |8.- Quest Log commands.|
 =========================
