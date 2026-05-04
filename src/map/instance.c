@@ -46,10 +46,10 @@ bool instance_is_valid(int instance_id) {
 /*--------------------------------------
  * name : instance name
  * Return value could be
- * -4 = already exists | -2 = owner not found | -1 = invalid type
+* @return -4 = no free instances | -3 = already exists | -2 = character/party/guild not found | -1 = invalid type | On success return instance_id
  * On success return instance_id
  *--------------------------------------*/
-int instance_create(int owner_id, const char *name, enum instance_owner_type type) {
+int instance_create(const int owner_id, const char *name, const enum e_instance_mode mode) {
 	struct map_session_data *sd = NULL;
 	unsigned short *icptr = NULL;
 	struct party_data *p = NULL;
@@ -59,39 +59,39 @@ int instance_create(int owner_id, const char *name, enum instance_owner_type typ
 
 	nullpo_retr(-1, name);
 
-	switch (type) {
-	case IOT_NONE:
-		break;
-	case IOT_CHAR:
-		if ((sd = map_id2sd(owner_id)) == NULL) {
-			ShowError("instance_create: character %d not found for instance '%s'.\n", owner_id, name);
-			return -2;
-		}
-		iptr = sd->instance;
-		icptr = &sd->instances;
-		break;
-	case IOT_PARTY:
-		if ((p = party_search(owner_id)) == NULL) {
-			ShowError("instance_create: party %d not found for instance '%s'.\n", owner_id, name);
-			return -2;
-		}
-		iptr = p->instance;
-		icptr = &p->instances;
-		break;
-	case IOT_GUILD:
-		if ((g = guild_search(owner_id)) == NULL) {
-			ShowError("instance_create: guild %d not found for instance '%s'.\n", owner_id, name);
-			return -2;
-		}
-		iptr = g->instance;
-		icptr = &g->instances;
-		break;
-	default:
-		ShowError("instance_create: unknown type %d for owner_id %d and name %s.\n", type, owner_id, name);
-		return -1;
+	switch (mode) {
+		case IM_NONE:
+			break;
+		case IM_CHAR:
+			if ((sd = map_id2sd(owner_id)) == NULL) {
+				ShowError("instance_create: character %d not found for instance '%s'.\n", owner_id, name);
+				return -2;
+			}
+			iptr = sd->instance;
+			icptr = &sd->instances;
+			break;
+		case IM_PARTY:
+			if ((p = party_search(owner_id)) == NULL) {
+				ShowError("instance_create: party %d not found for instance '%s'.\n", owner_id, name);
+				return -2;
+			}
+			iptr = p->instance;
+			icptr = &p->instances;
+			break;
+		case IM_GUILD:
+			if ((g = guild_search(owner_id)) == NULL) {
+				ShowError("instance_create: guild %d not found for instance '%s'.\n", owner_id, name);
+				return -2;
+			}
+			iptr = g->instance;
+			icptr = &g->instances;
+			break;
+		default:
+			ShowError("instance_create: unknown type %d for owner_id %d and name %s.\n", mode, owner_id, name);
+			return -1;
 	}
 
-	if (type != IOT_NONE && *icptr) {
+	if (mode != IM_NONE && *icptr) {
 		ARR_FIND(0, *icptr, i, iptr[i] != -1 && strcmp(instances[iptr[i]].name, name) == 0);
 		if (i != *icptr)
 			return -4;/* already got this instance */
@@ -112,7 +112,7 @@ int instance_create(int owner_id, const char *name, enum instance_owner_type typ
 	instances[i].map = NULL;
 	instances[i].num_map = 0;
 	instances[i].owner_id = owner_id;
-	instances[i].owner_type = type;
+	instances[i].mode = mode;
 	instances[i].vars = idb_alloc(DB_OPT_RELEASE_DATA);
 	instances[i].respawn.map = 0;
 	instances[i].respawn.y = 0;
@@ -120,23 +120,23 @@ int instance_create(int owner_id, const char *name, enum instance_owner_type typ
 
 	safestrncpy(instances[i].name, name, sizeof(instances[i].name));
 
-	if (type != IOT_NONE) {
+	if (mode != IM_NONE) {
 		ARR_FIND(0, *icptr, j, iptr[j] == -1);
 		if (j == *icptr) {
-			switch (type) {
-			case IOT_CHAR:
-				RECREATE(sd->instance, short, ++*icptr);
-				sd->instance[sd->instances - 1] = i;
-				break;
-			case IOT_PARTY:
-				RECREATE(p->instance, short, ++*icptr);
-				p->instance[p->instances - 1] = i;
-				break;
-			case IOT_GUILD:
-				RECREATE(g->instance, short, ++*icptr);
-				g->instance[g->instances - 1] = i;
-				break;
-			}
+			switch (mode) {
+				case IM_CHAR:
+					RECREATE(sd->instance, short, ++*icptr);
+					sd->instance[sd->instances - 1] = i;
+					break;
+				case IM_PARTY:
+					RECREATE(p->instance, short, ++*icptr);
+					p->instance[p->instances - 1] = i;
+					break;
+				case IM_GUILD:
+					RECREATE(g->instance, short, ++*icptr);
+					g->instance[g->instances - 1] = i;
+					break;
+				}
 		}
 		else
 			iptr[j] = i;
@@ -490,24 +490,24 @@ void instance_destroy(int instance_id)
 
 	clif_instance(instance_id, 5, type); // Report users this instance has been destroyed
 
-	switch (instances[instance_id].owner_type) {
-	case IOT_NONE:
+	switch (instances[instance_id].mode) {
+	case IM_NONE:
 		break;
-	case IOT_CHAR:
+	case IM_CHAR:
 		if ((sd = map_id2sd(instances[instance_id].owner_id)) == NULL) {
 			break;
 		}
 		iptr = sd->instance;
 		icptr = &sd->instances;
 		break;
-	case IOT_PARTY:
+	case IM_PARTY:
 		if ((p = party_search(instances[instance_id].owner_id)) == NULL) {
 			break;
 		}
 		iptr = p->instance;
 		icptr = &p->instances;
 		break;
-	case IOT_GUILD:
+	case IM_GUILD:
 		if ((g = guild_search(instances[instance_id].owner_id)) == NULL) {
 			break;
 		}
@@ -515,7 +515,7 @@ void instance_destroy(int instance_id)
 		icptr = &g->instances;
 		break;
 	default:
-		ShowError("instance_destroy: unknown type %d for owner_id %d and name '%s'.\n", instances[instance_id].owner_type, instances[instance_id].owner_id, instances[instance_id].name);
+		ShowError("instance_destroy: unknown mode %d for owner_id %d and name '%s'.\n", instances[instance_id].mode, instances[instance_id].owner_id, instances[instance_id].name);
 		break;
 	}
 
@@ -654,14 +654,14 @@ void instance_force_destroy(struct map_session_data *sd)
 	nullpo_retv(sd);
 
 	for (int i = 0; i < instance_count; ++i) {
-		switch (instances[i].owner_type) {
-		case IOT_CHAR:
+		switch (instances[i].mode) {
+		case IM_CHAR:
 		{
 			if (instances[i].owner_id != sd->status.account_id)
 				continue;
 			break;
 		}
-		case IOT_PARTY:
+		case IM_PARTY:
 		{
 			int party_id = sd->status.party_id;
 			if (instances[i].owner_id != party_id)
@@ -681,7 +681,7 @@ void instance_force_destroy(struct map_session_data *sd)
 			}
 			break;
 		}
-		case IOT_GUILD:
+		case IM_GUILD:
 		{
 			int guild_id = sd->status.guild_id;
 			if (instances[i].owner_id != guild_id)

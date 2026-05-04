@@ -12,7 +12,7 @@ extern unsigned short instance_count;
 /**
  * true if instance is in an active/playable state.
  * In other words, if a player can interact with it.
- * 
+ *
  * @param inst instance_data to be checked
  */
 #define instance_is_active(inst) ((inst).state == INSTANCE_IDLE || (inst).state == INSTANCE_BUSY)
@@ -24,20 +24,20 @@ typedef enum instance_state {
 	INSTANCE_DESTROYING,
 } instance_state;
 
-enum instance_owner_type {
-	IOT_NONE,
-	IOT_CHAR,
-	IOT_PARTY,
-	IOT_GUILD,
-	/* ... */
-	IOT_MAX,
+enum e_instance_mode {
+	IM_NONE,
+	IM_CHAR,
+	IM_PARTY,
+	IM_GUILD,
+	IM_CLAN,
+	IM_MAX,
 };
 
 struct instance_data {
 	unsigned short id;
 	char name[INSTANCE_NAME_LENGTH]; // Instance Name - required for clif functions.
 	instance_state state;
-	enum instance_owner_type owner_type;
+	enum e_instance_mode mode;
 	int owner_id;
 
 	unsigned short *map;
@@ -61,7 +61,7 @@ struct instance_data *instances;
 
 bool instance_is_valid(int instance_id);
 
-int instance_create(int owner_id, const char *name, enum instance_owner_type type);
+int instance_create(int owner_id, const char *name, enum e_instance_mode mode);
 int instance_add_map(const char *name, int instance_id, bool usebasename, const char *map_name);
 void instance_del_map(int m);
 int instance_map2imap(int m, int instance_id);
