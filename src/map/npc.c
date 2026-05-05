@@ -4227,7 +4227,6 @@ void npc_read_event_script(void)
 int npc_reload(void)
 {
 	struct npc_src_list *nsl;
-	int m, i;
 	int npc_new_min = npc_id;
 	struct s_mapiterator* iter;
 	struct block_list* bl;
@@ -4258,23 +4257,25 @@ int npc_reload(void)
 	}
 	mapit_free(iter);
 
-	if(battle_config.dynamic_mobs)
-	{// dynamic check by [random]
-		for (m = 0; m < map_num; m++) {
-			for (i = 0; i < MAX_MOB_LIST_PER_MAP; i++) {
+	// dynamic check by [random]
+	if(battle_config.dynamic_mobs) {
+		for (int m = 0; m < map_num; m++) {
+			for (int i = 0; i < MAX_MOB_LIST_PER_MAP; i++) {
 				if (map[m].moblist[i] != NULL) {
 					aFree(map[m].moblist[i]);
 					map[m].moblist[i] = NULL;
 				}
-				if( map[m].mob_delete_timer != INVALID_TIMER )
-				{ // Mobs were removed anyway,so delete the timer [Inkfish]
+
+				if(map[m].mob_delete_timer != INVALID_TIMER) {
+					// Mobs were removed anyway,so delete the timer [Inkfish]
 					delete_timer(map[m].mob_delete_timer, map_removemobs_timer);
 					map[m].mob_delete_timer = INVALID_TIMER;
 				}
+
+				if (map[m].npc_num > 0)
+					ShowWarning("npc_reload: %d npcs weren't removed at map %s!\n", map[m].npc_num, map[m].name);
 			}
 		}
-		if (map[m].npc_num > 0)
-			ShowWarning("npc_reload: %d npcs weren't removed at map %s!\n", map[m].npc_num, map[m].name);
 	}
 
 	// clear mob spawn lookup index
