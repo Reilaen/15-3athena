@@ -15122,76 +15122,84 @@ BUILDIN_FUNC(substr)
 // explode <dest_string_array>, <str>, <delimiter>
 // Note: delimiter is limited to 1 char
 //-------------------------------------------------------
-BUILDIN_FUNC(explode)
-{
+BUILDIN_FUNC(explode) {
 	struct script_data* data = script_getdata(st, 2);
 	const char *str = script_getstr(st,3);
 	const char delimiter = script_getstr(st, 4)[0];
-	int32 id;
-	size_t len = strlen(str);
+	const size_t len = strlen(str);
 	size_t i = 0, j = 0;
-	int index;
-
-	char *temp;
-	const char* name;
+	bool is_string = true;
 
 	TBL_PC* sd = NULL;
 
-	if( !data_isreference(data) )
-	{
+	if(!data_isreference(data)) {
 		ShowError("script:explode: not a variable\n");
 		script_reportdata(data);
 		st->state = END;
 		return 1;// not a variable
 	}
 
-	id = reference_getid(data);
-	index = reference_getindex(data);
-	name = reference_getname(data);
+	const int id = reference_getid(data);
+	int index = reference_getindex(data);
+	const char *name = reference_getname(data);
 
-	if( not_array_variable(*name) )
-	{
+	if(not_array_variable(*name)) {
 		ShowError("script:explode: illegal scope\n");
 		script_reportdata(data);
 		st->state = END;
 		return 1;// not supported
 	}
 
-	if( !is_string_variable(name) )
-	{
-		ShowError("script:explode: not string array\n");
-		script_reportdata(data);
-		st->state = END;
-		return 1;// data type mismatch
-	}
+	is_string = is_string_variable(name);
 
-	if( not_server_variable(*name) )
-	{
+	if(not_server_variable(*name)) {
 		sd = script_rid2sd(st);
 		if( sd == NULL )
 			return 0;// no player attached
 	}
 
-	temp = (char*)aMalloc(len + 1);
+	char *temp = aMalloc(len + 1);
 
-	for( i = 0; i < len; ++i )
-	{
-		if( index < SCRIPT_MAX_ARRAYSIZE-1 && str[i] == delimiter )
-		{ // break string at delimiter while there is space in the array
+	for( i = 0; i < len; ++i ) {
+		if( index < SCRIPT_MAX_ARRAYSIZE-1 && str[i] == delimiter ) {
+			// break string at delimiter while there is space in the array
 			temp[j] = '\0';
-			set_reg(st, sd, reference_uid(id, index), name, (void*)temp, reference_getref(data));
+			if (is_string) {
+				set_reg(st, sd, reference_uid(id, index), name, temp, reference_getref(data));
+			} else {
+				char *endptr = NULL;
+				long val = strtol(temp, &endptr, 10);
+
+				if (endptr == temp && temp[0] != '\0') {
+					ShowWarning("script:explode: '%s' is not a valid number. Defaulting to 0 at array index %d.\n", temp, index);
+					val = 0;
+				}
+
+				set_reg(st, sd, reference_uid(id, index), name, (void*)val, reference_getref(data));
+			}
 			++index;
 			j = 0;
-		}
-		else
-		{
+		} else {
 			temp[j] = str[i];
 			++j;
 		}
 	}
+
 	//set last string
 	temp[j] = '\0';
-	set_reg(st, sd, reference_uid(id, index), name, (void*)temp, reference_getref(data));
+	if (is_string) {
+		set_reg(st, sd, reference_uid(id, index), name, temp, reference_getref(data));
+	} else {
+		char *endptr = NULL;
+		long val = strtol(temp, &endptr, 10);
+
+		if (endptr == temp && temp[0] != '\0') {
+			ShowWarning("script:explode: '%s' is not a valid number. Defaulting to 0 at array index %d.\n", temp, index);
+			val = 0;
+		}
+
+		set_reg(st, sd, reference_uid(id, index), name, (void*)val, reference_getref(data));
+	}
 
 	aFree(temp);
 	return 0;
@@ -15200,70 +15208,56 @@ BUILDIN_FUNC(explode)
 // implode <string_array>
 // implode <string_array>, <glue>
 //-------------------------------------------------------
-BUILDIN_FUNC(implode)
-{
+BUILDIN_FUNC(implode) {
 	struct script_data* data = script_getdata(st, 2);
-	const char* name;
-	int32 array_size, id;
+	bool is_string = true;
 
 	TBL_PC* sd = NULL;
 
-	if( !data_isreference(data) )
-	{
+	if(!data_isreference(data)) {
 		ShowError("script:implode: not a variable\n");
 		script_reportdata(data);
 		st->state = END;
-		return 1;// not a variable
+		return 1;
 	}
 
-	id = reference_getid(data);
-	name = reference_getname(data);
+	const int id = reference_getid(data);
+	const char *name = reference_getname(data);
 
-	if( not_array_variable(*name) )
-	{
+	if(not_array_variable(*name)) {
 		ShowError("script:implode: illegal scope\n");
 		script_reportdata(data);
 		st->state = END;
 		return 1;// not supported
 	}
 
-	if( !is_string_variable(name) )
-	{
-		ShowError("script:implode: not string array\n");
-		script_reportdata(data);
-		st->state = END;
-		return 1;// data type mismatch
-	}
+	is_string = is_string_variable(name);
 
-	if( not_server_variable(*name) )
-	{
+	if(not_server_variable(*name)) {
 		sd = script_rid2sd(st);
-		if( sd == NULL )
-			return 0;// no player attached
+		if(sd == NULL)
+			return 0; // no player attached
 	}
 
 	//count chars
-	array_size = getarraysize(st, id, reference_getindex(data), is_string_variable(name), reference_getref(data));
+	const int array_size = getarraysize(st, id, reference_getindex(data), is_string_variable(name), reference_getref(data));
 
-	if( array_size < 0 || array_size >= SCRIPT_MAX_ARRAYSIZE )
-	{
+	if( array_size < 0 || array_size >= SCRIPT_MAX_ARRAYSIZE ) {
 		ShowError("script:implode: invalid array length = %d\n", array_size);
 		script_reportdata(data);
 		st->state = END;
 		return -1;
 	}
 
-	if( array_size == 0 ) //empty array check (AmsTaff)
-	{
+	if(array_size == 0) {
 		ShowWarning("script:implode: array length = 0\n");
 		script_reportdata(data);
 		script_reportsrc(st);
 		script_pushconststr(st, "NULL"); // XXX why return "NULL" for an empty array? [flaviojs]
-	}
-	else
-	{
+	} else {
 		const char* str[SCRIPT_MAX_ARRAYSIZE];
 		size_t len[SCRIPT_MAX_ARRAYSIZE];
+		int int_vals[SCRIPT_MAX_ARRAYSIZE];
 		size_t total_len = 0;
 		const char* glue = "";
 		size_t glue_len = 0;
@@ -15271,15 +15265,20 @@ BUILDIN_FUNC(implode)
 		int i, k;
 
 		// parse data
-		for( i = 0; i < array_size; ++i )
-		{
-			str[i] = (const char*)get_val2(st, reference_uid(id, i), reference_getref(data)); // leave string data in the stack
-			len[i] = strlen(str[i]);
+		for( i = 0; i < array_size; ++i ) {
+			if (is_string) {
+				str[i] = (const char*)get_val2(st, reference_uid(id, i), reference_getref(data));
+				len[i] = strlen(str[i]);
+			} else {
+				int_vals[i] = (int)(intptr_t)get_val2(st, reference_uid(id, i), reference_getref(data));
+				char temp_buf[16];
+				len[i] = snprintf(temp_buf, sizeof(temp_buf), "%d", int_vals[i]);
+			}
+
 			total_len += len[i];
 		}
 
-		if( script_hasdata(st,3) )
-		{
+		if(script_hasdata(st,3)) {
 			glue = script_getstr(st,3);
 			glue_len = strlen(glue);
 			total_len += glue_len * (array_size - 1);
@@ -15287,19 +15286,20 @@ BUILDIN_FUNC(implode)
 
 		//build output
 		output = (char*)aMalloc(total_len + 1);
-		for( i = 0, k = 0; i < array_size; ++i )
-		{
-			memcpy(&output[k], str[i], len[i]);
+		for( i = 0, k = 0; i < array_size; ++i ) {
+			if (is_string) {
+				memcpy(&output[k], str[i], len[i]);
+			} else {
+				sprintf(&output[k], "%d", int_vals[i]);
+			}
 			k += len[i];
-			if( glue_len > 0 && i < array_size - 1 )
-			{
+			if( glue_len > 0 && i < array_size - 1 ) {
 				memcpy(&output[k], glue, glue_len);
 				k += glue_len;
 			}
 		}
 		output[k] = '\0';
-		script_removetop(st, -array_size, 0); // clear string data in the stack
-
+		script_removetop(st, -array_size, 0);
 		script_pushstr(st, output);
 	}
 
