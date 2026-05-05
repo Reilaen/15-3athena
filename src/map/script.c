@@ -2997,13 +2997,31 @@ static int set_reg(struct script_state* st, TBL_PC* sd, int64 num, const char* n
 			}
 		}
 			return 1;
-		case '\'':
-			if (st->instance_id >=0) {
-				i64db_remove(instances[st->instance_id].vars, num);
-				if (str[0])
-					i64db_put(instances[st->instance_id].vars, num, aStrdup(str));
+		case '\'': {
+			DBMap* src = NULL;
+
+			if(ref){
+				src = *ref;
+			} else {
+				const struct instance_data* idata = &instances[script_instancegetid(st, IM_NONE)];
+
+				if (idata)
+					src = idata->vars;
 			}
+
+			if(src) {
+				if(((const char*)value)[0]){
+					i64db_put(src, num, aStrdup(value));
+				}else{
+					i64db_remove(src, num);
+				}
+			} else {
+				ShowError("script_set_reg: cannot write instance variable '%s', NPC not in a instance!\n", name);
+				script_reportsrc(st);
+			}
+
 			return 1;
+		}
 		default:
 			return pc_setglobalreg_str(sd, name, str);
 		}
@@ -3047,13 +3065,31 @@ static int set_reg(struct script_state* st, TBL_PC* sd, int64 num, const char* n
 				}
 			}
 			return 1;
-		case '\'':
-			if (st->instance_id >=0) {
-				i64db_remove(instances[st->instance_id].vars, num);
-				if (val != 0)
-					i64db_i64put(instances[st->instance_id].vars, num, val);
+		case '\'': {
+			DBMap* src = NULL;
+
+			if(ref){
+				src = *ref;
+			} else {
+				const struct instance_data* idata = &instances[script_instancegetid(st, IM_NONE)];
+
+				if (idata)
+					src = idata->vars;
 			}
+
+			if(src) {
+				if(value != 0){
+					i64db_i64put(src, num, val);
+				}else{
+					i64db_remove(src, num);
+				}
+			} else {
+				ShowError("script_set_reg: cannot write instance variable '%s', NPC not in a instance!\n", name);
+				script_reportsrc(st);
+			}
+
 			return 1;
+		}
 		default:
 			return pc_setglobalreg(sd, name, val);
 		}
