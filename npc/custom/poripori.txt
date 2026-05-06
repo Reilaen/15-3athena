@@ -1,0 +1,191 @@
+quiz_01	mapflag	src4instance
+
+prontera,150,150,4	script	Pori Pori Nyu	10242,{
+	.@instance_id = instance_id(IM_PARTY);
+
+	mes("[Pori Pori Nyu]");
+	mes("Heya! Welcome to the Pori Pori Challenge! I am here to help you to either host or participate in a Pori Pori Challenge. How can i help you?");
+	next;
+	menu((.@instance_id < 0 ? "Start a Pori Pori Challenge" : ""), StartChallenge, (.@instance_id >= 0 ? "Join a Pori Pori Challenge" : ""), JoinChallenge, "What is a Pori Pori Challenge?", Explanation, "Cancel", Cancel);
+
+	StartChallenge:
+		if (!is_party_leader()) {
+			mes "[Pori Pori Nyu]";
+			mes "You need to lead a party to start a Pori Pori Challenge";
+			close;
+		}
+
+		mes("[Pori Pori Nyu]");
+		mes("I will register your party. Please make sure that only people that want to participate are an it. You can change it later but it would cost you extra.");
+		next;
+		if (select("Thats fine continue.", "Wait! We need to make some changes.") == 2) {
+			goto(Cancel);
+		}
+
+		getpartymember(getcharid(1), 1);
+		.@participant_count = $@partymembercount;
+		copyarray(.@participants[0], $@partymembercid[0], .@participant_count);
+
+		//if($@participant_count < $@pori_min_group_size || .@participant_count> .max_group_size) {
+		//	mes("[Pori Pori Nyu]");
+		//	mes("Sadly that will not work. Your group needs atleast " + $@pori_min_group_size + " people and can not have more than " + .max_group_size + " people.");
+		//	close;
+		//}
+
+		.@fee = .base_fee + .@participant_count * .participant_fee;
+		mes("[Pori Pori Nyu]");
+		mes("Alright! Let's see.. the basic fee is ^0000FF" + callfunc("F_InsertComma", .base_fee) + " Zeny^000000.");
+		mes("The additional fee per participant is ^0000FF" + callfunc("F_InsertComma", .participant_fee) + " Zeny^000000.");
+		mes("That means the final fee is ^0000FF" + callfunc("F_InsertComma", .@fee) + " Zeny^000000.");
+		mes("Do you want to create the dimension for the Pori Pori Challenge?");
+		next;
+		if (select("Yes!", "No, i changed my mind.") == 2) {
+			goto(Cancel);
+		}
+
+		if (Zeny < .@fee) {
+			mes("[Pori Pori Nyu]");
+			mes("You do not have enough Zeny. The fee we agreed upon for the creation of the dimension for the Pori Pori Challenge is ^0000FF" + callsub("F_InsertComma", .@fee) + " Zeny^000000.");
+			close;
+		}
+
+		.@instance_id = instance_create("Pori Pori Challenge");
+		if (.@instance_id < 0 || instance_attachmap("quiz_01", .@instance_id, 1) == "") {
+			.@p_name$ = getpartyname(.@party_id);
+			mes("Party Name: " + .@p_name$);
+			mes("Party Leader: " + strcharinfo(0));
+			mes("Error #" + .@instance_id);
+			mes("Message: Reservation failed!");
+			close;
+		}
+		instance_set_timeout(300, 300, .@instance_id);
+		instance_init(.@instance_id);
+		Zeny -= .@fee;
+
+		mes("[Pori Pori Nyu]");
+		mes("Everything is ready. Please note that you have 5 minutes to start the Pori Pori Challenge or it will fail!");
+		next;
+
+		setinstancevar('participants$, implode(.@participants[0], ":"), .@instance_id);
+		goto(JoinChallenge);
+		end;
+
+	JoinChallenge:
+		.@instance_id = instance_id(IM_PARTY);
+
+		if (.@instance_id < 0) {
+			mes("[Pori Pori Nyu]");
+			mes("There is no Pori Pori Challenge you can join right now.");
+			close;
+		}
+
+		explode(.@participants[0], getinstancevar('participants$, .@instance_id), ":");
+
+		warp("quiz_01", 30, 285);
+		end;
+
+	Explanation:
+		mes("[Pori Pori Nyu]");
+		mes("That is pretty simple! You choose the size of your group, pay a small fee and i will create a dimension just for you.");
+		mes("Once the dimension is created you and your group have 10 minutes to enter it.  If you fail the Pori Pori Challenge has failed.");
+		next;
+		mes("[Pori Pori Nyu]");
+		mes("Inside the dimension you will meet my sister Nya, once you are ready you can tell her and she will start the Pori Pori Challenge.");
+		mes("You then have 30 minutes to beat " + getarraysize($pori_monsters) + " levels of monsters that get stronger with each level.");
+		next;
+		mes("[Pori Pori Nyu]");
+		mes("The quicker you beat all the levels, the better your reward will be.");
+		close;
+
+	Cancel:
+		mes("[Pori Pori Nyu]");
+		mes("Alright, come back any time if you need something!");
+		close;
+
+	OnInit:
+		$@pori_min_group_size = 2;
+		.max_group_size = 4;
+
+		$@pori_return_map$ = "prontera";
+		setarray($@pori_return_coords[0], 150, 154);
+
+		setarray($pori_monsters[0], 1002, 1002, 1002, 1002, 1002, 1002);
+
+		$@pori_price_id = 512;
+		setarray($@pori_price_amounts[0], 300000, 30, 600000, 25, 900000, 20, 120000, 15, 150000, 10, 18000, 5);
+
+		.base_fee = 100000;
+		.participant_fee = 10000;
+}
+
+quiz_01,30,288,4	script	Pori Pori Nya	10242,{
+	mes("[Pori Pori Nyu]");
+	mes("Hey! How can i help you? Do you want to start the Pori Pori Challenge?");
+	next;
+	menu("We are ready for the challenge!", Ready, "Let's wait a moment.", Wait, "I want to leave", Leave);
+
+	Ready:
+		disablenpc(instance_npcname("Pori Pori Nya"));
+		donpcevent('manager_npc$ + "::OnStartChallenge");
+		end;
+
+	Wait:
+		mes("[Pori Pori Nyu]");
+		mes("Alright then. I'll be waiting.");
+		close;
+
+	Leave:
+		warp($@pori_return_map$, $@pori_return_coords[0], $@pori_return_coords[1]);
+		end;
+}
+
+quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
+	OnStartChallenge:
+		instance_set_timeout(1860, 300);
+		mapannounce('map$, "The Pori Pori Challenge has started! You have 1 Minute to get ready!",bc_map,"0x00ff99");
+		'challenge_state = 1;
+		initnpctimer;
+		end;
+
+	EndChallenge:
+		sleep(5000);
+		instance_warpall($@pori_return_map$, $@pori_return_coords[0], $@pori_return_coords[1]);
+		instance_destroy();
+		end;
+
+	OnTimer30000:
+	OnNextLevel:
+		if('level > getarraysize($pori_monsters)) {
+			.@finish_time = getnpctimer(0);
+			for (.@i = 0; .@i < getarraysize($@pori_price_amounts); .@i += 2) {
+				if (.@finish_time <= $@pori_price_amounts[.@i]) {
+					.@price_amount = $@pori_price_amounts[.@i + 1];
+					break;
+				}
+			}
+
+			getitem($@pori_price_id, .@price_amount);
+
+			mapannounce('map$, "Congratulations you beat the final level! You will now be teleported back.", bc_map, "0x00ff99");
+			goto(EndChallenge);
+			end;
+		}
+
+		mapannounce('map$, "The opponent for level " + 'level + " has appeared!", bc_map, "0x00ff99");
+		.@area = rand(0, 1) * 4;
+		areamonster('map$, 'spawn_area[.@area], 'spawn_area[.@area + 1], 'spawn_area[.@area + 2], 'spawn_area[.@area + 3], "", $pori_monsters['level - 1], 1, 'manager_npc$ + "::OnNextLevel");
+		'level++;
+		end;
+
+	OnTimer1800000:
+		mapannounce('map$, "You failed to beat the Pori Pori Challenge on time! You will now be teleported back.", bc_map, "0x00ff99");
+		goto(EndChallenge);
+		end;
+
+	OnInstanceInit:
+		'map$ = instance_mapname("quiz_01");
+		'manager_npc$ = instance_npcname("PORI_PORI_CHALLENGE_MANAGER");
+		'level = 1;
+		setarray('spawn_area, 23, 293, 39, 277, 45, 293, 61, 277);
+		end;
+}
