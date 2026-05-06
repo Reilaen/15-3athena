@@ -618,3 +618,11 @@ function	script	close3	{
 	end;
 }
 
+function	script	F_FormatMilliseconds	{
+	.@ms_total = getarg(0);
+    .@minutes = (.@ms_total / 60000);
+    .@seconds = (.@ms_total % 60000) / 1000;
+    .@ms_remainder = (.@ms_total % 1000) / 100;
+
+    return .@minutes + "m " + .@seconds + "." + .@ms_remainder + "s";
+}
