@@ -1,0 +1,417 @@
+-	script	Castle_Raid_Config	-1,{
+	OnInit:
+		$@scouts = 15; // How many scouts spawn as base value.
+		$@scouts_per_player = 5; // Additional raiders per player that are spawned.
+
+		$@scout_alarm_time = 3 * 60000; // If scouts get defeated within $@scout_alarm_time milliseconds, the tier will rise to $@scout_next_tier.
+		$@scout_next_tier = 2;
+
+		$@raiders = 50; // How many scouts spawn as base value.
+		$@raiders_per_player = 10; // Additional scouts per player that are spawned.
+
+		$@captains = 3; // How many captains spawn as base value.
+		$@captain_advantage = 2; // How many captains are added if the guild fails to kill all scouts.
+
+		$@medium_offense_threshold = 10000;
+		$@high_offense_threshold = 20000;
+
+		$@member_count_tier2_threshold = 12;
+		$@member_count_tier3_threshold = 22;
+
+		$@kpm_tier2_threshold = 30;
+		$@kpm_tier3_threshold = 50;
+
+		$@scout_tier2_time = 3 * 60000;
+		$@scout_tier3_time = 1 * 60000;
+
+		// LOW TIER //
+		// Raiders: 1st Class Clone Mobs (lhz_dun02)
+		// 1652 (Egnigem), 1653 (Wickebine), 1654 (Armeyer), 1655 (Errende), 1656 (Kavach), 1657 (Laurell)
+		setarray($@low_tier_raiders[0], 1652, 1653, 1654, 1655, 1656, 1657);
+
+		// Captains: Trans-Class Normals (lhz_dun03)
+		// 1634 (Seyren), 1635 (Eremes), 1636 (Howard), 1637 (Margaretha), 1638 (Cecil), 1639 (Kathryne)
+		setarray($@low_tier_captains[0], 1634, 1635, 1636, 1637, 1638, 1639);
+
+		// Leaders: Boss Egnigem Cenia + Trans-Class MVPs (lhz_dun03)
+		// 1658 (Boss Egnigem), 1646 (MVP Seyren), 1647 (MVP Eremes), 1648 (MVP Howard), 1649 (MVP Margaretha), 1650 (MVP Cecil), 1651 (MVP Kathryne)
+		setarray($@low_tier_leaders[0], 1658, 1646, 1647, 1648, 1649, 1650, 1651);
+
+		// MEDIUM TIER //
+		// Raiders: Bio 4 Normals (lhz_dun04)
+		// 2221 (Randel), 2222 (Flamel), 2223 (Celia), 2224 (Chen), 2225 (Gertie), 2226 (Alphoccio), 2227 (Trentini)
+		setarray($@medium_tier_raiders[0], 2221, 2222, 2223, 2224, 2225, 2226, 2227);
+
+		// Captains: Bio 3 Mini-Bosses
+		// 1640 (Seyren), 1641 (Eremes), 1642 (Howard), 1643 (Margaretha), 1644 (Cecil), 1645 (Kathryne)
+		setarray($@medium_tier_captains[0], 1640, 1641, 1642, 1643, 1644, 1645);
+
+		// Leaders: Bio 4 MVPs (lhz_dun04)
+		// 2235 (MVP Randel), 2236 (MVP Flamel), 2237 (MVP Celia), 2238 (MVP Chen), 2239 (MVP Gertie), 2240 (MVP Alphoccio), 2241 (MVP Trentini)
+		setarray($@medium_tier_leaders[0], 2235, 2236, 2237, 2238, 2239, 2240, 2241);
+
+		// HIGH TIER //
+		// Raiders: Bio 5 Normals (3rd Class Clones, lhz_dun05)
+		// 3183 (Rune Knight Seyren), 3184 (Warlock Kathryne), 3185 (Ranger Cecil), 3186 (Arch Bishop Margaretha), 3187 (Mechanic Howard), 3188 (Guillotine Cross Eremes)
+		setarray($@high_tier_raiders[0], 3183, 3184, 3185, 3186, 3187, 3188);
+
+		// Captains: Bio 4 MVPs (Captains)
+		// 2235 (MVP Randel), 2236 (MVP Flamel), 2237 (MVP Celia), 2238 (MVP Chen), 2239 (MVP Gertie), 2240 (MVP Alphoccio), 2241 (MVP Trentini)
+		setarray($@high_tier_captains[0], 2235, 2236, 2237, 2238, 2239, 2240, 2241);
+
+		// Leaders: Bio 5 MVPs (3rd Class Clones MVPs, lhz_dun05)
+		// 3221 (MVP Margaretha), 3222 (MVP Cecil), 3223 (MVP Howard), 3224 (MVP Kathryne), 3225 (MVP Seyren), 3226 (MVP Randel)
+		setarray($@high_tier_leaders[0], 3221, 3222, 3223, 3224, 3225, 3226);
+}
+
+-	script	Castle_Raid	-1,{
+	OnInit:
+		if(strnpcinfo(4) == "") end;
+
+		bindatcmd("startraid",strnpcinfo(0) + "::OnStartRaid", 99, 99);
+		bindatcmd("endraid",strnpcinfo(0) + "::OnEndRaid", 99, 99);
+		.castle_map$ = strnpcinfo(4);
+
+		// WoE FE
+		if (.castle_map$ == "aldeg_cas01") setarray .emproom[0],216,23;
+		else if (.castle_map$ == "aldeg_cas02") setarray .emproom[0],213,23;
+		else if (.castle_map$ == "aldeg_cas03") setarray .emproom[0],205,31;
+		else if (.castle_map$ == "aldeg_cas04") setarray .emproom[0],36,217;
+		else if (.castle_map$ == "aldeg_cas05") setarray .emproom[0],27,101;
+		else if (.castle_map$ == "gefg_cas01") setarray .emproom[0],197,181;
+		else if (.castle_map$ == "gefg_cas02") setarray .emproom[0],176,178;
+		else if (.castle_map$ == "gefg_cas03") setarray .emproom[0],244,166;
+		else if (.castle_map$ == "gefg_cas04") setarray .emproom[0],174,177;
+		else if (.castle_map$ == "gefg_cas05") setarray .emproom[0],194,184;
+		else if (.castle_map$ == "payg_cas01") setarray .emproom[0],139,139;
+		else if (.castle_map$ == "payg_cas02") setarray .emproom[0],38,25;
+		else if (.castle_map$ == "payg_cas03") setarray .emproom[0],269,265;
+		else if (.castle_map$ == "payg_cas04") setarray .emproom[0],270,28;
+		else if (.castle_map$ == "payg_cas05") setarray .emproom[0],30,30;
+		else if (.castle_map$ == "prtg_cas01") setarray .emproom[0],197,197;
+		else if (.castle_map$ == "prtg_cas02") setarray .emproom[0],157,174;
+		else if (.castle_map$ == "prtg_cas03") setarray .emproom[0],16,220;
+		else if (.castle_map$ == "prtg_cas04") setarray .emproom[0],291,14;
+		else if (.castle_map$ == "prtg_cas05") setarray .emproom[0],266,266;
+		// WoE SE
+		else if (.castle_map$ == "arug_cas01") setarray .emproom[0],87,219;
+		else if (.castle_map$ == "arug_cas02") setarray .emproom[0],89,256;
+		else if (.castle_map$ == "arug_cas03") setarray .emproom[0],141,293;
+		else if (.castle_map$ == "arug_cas04") setarray .emproom[0],141,293;
+		else if (.castle_map$ == "arug_cas05") setarray .emproom[0],141,293;
+		else if (.castle_map$ == "schg_cas01") setarray .emproom[0],120,272;
+		else if (.castle_map$ == "schg_cas02") setarray .emproom[0],162,193;
+		else if (.castle_map$ == "schg_cas03") setarray .emproom[0],338,202;
+		else if (.castle_map$ == "schg_cas04") setarray .emproom[0],120,272;
+		else if (.castle_map$ == "schg_cas05") setarray .emproom[0],120,272;
+		// WoE TE
+		else if (.castle_map$ == "te_aldecas1") setarray .emproom[0],216,23;
+		else if (.castle_map$ == "te_aldecas2") setarray .emproom[0],213,23;
+		else if (.castle_map$ == "te_aldecas3") setarray .emproom[0],205,31;
+		else if (.castle_map$ == "te_aldecas4") setarray .emproom[0],36,217;
+		else if (.castle_map$ == "te_aldecas5") setarray .emproom[0],27,101;
+		else if (.castle_map$ == "te_prtcas01") setarray .emproom[0],197,197;
+		else if (.castle_map$ == "te_prtcas02") setarray .emproom[0],157,174;
+		else if (.castle_map$ == "te_prtcas03") setarray .emproom[0],16,220;
+		else if (.castle_map$ == "te_prtcas04") setarray .emproom[0],291,14;
+		else if (.castle_map$ == "te_prtcas05") setarray .emproom[0],266,266;
+	end;
+
+	OnStartRaid:
+	OnWed1955:
+		.owning_guild_id = getcastledata(.castle_map$, 1);
+		if(.owning_guild_id == 0) end;
+
+		initnpctimer;
+		announce("A Raid Group is forming around [" + getcastlename(.castle_map$) + "] Castle! Members of [" + getguildName(.owning_guild_id) + "] Guild, you have 5 minutes to gather to defend it!", bc_all, 0xFF0000);
+		end;
+
+	OnTimer300000:
+		.event_active = 1;
+		setmapflag(.castle_map$, MF_LOADEVENT);
+		maprespawnguildid(.castle_map$, .owning_guild_id, 2);
+
+		.main_phase_kills = 0;
+		.captain_kills = 0;
+		.member_count = getmapguildusers(.castle_map$, .owning_guild_id);
+		.tier = callsub(S_CalcBaselineTier, .owning_guild_id, 1, .member_count);
+
+		.captains = $@captains;
+		.scouts = $@scouts + .member_count * $@scouts_per_player;
+
+		announce("A Raid Group has started attacking [" + getcastlename(.castle_map$) + "] castle!", bc_all, 0xFF0000);
+		mapannounce(.castle_map$, "The [" + getcastlename(.castle_map$) + "] Castle will be conquered if the Raiders are not defeated within 30 minutes!", bc_map, 0xFF0000);
+		mapannounce(.castle_map$, .scouts + " Raid Scouts have appeared! Defeat them before the main force arrives in 5 minutes!", bc_map, 0xFF0000);
+		callsub(S_SpawnScouts, .scouts, .tier);
+		end;
+
+	OnTimer600000:
+		mapannounce(.castle_map$, "The Raiders main forces have arrived! The Raid Leader dispatches the first of " + .captains + " Raid Captains to break your defenses!", bc_map, 0xFF0000);
+		if(mobcount(.castle_map$, strnpcinfo(0) + "::OnRaidScoutKilled") > 0) {
+			.captains += $@captain_advantage;
+		}
+
+		mapannounce(.castle_map$, "Find and defeat the " + .captains + " Raid Captain!", bc_map, 0xFF0000);
+
+		callsub(S_SpawnRaiders, $@raiders + .member_count * $@raiders_per_player, .tier);
+		callsub(S_SpawnCaptains, 1, .tier);
+		end;
+
+	OnTimer2100000:
+	OnDefendFailed:
+		announce("The [" + getguildName(.owning_guild_id) + "] Guild lost [" + getcastlename(.castle_map$) + "] Castle to the Raid Group!", bc_all, 0xFF0000);
+		for (.@i = 1; .@i <= 17; .@i++) {
+			setcastledata(.castle_map$, .@i, 0);
+		}
+
+		maprespawnguildid(.castle_map$, .owning_guild_id, 1);
+		callsub(S_EndEvent);
+		end;
+
+	OnRaidScoutKilled:
+		.main_phase_kills++;
+
+		if (mobcount(.castle_map$, strnpcinfo(0) + "::OnRaidScoutKilled") == 0) {
+			mapannounce(.castle_map$, "All Raid Scouts have been defeated! Use the earned time to prepare.", bc_map, 0xFF0000);
+			.@elapsed_ms = getnpctimer(0) - 300000;
+
+			if (.@elapsed_ms <= $@scout_tier3_time && .tier < 3) {
+				.tier = 3;
+			} else if (.@elapsed_ms <= $@scout_tier2_time && .tier < 2) {
+				.tier = 2;
+			}
+			end;
+		}
+
+		mapannounce(.castle_map$, "A Raid Scout has been defeated! (" + mobcount(.castle_map$, strnpcinfo(0) + "::OnRaidScoutKilled") + " / " + .scouts + " remaining)", bc_map, 0xFF0000);
+		end;
+
+	OnRaidMemberKilled:
+		.main_phase_kills++;
+
+		.tier = callsub(S_CalcTierByKills, .tier);
+		callsub(S_SpawnRaiders, 1, .tier);
+		end;
+
+	OnRaidCaptainKilled:
+		.main_phase_kills++;
+		.captain_kills++;
+
+		.tier = callsub(S_CalcTierByKills, .tier);
+		if(.captain_kills < .captains) {
+			mapannounce(.castle_map$, "A Raid Captain has fallen! (" + (.captains - .captain_kills) +  " / " + .captains + " remaining)", bc_map, 0xFF0000);
+			mapannounce(.castle_map$, "But there is no time to rest! Another Raid Captain just broke through the defenses!", bc_map, 0xFF0000);
+			callsub(S_SpawnCaptains, 1, .tier);
+			end;
+		}
+
+		mapannounce(.castle_map$, "Angered by the miserable failure of his Raid Captains, the Raid Leader has burst in the Emperium Room!", bc_map, 0xFF0000);
+		callsub(S_SpawnLeader, .tier);
+		end;
+
+	OnEndRaid:
+	OnRaidLeaderKilled:
+		callsub(S_EndEvent);
+		announce("The [" + getguildName(.owning_guild_id) + "] Guild successfully defended [" + getcastlename(.castle_map$) + "] Castle against the Raid Group!", bc_all, 0xFF0000);
+		end;
+
+	OnPCDieEvent:
+		if(!.event_active || strcharinfo(3) != .castle_map$ || getmapguildusers(.castle_map$, .owning_guild_id) > 0) end;
+		goto(OnDefendFailed);
+
+	OnPCLoadMapEvent:
+		if (strcharinfo(3) != .castle_map$ || getgmlevel() > 0) end;
+		sleep2(500);
+		dispbottom("The [" + getcastlename(.castle_map$) + "] Castle is surrounded by a magical barrier, which makes it impossible to enter.");
+		warp("SavePoint", 0, 0);
+		end;
+
+	S_EndEvent:
+		stopnpctimer;
+		callsub(S_ClearMonsters);
+		removemapflag(.castle_map$, MF_LOADEVENT);
+		.event_active = 0;
+		return;
+
+		S_CalcBaselineTier:
+		    .@guild_id = getarg(0);
+		    .@min_tier = getarg(1, 1);
+		    .@member_count = getarg(2, 1);
+		    .@total_power = 0;
+
+		    getmapunits(BL_PC, .castle_map$, .@players$[0]);
+		    for (.@i = 0; .@i < getarraysize(.@players$); .@i++ ) {
+		        if (getcharid(2, .@players$[.@i]) == .@guild_id) {
+		            .@member_count++;
+
+		            .@atk = readparam(bAtk, .@players[.@i]) + readparam(bAtk2, .@players[.@i]);
+		            .@matk = readparam(bMatk, .@players[.@i]) + readparam(bMatk2, .@players[.@i]);
+		            .@total_power += (.@atk + .@matk);
+		        }
+		    }
+
+		    .@tier_by_members = 1;
+		    if (.@member_count >= $@member_count_tier3_threshold) {
+				.@tier_by_members = 3;
+		    } else if (.@member_count >= $@member_count_tier2_threshold) {
+				.@tier_by_members = 2;
+			}
+
+		    .@tier_by_offense = 1;
+		    if (.@total_power >= $@high_offense_threshold) {
+				.@tier_by_offense = 3;
+			} else if (.@total_power >= $@medium_offense_threshold) {
+				.@tier_by_offense = 2;
+			}
+
+		    .@calc_tier = .@tier_by_members;
+		    if (.@tier_by_offense > .@calc_tier) {
+		        .@calc_tier = .@tier_by_offense;
+		    }
+
+		    if (.@min_tier > .@calc_tier) {
+				return .@min_tier;
+			}
+
+		return .@calc_tier;
+
+	S_CalcTierByKills:
+		.@min_tier = getarg(0, 1);
+		.@calc_tier = 1;
+
+		.@elapsed_ms = getnpctimer(0) - 300000;
+	    if (.@elapsed_ms > 0) {
+	        .@kills_per_minute = (.main_phase_kills * 60000) / .@elapsed_ms;
+
+	        if (.@kills_per_minute >= $@kpm_tier3_threshold) {
+	            .@calc_tier = 3;
+	        } else if (.@kills_per_minute >= $@kpm_tier2_threshold) {
+	            .@calc_tier = 2;
+	        }
+	    }
+
+		if (.@min_tier > .@calc_tier) return .@min_tier;
+
+		return .@calc_tier;
+
+	S_SpawnScouts:
+		callsub(S_SpawnBasicRaiders, getarg(0), getarg(1), "Raid Scout", "OnRaidScoutKilled");
+		return;
+
+	S_SpawnRaiders:
+		callsub(S_SpawnBasicRaiders, getarg(0), getarg(1), "Raider", "OnRaidMemberKilled");
+		return;
+
+	S_SpawnBasicRaiders:
+		.@name$ = getarg(2);
+		.@label$ = getarg(3);
+
+		switch(getarg(1)) {
+			case 1:
+				copyarray(.@raider_ids[0], $@low_tier_raiders[0], getarraysize($@low_tier_raiders));
+				break;
+			case 2:
+				copyarray(.@raider_ids[0], $@medium_tier_raiders[0], getarraysize($@medium_tier_raiders));
+				break;
+			case 3:
+				copyarray(.@raider_ids[0], $@high_tier_raiders[0], getarraysize($@high_tier_raiders));
+				break;
+		}
+
+		.@raider_amount = getarg(0);
+		for(.@i = 0; .@i < .@raider_amount; .@i++) {
+			monster(.castle_map$, 0, 0, .@name$, .@raider_ids[rand(0, getarraysize(.@raider_ids) - 1)], 1, strnpcinfo(0) + "::" + .@label$);
+		}
+
+		return;
+
+	S_SpawnCaptains:
+		switch(getarg(1)) {
+			case 1:
+				copyarray(.@captain_ids[0], $@low_tier_captains[0], getarraysize($@low_tier_captains));
+				break;
+			case 2:
+				copyarray(.@captain_ids[0], $@medium_tier_captains[0], getarraysize($@medium_tier_captains));
+				break;
+			case 3:
+				copyarray(.@captain_ids[0], $@high_tier_captains[0], getarraysize($@high_tier_captains));
+				break;
+		}
+
+		.@captain_amount = getarg(0);
+		for(.@i = 0; .@i < .@captain_amount; .@i++) {
+			monster(.castle_map$, 0, 0, "Raid Captain", .@captain_ids[rand(0, getarraysize(.@captain_ids) - 1)], 1, strnpcinfo(0) + "::OnRaidCaptainKilled");
+		}
+		return;
+
+	S_SpawnLeader:
+		switch(getarg(0)) {
+			case 1:
+				copyarray(.@leader_ids[0], $@low_tier_leaders[0], getarraysize($@low_tier_leaders));
+				break;
+			case 2:
+				copyarray(.@leader_ids[0], $@medium_tier_leaders[0], getarraysize($@medium_tier_leaders));
+				break;
+			case 3:
+				copyarray(.@leader_ids[0], $@high_tier_leaders[0], getarraysize($@high_tier_leaders));
+				break;
+		}
+
+		monster(.castle_map$, .emproom[0], .emproom[1], "Raid Leader", .@leader_ids[rand(0, getarraysize(.@leader_ids) - 1)], 1, strnpcinfo(0) + "::OnRaidLeaderKilled");
+		return;
+
+	S_ClearMonsters:
+			killmonster(.castle_map$, strnpcinfo(0) + "::OnRaidScoutKilled");
+			killmonster(.castle_map$, strnpcinfo(0) + "::OnRaidMemberKilled");
+			killmonster(.castle_map$, strnpcinfo(0) + "::OnRaidCaptainKilled");
+			killmonster(.castle_map$, strnpcinfo(0) + "::OnRaidLeaderKilled");
+			return;
+}
+
+aldeg_cas01,0,0,0	duplicate(Castle_Raid)	CR_Neuschwanstein	-1
+aldeg_cas02,0,0,0	duplicate(Castle_Raid)	CR_Hohenschwangau	-1
+aldeg_cas03,0,0,0	duplicate(Castle_Raid)	CR_Nuenberg	-1
+aldeg_cas04,0,0,0	duplicate(Castle_Raid)	CR_Wuerzburg	-1
+aldeg_cas05,0,0,0	duplicate(Castle_Raid)	CR_Rothenburg	-1
+
+gefg_cas01,0,0,0	duplicate(Castle_Raid)	CR_Repherion	-1
+gefg_cas02,0,0,0	duplicate(Castle_Raid)	CR_Eeyolbriggar	-1
+gefg_cas03,0,0,0	duplicate(Castle_Raid)	CR_Yesnelph	-1
+gefg_cas04,0,0,0	duplicate(Castle_Raid)	CR_Bergel	-1
+gefg_cas05,0,0,0	duplicate(Castle_Raid)	CR_Mersetzdeitz	-1
+
+payg_cas01,0,0,0	duplicate(Castle_Raid)	CR_Bright	-1
+payg_cas02,0,0,0	duplicate(Castle_Raid)	CR_Scarlet_Palace	-1
+payg_cas03,0,0,0	duplicate(Castle_Raid)	CR_Holy_Shadow	-1
+payg_cas04,0,0,0	duplicate(Castle_Raid)	CR_Sacred_Altar	-1
+payg_cas05,0,0,0	duplicate(Castle_Raid)	CR_Bamboo_Grove_Hill	-1
+
+prtg_cas01,0,0,0	duplicate(Castle_Raid)	CR_Kriemhild	-1
+prtg_cas02,0,0,0	duplicate(Castle_Raid)	CR_Swanhild	-1
+prtg_cas03,0,0,0	duplicate(Castle_Raid)	CR_Fadhgridh	-1
+prtg_cas04,0,0,0	duplicate(Castle_Raid)	CR_Skoegul	-1
+prtg_cas05,0,0,0	duplicate(Castle_Raid)	CR_Gondul	-1
+
+arug_cas01,0,0,0	duplicate(Castle_Raid)	CR_Mardol	-1
+arug_cas02,0,0,0	duplicate(Castle_Raid)	CR_Cyr	-1
+arug_cas03,0,0,0	duplicate(Castle_Raid)	CR_Horn	-1
+arug_cas04,0,0,0	duplicate(Castle_Raid)	CR_Gefn	-1
+arug_cas05,0,0,0	duplicate(Castle_Raid)	CR_Bandis	-1
+
+schg_cas01,0,0,0	duplicate(Castle_Raid)	CR_Himinn	-1
+schg_cas02,0,0,0	duplicate(Castle_Raid)	CR_Andlangr	-1
+schg_cas03,0,0,0	duplicate(Castle_Raid)	CR_Viblainn	-1
+schg_cas04,0,0,0	duplicate(Castle_Raid)	CR_Hljod	-1
+schg_cas05,0,0,0	duplicate(Castle_Raid)	CR_Skidbladnir	-1
+
+te_aldecas1,0,0,0	duplicate(Castle_Raid)	CR_Kafragarten_01	-1
+te_aldecas2,0,0,0	duplicate(Castle_Raid)	CR_Kafragarten_02	-1
+te_aldecas3,0,0,0	duplicate(Castle_Raid)	CR_Kafragarten_03	-1
+te_aldecas4,0,0,0	duplicate(Castle_Raid)	CR_Kafragarten_04	-1
+te_aldecas5,0,0,0	duplicate(Castle_Raid)	CR_Kafragarten_05	-1
+
+te_prtcas01,0,0,0	duplicate(Castle_Raid)	CR_Gloria_01	-1
+te_prtcas02,0,0,0	duplicate(Castle_Raid)	CR_Gloria_02	-1
+te_prtcas03,0,0,0	duplicate(Castle_Raid)	CR_Gloria_03	-1
+te_prtcas04,0,0,0	duplicate(Castle_Raid)	CR_Gloria_04	-1
+te_prtcas05,0,0,0	duplicate(Castle_Raid)	CR_Gloria_05	-1
