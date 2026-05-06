@@ -11,7 +11,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 	StartChallenge:
 		if (!is_party_leader()) {
 			mes "[Pori Pori Nyu]";
-			mes "You need to lead a party to start a Pori Pori Challenge";
+			mes "You need to lead a party to start a Pori Pori Challenge.";
 			close;
 		}
 
@@ -150,39 +150,33 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 quiz_01,30,288,4	script	Pori Pori Nya	10242,{
 	mes("[Pori Pori Nyu]");
-	mes("Hey! How can i help you? Do you want to start the Pori Pori Challenge?");
+	mes("Hey! How can i help you?");
 	next;
-	menu("We are ready for the challenge!", Ready, "Let's wait a moment.", Wait, "I want to leave", Leave);
-
-	Ready:
-		if ('participants_amount < getmapusers('map$)) {
-			mes("[Pori Pori Nyu]");
-			mes("Not all registered participants are here, do you want to start anyway?");
-			next;
-			if (select("Yes.", "No.") == 2) {
-				goto(Wait);
-			}
-		}
-
-		disablenpc(instance_npcname("Pori Pori Nya"));
-		donpcevent('manager_npc$ + "::OnStartChallenge");
-		end;
-
-	Wait:
-		mes("[Pori Pori Nyu]");
-		mes("Alright then. I'll be waiting until you are ready.");
-		close;
-
-	Leave:
+	if(select((is_party_leader() ? "Please start the challenge!" : ""), "I want to leave") == 2) {
 		warp($@pori_return_map$, $@pori_return_coords[0], $@pori_return_coords[1]);
 		end;
+	}
+
+	if ('participants_amount < getmapusers('map$)) {
+		mes("[Pori Pori Nyu]");
+		mes("Not all registered participants are here, do you want to start anyway?");
+		next;
+		if (select("Yes.", "No.") == 2) {
+			mes("[Pori Pori Nyu]");
+			mes("Alright then. I'll be waiting until you are ready.");
+			close;
+		}
+	}
+
+	disablenpc(instance_npcname("Pori Pori Nya"));
+	donpcevent('manager_npc$ + "::OnStartChallenge");
+	end;
 }
 
 quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 	OnStartChallenge:
 		instance_set_timeout(1860, 300);
 		mapannounce('map$, "The Pori Pori Challenge has started! You have 1 Minute to get ready!", bc_map, "0x00ff99");
-		'challenge_state = 1;
 		initnpctimer;
 		end;
 
