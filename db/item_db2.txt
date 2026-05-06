@@ -3006,6 +3006,7 @@
 31601,C_Under_Rim_Glasses_Blue,C Under Rim Glasses Blue,5,0,,,,0,,0,0xFFFFFFFF,63,2,2048,,1,,1805,{},{},{}
 31602,C_Midgarts_Glory,C Rune Midgarts Glory,5,0,,,,0,,0,0xFFFFFFFF,63,2,1024,,1,,1807,{},{},{}
 31609,C_Noble_Mask,C Noble Mask,5,0,,,,0,,0,0xFFFFFFFF,63,2,2048,,1,,1409,{},{},{}
+2000000,Nyan_Lotto_Ring,Lotto Ring,5,,,,,0,,0,0xFFFFFFFE,7,2,136,,20,0,0,{ bonus2 bAddMonsterDropItemGroup,IG_Lottoboxes,10000; },{},{}
 
 // Faceworm Nest (custom) (renewal)
 6649,Broken_Horn,Broken Horn,3,10,,10,,,,,,,,,,,,,{},{},{}

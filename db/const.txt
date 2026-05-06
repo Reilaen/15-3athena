@@ -827,6 +827,7 @@ IG_VelcardeAlbum	61
 IG_VelcardeRecycle	62
 IG_SealedCardAlbum	63
 IG_SealedCardAlbum2	64
+IG_Lottoboxes 65
 
 //Item Packages
 IP_Aspersio_5_Scroll_Box	1		// 92

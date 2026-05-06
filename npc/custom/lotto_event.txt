@@ -1,0 +1,280 @@
+prontera,150,150,4	script	Lotto Manager	604,{
+	mes("Lotto Manager");
+	mes("Welcome friend! Are you interested in playing some lotto? I offer everything you need! How can i help you?");
+	next;
+	menu("I want to register a ticket.", RegisterTicket, "What are the lotto numbers today?", LottoNumbers, "Check my ticket, please!", CheckTicket, "Can you give me more information?", Information, "Can i have a Lotto Ring?", GetRing,  "No, thank you.", Cancel);
+
+	RegisterTicket:
+		if (lotto_ticket_draw_id == $lotto_next_draw_id) {
+			mes("Lotto Manager");
+			mes("You already registered a ticket for draw #" + $lotto_next_draw_id + "!");
+			close;
+		}
+
+		if (lotto_ticket_draw_id > 0) {
+			mes("Lotto Manager");
+			mes("Do you have an old ticket? Let us check that first.");
+			next;
+			goto(CheckTicket);
+		}
+
+		if (Zeny < .registration_fee) {
+			mes("Lotto Manager");
+			mes("I am sorry, but it seems like you do not have enough zeny. Please consider coming back once you have!");
+			close;
+		}
+
+		mes("Lotto Manager");
+		mes("Great! Please hand over 6 different lotto balls.");
+		next;
+
+		getinventorylist;
+		for (.@i = 0; .@i < @inventorylist_count; .@i++) {
+			if (!getd(".id_" + @inventorylist_id[.@i] + "_to_number")) {
+				continue;
+			}
+
+			.@menu$[.@lotto_ball_count] = getitemname(@inventorylist_id[.@i]) + " (" + @inventorylist_amount[.@i] + ")";
+			.@lotto_ball_ids[.@lotto_ball_count] = @inventorylist_id[.@i];
+			.@lotto_ball_count++;
+		}
+
+		if (.@lotto_ball_count == 0) {
+			mes("Lotto Manager");
+			mes("It seems you don't have any lotto balls!");
+			close;
+		}
+
+		if (.@lotto_ball_count < 6) {
+			mes("Lotto Manager");
+			mes("You don't have enough unique lotto balls to complete your ticket!");
+			close;
+		}
+
+		for (.@i = 0; .@i < 6; .@i++) {
+			.@selected_lotto_idx = select(implode(.@menu$, ":")) - 1;
+			.@menu$[.@selected_lotto_idx] = "";
+			.@selected_numbers[.@i] = .@lotto_ball_ids[.@selected_lotto_idx];
+			.@current_number = getd(".id_" + .@lotto_ball_ids[.@selected_lotto_idx] + "_to_number");
+
+			.@ticket_numbers$ += .@current_number;
+			if (.@i < 5) .@ticket_numbers$ += ", ";
+
+			mes("Lotto Manager");
+			mes("You added number " + .@current_number + " to your ticket. (" + (.@i + 1) + "/6)");
+			next;
+		}
+
+		mes("Lotto Manager");
+		mes("You selected the following 6 numbers:");
+		mes("^0000FF" + .@ticket_numbers$ + "^000000");
+		mes("Are you sure you want to register this ticket?");
+		next;
+
+		if (select("Yes, register it!", "No, i changed my mind.") == 2) {
+			goto(Cancel);
+		}
+
+		Zeny -= .registration_fee;
+		for (.@i = 0; .@i < 6; .@i++) {
+			delitem(.@selected_numbers[.@i], 1);
+		}
+
+		lotto_ticket_numbers$ = .@ticket_numbers$;
+		lotto_ticket_draw_id = $lotto_next_draw_id;
+
+		mes("Lotto Manager");
+		mes("Perfect! I registered your ticket and all you need now is a little bit of luck! Also please keep in mind that you can always check your ticket via @lottoticket.");
+		mes("Come back after 18:00 to see if you won!");
+		close;
+
+	LottoNumbers:
+		if ($lotto_latest_draw_id == 0) {
+			mes("Lotto Manager");
+			mes("We just started today. Come back after 18:00, then i will have the numbers of our first draw for you!");
+			close;
+		}
+
+		mes("Lotto Manager");
+		mes("The lotto numbers of the latest draw #" + $lotto_latest_draw_id + " are:");
+		mes("^0000FF" + getd("$lotto_saved_draws_" + $lotto_latest_draw_id + "$") + "^000000");
+		close;
+
+	CheckTicket:
+		if (lotto_ticket_draw_id == 0) {
+			mes("Lotto Manager");
+			mes("How? It seems like you do not even own a ticket..");
+			close;
+		}
+
+		if (lotto_ticket_draw_id == $lotto_next_draw_id) {
+			mes("Lotto Manager");
+			mes("It seems like you messed something up. Your ticket is for the upcoming draw #" + $lotto_next_draw_id + ".");
+			close;
+		}
+
+		.@saved_draw$ = getd("$lotto_saved_draws_" + lotto_ticket_draw_id + "$");
+		if(.@saved_draw$ == "") {
+			mes("Lotto Manager");
+			mes("Sadly, it seems this ticket is too old. It is for drawing #" + lotto_ticket_draw_id + " we keep track of the current draw plus the last " + .draws_history_limit + " draws.");
+			mes("Right now we are at drawing #" + $lotto_next_draw_id + ".");
+			close;
+		}
+
+		explode(.@player_numbers$, lotto_ticket_numbers$, ", ");
+		explode(.@saved_draw_numbers$, .@saved_draw$, ", ");
+
+		for (.@i = 0; .@i < 6; .@i++) {
+			.@saved_draw_number = atoi(.@saved_draw_numbers$[.@i]);
+			for (.@j = 0; .@j < 6; .@j++) {
+				.@player_number = atoi(.@player_numbers$[.@j]);
+				if (.@saved_draw_number == .@player_number) {
+					.@tier++;
+					break;
+				}
+			}
+		}
+
+		mes("Lotto Manager");
+		mes("Let's check your ticket for draw #" + lotto_ticket_draw_id + "...");
+		mes("The numbers of the draw are " + .@saved_draw$ + "...");
+		mes("and your numbers are " + lotto_ticket_numbers$ + ".");
+		mes("That means you have ^0000FF" + .@tier + " matching numbers^000000!");
+		next;
+
+		if (.@tier >= 3) {
+			mes("Lotto Manager");
+			mes("Congratulations! You are a winner! Here is your price!");
+
+			.@idx = rand(getd(".prices_tier_" + .@tier + "_size")) * 2;
+			getitem(getd(".prices_tier_" + .@tier + "[" + .@idx + "]"), getd(".prices_tier_" + .@tier + "[" + (.@idx + 1) + "]"));
+		} else {
+			mes("Lotto Manager");
+			mes("Unfortunately, you didn't win this time.. But noone leaves without a price! Take this small gift and better luck next time!");
+
+			.@idx = rand(.consolation_prices_size) * 2;
+			getitem(.consolation_prices[.@idx], .consolation_prices[.@idx + 1]);
+		}
+
+		lotto_ticket_draw_id = 0;
+		lotto_ticket_numbers$ = "";
+		close;
+
+	Information:
+		mes("Lotto Manager");
+		mes("It is pretty simple, we provide you a magic Lotto Ring, that sometimes creates an Lotto Box, when you kill a monster.");
+		mes("Those boxes give you a ball with a random number. Each box has a different range, one goes from 1 to 10, the next from 11 to 20.");
+		next;
+		mes("Lotto Manager");
+		mes("The final box goes from 41 to 45. So in total you can get numbers from 1 to 45. Everyday until 18:00 you can register a ticket for small fee of ^0000FF" + callfunc("F_InsertComma", .registration_fee) + " Zeny^000000!");
+		mes("Registering a ticket simply means, you give me 6 number balls you choose and will put them into my lotto machine.");
+		next;
+		mes("Lotto Manager");
+		mes("Everyday at 18:00 i will draw 6 random numbers and those lucky people that got atleast 3 numbers right get a price. You should not miss this opportunity!");
+		close;
+
+	GetRing:
+		mes("Lotto Manager");
+		mes("Of course! They are very cheap, only ^0000FF" + callfunc("F_InsertComma", .lotto_ring_price) + " zeny^000000! So are you interested?");
+		next;
+		if (select("Yes, i want one!", "Thank you, but i pass.") == 2) {
+			goto(Cancel);
+		}
+
+		if (Zeny < .lotto_ring_price) {
+			mes("Lotto Manager");
+			mes("It seems you do not have enough Zeny.. Please come back once you have!");
+			close;
+		}
+
+		Zeny -= .lotto_ring_price;
+		getitem(.lotto_ring_id, 1);
+
+		mes("Lotto Manager");
+		mes("There you go! Enjoy your Lotto Ring and Good luck!");
+		close;
+
+	Cancel:
+		mes("Lotto Manager");
+		mes("Alright, do not hesitate to come back, if you change your mind. Have a nice day!");
+		close;
+
+	OnLottoTicket:
+		if (lotto_ticket_draw_id == 0) {
+			dispbottom("You do not own a ticket.");
+			end;
+		}
+
+		dispbottom("##### LOTTO TICKET #####");
+		dispbottom("Your numbers are " + lotto_ticket_numbers$);
+		dispbottom("Drawing #" + lotto_ticket_draw_id);
+		end;
+
+	OnHour18:
+		$lotto_latest_draw_id = $lotto_next_draw_id;
+		$lotto_next_draw_id++;
+
+		while (.@i < 6) {
+			.@number = rand(1, 45);
+			if (!getd(".@drawn_" + .@number)) {
+				.@lotto_latest_draw$ += "" + .@number;
+				if (.@i < 5) {
+					.@lotto_latest_draw$ += ", ";
+				}
+				setd(".@drawn_" + .@number, 1);
+				.@i++;
+			}
+		}
+
+		setd("$lotto_saved_draws_" + $lotto_latest_draw_id + "$", .@lotto_latest_draw$);
+
+		.@old_draw = $lotto_latest_draw_id - (.draws_history_limit + 1);
+		if (.@old_draw > 0) {
+			setd("$lotto_saved_draws_" + .@old_draw + "$", "");
+		}
+
+		announce("[Lotto Manager] The latest numbers have been drawn! The numbers for draw #" + $lotto_latest_draw_id + " are " + .@lotto_latest_draw$ + "! Good luck everyone!", bc_all|bc_blue);
+		end;
+
+	OnInit:
+		bindatcmd("lottoticket", strnpcinfo(0) + "::OnLottoTicket");
+
+		if($lotto_next_draw_id == 0) {
+			$lotto_next_draw_id = 1;
+			$lotto_latest_draw_id = 0;
+		}
+
+		.lotto_ring_id = 25000;
+		.lotto_ring_price = 100000;
+		.registration_fee = 100000;
+		.draws_history_limit = 7;
+
+		.@current_lotto_id = 7361;
+		for(.@i = 1; .@i < 46; .@i++) {
+			setd(".id_" + .@current_lotto_id + "_to_number", .@i);
+			.@current_lotto_id++;
+			if(.@current_lotto_id == 7399) {
+				.@current_lotto_id = 7540;
+			}
+		}
+
+		// Gift Box, Berserk Potion
+		setarray(.consolation_prices, 644, 1, 657, 10);
+
+		// Yggdrasil Berry, OBB, Enriched Elunium, Enriched Oridecon
+		setarray(.prices_tier_3, 607, 10, 603, 1, 6291, 1, 6292, 1, 14533, 1, 12210, 1);
+
+		// Old Card Album, Old Purple Box, Convex Mirror, Safe to 5 Armor Certificate, Taming Gift Set
+		setarray(.prices_tier_4, 616, 1, 617, 1, 12214, 1, 6457, 1, 12105, 1);
+
+		// Gym Pass, Blacksmith Blessing, HD Oridecon, HD Elunium, Safe to 7 Weapon Certificate
+		setarray(.prices_tier_5, 7776, 1, 6635, 1, 6240, 1, 6241, 1, 6230, 1);
+
+		// Velcarde MVP Card Album (105529, 1 dependant on Velcarde Implementation), Safe to 9 Armor Certificate
+		setarray(.prices_tier_6, 6232, 1);
+
+		.consolation_prices_size = getarraysize(.consolation_prices) / 2;
+		for (.@i = 3; .@i <= 6; .@i++) {
+			setd(".prices_tier_" + .@i + "_size", getarraysize(getd(".prices_tier_" + .@i)) / 2);
+	    }
+}

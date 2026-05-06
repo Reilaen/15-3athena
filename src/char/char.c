@@ -954,7 +954,7 @@ int mmo_char_fromstr(char *str, struct mmo_charstatus *p, struct global_reg *reg
 	}
 #endif //TXT_SQL_CONVERT
 	if (str[next] == '\n' || str[next] == '\r')
-		return 1;	// V‹Kƒf[ƒ^
+		return 1;	// ï¿½Vï¿½Kï¿½fï¿½[ï¿½^
 
 	next++;
 
@@ -991,7 +991,7 @@ int mmo_char_fromstr(char *str, struct mmo_charstatus *p, struct global_reg *reg
 
 	next++;
 
-	for(i = 0; str[next] && str[next] != '\t' && str[next] != '\n' && str[next] != '\r'; i++) { // global_regŽÀ‘•ˆÈ‘O‚Ìathena.txtŒÝŠ·‚Ì‚½‚ßˆê‰ž'\n'ƒ`ƒFƒbƒN
+	for(i = 0; str[next] && str[next] != '\t' && str[next] != '\n' && str[next] != '\r'; i++) { // global_regï¿½ï¿½ï¿½ï¿½ï¿½È‘Oï¿½ï¿½athena.txtï¿½ÝŠï¿½ï¿½Ì‚ï¿½ï¿½ßˆê‰ž'\n'ï¿½`ï¿½Fï¿½bï¿½N
 		if (sscanf(str + next, "%[^,],%[^ ] %n", reg[i].str, reg[i].value, &len) != 2) { 
 			// because some scripts are not correct, the str can be "". So, we must check that.
 			// If it's, we must not refuse the character, but just this REG value.
@@ -2310,7 +2310,7 @@ void mmo_char_send082d(int fd, struct char_session_data* sd)
 #endif
 }
 
-// —£¥(charíœŽž‚ÉŽg—p)
+// ï¿½ï¿½ï¿½ï¿½(charï¿½íœï¿½ï¿½ï¿½ÉŽgï¿½p)
 int char_divorce(struct mmo_charstatus *cs)
 {
 	struct online_char_data *character, *cs_character;
@@ -2398,12 +2398,12 @@ void disconnect_player(uint32 account_id)
 		set_eof(i);
 }
 
-// ƒLƒƒƒ‰íœ‚É”º‚¤ƒf[ƒ^íœ
+// ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½íœï¿½É”ï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½íœ
 static int char_delete(struct mmo_charstatus *cs)
 {
 	int j;
 
-	// ƒyƒbƒgíœ
+	// ï¿½yï¿½bï¿½gï¿½íœ
 	if (cs->pet_id)
 		inter_pet_delete(cs->pet_id);
 	if (cs->hom_id)
@@ -2414,21 +2414,21 @@ static int char_delete(struct mmo_charstatus *cs)
 	for (j = 0; j < MAX_CART; j++)
 		if (cs->cart[j].card[0] == (short)0xff00)
 			inter_pet_delete( MakeDWord(cs->cart[j].card[1],cs->cart[j].card[2]) );
-	// ƒMƒ‹ƒh’E‘Þ
+	// ï¿½Mï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½
 	if (cs->guild_id)
 		inter_guild_leave(cs->guild_id, cs->account_id, cs->char_id);
-	// ƒp[ƒeƒB[’E‘Þ
+	// ï¿½pï¿½[ï¿½eï¿½Bï¿½[ï¿½Eï¿½ï¿½
 	if (cs->party_id)
 		inter_party_leave(cs->party_id, cs->account_id, cs->char_id);
-	// —£¥
+	// ï¿½ï¿½ï¿½ï¿½
 	if (cs->partner_id){
-		// —£¥î•ñ‚ðmap‚É’Ê’m
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mapï¿½É’Ê’m
 		unsigned char buf[10];
 		WBUFW(buf,0) = 0x2b12;
 		WBUFL(buf,2) = cs->char_id;
 		WBUFL(buf,6) = cs->partner_id;
 		mapif_sendall(buf,10);
-		// —£¥
+		// ï¿½ï¿½ï¿½ï¿½
 		char_divorce(cs);
 	}
 #ifdef ENABLE_SC_SAVING
@@ -3861,7 +3861,7 @@ int search_mapserver(unsigned short map, uint32 ip, uint16 port)
 	return -1;
 }
 
-// char_mapif‚Ì‰Šú‰»ˆ—iŒ»Ý‚Íinter_mapif‰Šú‰»‚Ì‚Ýj
+// char_mapifï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ý‚ï¿½inter_mapifï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Ýj
 static int char_mapif_init(int fd)
 {
 	return inter_mapif_init(fd);
@@ -5292,7 +5292,7 @@ int do_init(int argc, char **argv)
 #ifdef ENABLE_SC_SAVING
 	status_init();
 #endif
-	inter_init_txt((argc > 2) ? argv[2] : inter_cfgName);	// inter server ‰Šú‰»
+	inter_init_txt((argc > 2) ? argv[2] : inter_cfgName);	// inter server ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ShowInfo("char server initialized.\n");
 
 	if ((naddr_ != 0) && (!login_ip || !char_ip))

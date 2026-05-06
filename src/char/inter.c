@@ -73,7 +73,7 @@ static int wis_dellist[WISDELLIST_MAX], wis_delnum;
 
 //--------------------------------------------------------
 
-// ƒAƒJƒEƒ“ƒg•Ï”‚ğ•¶š—ñ‚Ö•ÏŠ·
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½ğ•¶ï¿½ï¿½ï¿½Ö•ÏŠï¿½
 int inter_accreg_tostr(char *str, struct accreg *reg) {
 	int j;
 	char *p = str;
@@ -86,7 +86,7 @@ int inter_accreg_tostr(char *str, struct accreg *reg) {
 	return 0;
 }
 #endif //TXT_SQL_CONVERT
-// ƒAƒJƒEƒ“ƒg•Ï”‚ğ•¶š—ñ‚©‚ç•ÏŠ·
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½ğ•¶ï¿½ï¿½ñ‚©‚ï¿½ÏŠï¿½
 int inter_accreg_fromstr(const char *str, struct accreg *reg) {
 	int j, n;
 	const char *p = str;
@@ -103,7 +103,7 @@ int inter_accreg_fromstr(const char *str, struct accreg *reg) {
 	return 0;
 }
 #ifndef TXT_SQL_CONVERT
-// ƒAƒJƒEƒ“ƒg•Ï”‚Ì“Ç‚İ‚İ
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½Ì“Ç‚İï¿½ï¿½ï¿½
 int inter_accreg_init(void) {
 	char line[8192];
 	FILE *fp;
@@ -134,7 +134,7 @@ int inter_accreg_init(void) {
 	return 0;
 }
 
-// ƒAƒJƒEƒ“ƒg•Ï”‚ÌƒZ[ƒu—p
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½ÌƒZï¿½[ï¿½uï¿½p
 int inter_accreg_save_sub(DBKey key, DBData data, va_list ap) {
 	char line[8192];
 	FILE *fp;
@@ -149,7 +149,7 @@ int inter_accreg_save_sub(DBKey key, DBData data, va_list ap) {
 	return 0;
 }
 
-// ƒAƒJƒEƒ“ƒg•Ï”‚ÌƒZ[ƒu
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½ÌƒZï¿½[ï¿½u
 int inter_accreg_save(void) {
 	FILE *fp;
 	int lock;
@@ -167,7 +167,7 @@ int inter_accreg_save(void) {
 //--------------------------------------------------------
 #endif //TXT_SQL_CONVERT
 /*==========================================
- * İ’èƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+ * ï¿½İ’ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½Ç‚İï¿½ï¿½ï¿½
  *------------------------------------------*/
 static int inter_config_read(const char *cfgName) {
 	char line[1024], w1[1024], w2[1024];
@@ -221,7 +221,7 @@ static int inter_config_read(const char *cfgName) {
 	return 0;
 }
 #ifndef TXT_SQL_CONVERT
-// ƒƒO‘‚«o‚µ
+// ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½
 int inter_log(char *fmt,...) {
 	FILE *logfp;
 	va_list ap;
@@ -237,7 +237,7 @@ int inter_log(char *fmt,...) {
 	return 0;
 }
 
-// ƒZ[ƒu
+// ï¿½Zï¿½[ï¿½u
 int inter_save(void) {
 #ifdef ENABLE_SC_SAVING
 	inter_status_save();
@@ -254,7 +254,7 @@ int inter_save(void) {
 }
 #endif //TXT_SQL_CONVERT
 
-// ‰Šú‰»
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int inter_init_txt(const char *file)
 {
 	inter_config_read(file);
@@ -374,7 +374,7 @@ static void mapif_account_reg(int fd, unsigned char *src)
 	mapif_sendallwos(fd, src, WBUFW(src,2));
 }
 
-// ƒAƒJƒEƒ“ƒg•Ï”—v‹•ÔM
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½vï¿½ï¿½ï¿½ÔM
 int mapif_account_reg_reply(int fd,uint32 account_id, uint32 char_id)
 {
 	struct accreg *reg = (struct accreg*)idb_get(accreg_db,account_id);
@@ -558,7 +558,7 @@ static void* create_accreg(DBKey key, va_list args) {
 	return reg;
 }
 
-// ƒAƒJƒEƒ“ƒg•Ï”•Û‘¶—v‹
+// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½ï¿½Û‘ï¿½ï¿½vï¿½ï¿½
 int mapif_parse_Registry(int fd) {
 	int j, p, len;
 	struct accreg *reg;
@@ -594,7 +594,7 @@ int mapif_parse_Registry(int fd) {
 		p += actual_len + 1;
 	}
 	reg->reg_num=j;
-	mapif_account_reg(fd, RFIFOP(fd,0));	// ‘¼‚ÌMAPƒT[ƒo[‚É‘—M
+	mapif_account_reg(fd, RFIFOP(fd,0));	// ï¿½ï¿½ï¿½ï¿½MAPï¿½Tï¿½[ï¿½oï¿½[ï¿½É‘ï¿½ï¿½M
 
 	return 0;
 }
@@ -680,23 +680,23 @@ int inter_check_length(int fd, int length)
 	return length;
 }
 
-// map server ‚©‚ç‚Ì’ÊMi‚PƒpƒPƒbƒg‚Ì‚İ‰ğÍ‚·‚é‚±‚Æj
-// ƒGƒ‰[‚È‚ç0(false)Aˆ—‚Å‚«‚½‚È‚ç1A
-// ƒpƒPƒbƒg’·‚ª‘«‚è‚È‚¯‚ê‚Î2‚ğ‚©‚¦‚³‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+// map server ï¿½ï¿½ï¿½ï¿½Ì’ÊMï¿½iï¿½Pï¿½pï¿½Pï¿½bï¿½gï¿½Ì‚İ‰ï¿½Í‚ï¿½ï¿½é‚±ï¿½Æj
+// ï¿½Gï¿½ï¿½ï¿½[ï¿½È‚ï¿½0(false)ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½1ï¿½A
+// ï¿½pï¿½Pï¿½bï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½Î‚È‚ï¿½È‚ï¿½
 int inter_parse_frommap(int fd) {
 	int cmd, len;
 
 	cmd = RFIFOW(fd,0);
 	len = 0;
 
-	// interIŠÇŠ‚©‚ğ’²‚×‚é
+	// interï¿½Iï¿½ÇŠï¿½ï¿½ï¿½ï¿½ğ’²‚×‚ï¿½
 	if (cmd < 0x3000 || cmd >= 0x3000 + ARRAYLENGTH(inter_recv_packet_length))
 		return 0;
 	
 	if (inter_recv_packet_length[cmd-0x3000] == 0) //This is necessary, because otherwise we return 2 and the char server will just hang waiting for packets! [Skotlex]
 		return 0;
 
-	// ƒpƒPƒbƒg’·‚ğ’²‚×‚é
+	// ï¿½pï¿½Pï¿½bï¿½gï¿½ï¿½ï¿½ğ’²‚×‚ï¿½
 	if ((len = inter_check_length(fd, inter_recv_packet_length[cmd - 0x3000])) == 0)
 		return 2;
 
