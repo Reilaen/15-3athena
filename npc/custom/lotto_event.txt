@@ -121,25 +121,15 @@ prontera,156,184,4	script	Lotto Manager	604,{
 			close;
 		}
 
-		explode(.@player_numbers$, lotto_ticket_numbers$, ", ");
-		explode(.@saved_draw_numbers$, .@saved_draw$, ", ");
-
-		for (.@i = 0; .@i < 6; .@i++) {
-			.@saved_draw_number = atoi(.@saved_draw_numbers$[.@i]);
-			for (.@j = 0; .@j < 6; .@j++) {
-				.@player_number = atoi(.@player_numbers$[.@j]);
-				if (.@saved_draw_number == .@player_number) {
-					.@tier++;
-					break;
-				}
-			}
-		}
+		explode(.@player_numbers, lotto_ticket_numbers$, ", ");
+		explode(.@saved_draw_numbers, .@saved_draw$, ", ");
+		.@tier = countinarray(.@player_numbers, .@saved_draw_numbers);
 
 		mes("Lotto Manager");
 		mes("Let's check your ticket for draw #" + lotto_ticket_draw_id + "...");
 		mes("The numbers of the draw are " + .@saved_draw$ + "...");
 		mes("and your numbers are " + lotto_ticket_numbers$ + ".");
-		mes("That means you have ^0000FF" + .@tier + " matching numbers^000000!");
+		mes("That means you have ^0000FF" + .@tier + "^000000 matching number" + ((.@tier == 1) ? "" : "s") + "!");
 		next;
 
 		if (.@tier >= 3) {
