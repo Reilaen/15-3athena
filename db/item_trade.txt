@@ -2201,3 +2201,8 @@
 28703,507,100	// Infinity_Dagger
 31140,507,100	// C_Cowboy_Hat_
 31141,507,100	// C_Rose_Corsage_
+1002433,507,100 // Card_Fragment_US
+105529,507,100  // Velcarde_Album_US
+105530,507,100  // Card_Recycle_US
+22829,507,100  // Sealed_Card
+23719,507,100  // Sealed_Card2
