@@ -499,7 +499,7 @@ void party_member_joined(struct map_session_data *sd)
 	ARR_FIND( 0, MAX_PARTY, i, p->party.member[i].account_id == sd->status.account_id && p->party.member[i].char_id == sd->status.char_id );
 	if (i < MAX_PARTY) {
 		p->data[i].sd = sd;
-		if (p->instance_id >= 0 && instances[p->instance_id].idle_timer != INVALID_TIMER || instances[p->instance_id].progress_timer != INVALID_TIMER) {
+		if (p->instance_id >= 0 && (instances[p->instance_id].idle_timer != INVALID_TIMER || instances[p->instance_id].progress_timer != INVALID_TIMER)) {
 			clif_instance_join(sd->fd, p->instance_id);
 		}
 	}
