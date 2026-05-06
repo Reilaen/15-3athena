@@ -1,4 +1,4 @@
-prontera,150,150,4	script	Velcarde	528,{
+prontera,150,184,4	script	Velcarde	528,{
 	.@today = callsub(S_GetDateYYYYMMDD);
 	if (#VC_RESET_DATE != .@today) {
 	    #VC_SEED = rand(1, 1000000);
@@ -128,7 +128,7 @@ prontera,150,150,4	script	Velcarde	528,{
 		.itemlist_size = getarraysize(.itemlist);
 }
 
-prontera,152,150,4	script	Card Collector	408,{
+prontera,152,184,4	script	Card Collector	408,{
 	mes("[Card Collector]");
 	mes("Welcome, adventurer! I trade cards for ^0000FF" + callfunc("F_GetPlural", getitemname(.currency_id)) + "^000000. How may i help you today?");
 	next;

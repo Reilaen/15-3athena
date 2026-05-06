@@ -1,4 +1,4 @@
-prontera,150,150,4	script	Lotto Manager	604,{
+prontera,156,184,4	script	Lotto Manager	604,{
 	mes("Lotto Manager");
 	mes("Welcome friend! Are you interested in playing some lotto? I offer everything you need! How can i help you?");
 	next;
