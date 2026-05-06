@@ -22360,7 +22360,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(instance_attachmap,"si??"),
 	BUILDIN_DEF(instance_detachmap,"s?"),
 	BUILDIN_DEF(instance_attach,"i"),
-	BUILDIN_DEF(instance_id,""),
+	BUILDIN_DEF(instance_id,"?"),
 	BUILDIN_DEF(instance_set_timeout,"ii?"),
 	BUILDIN_DEF(instance_init,"i"),
 	BUILDIN_DEF(instance_announce,"isi?????"),
