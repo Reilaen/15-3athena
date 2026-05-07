@@ -82,6 +82,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		close;
 
 	Information:
+		goto(OnHour18);
 		mes("[Lotto Manager]");
 		mes("It is pretty simple, we provide you a magic Lotto Ring, that sometimes creates an Lotto Box, when you kill a monster.");
 		mes("Those boxes give you a ball with a random number. Each box has a different range, one goes from 1 to 10, the next from 11 to 20.");
@@ -143,23 +144,22 @@ prontera,156,184,4	script	Lotto Manager	604,{
 			explode(.@player_numbers, .@player_number_str$, ", ");
 			.@tier = countinarray($lotto_latest_draw, .@player_numbers);
 
-			.@body_prefix$ = "Draw #" + $lotto_latest_draw_id + " details" + .CRLF$ +
-			                 "-------------------------" + .CRLF$ +
-			                 "Drawn: [" + .@lotto_latest_draw_str$ + "]" + .CRLF$ +
-			                 "Yours: [" + .@player_number_str$ + "]" + .CRLF$ +
-			                 "Matches: " + .@tier + .CRLF$ +
-			                 "-------------------------" + .CRLF$;
+			.@body_prefix$ = "Draw #" + $lotto_latest_draw_id + " details\r\n" +
+			                 "-------------------------\r\n" +
+			                 "Drawn: [" + .@lotto_latest_draw_str$ + "]\r\n" +
+			                 "Yours: [" + .@player_number_str$ + "]\r\n" +
+			                 "Matches: " + .@tier + "\r\n" +
+			                 "-------------------------\r\n";
 
 			if (.@tier >= 3) {
-				.@body$ = .@body_prefix$ + "Congratulations! You are a winner!" + .CRLF$ +
-											"Enjoy your price!";
+				.@body$ = .@body_prefix$ + "Congratulations! You are a winner!\r\n Enjoy your price!";
 
 				.@idx = rand(getd(".prices_tier_" + .@tier + "_size")) * 2;
 				setarray(.@mailitem[0], getd(".prices_tier_" + .@tier + "[" + .@idx + "]"));
 				setarray(.@mailamount[0], getd(".prices_tier_" + .@tier + "[" + (.@idx + 1) + "]"));
 			} else {
-				.@body$ = .@body_prefix$ + "Unfortunately, you didn't win this time." + .CRLF$ +
-											"But no one leaves without a prize!" + .CRLF$ +
+				.@body$ = .@body_prefix$ + "Unfortunately, you didn't win this time.\r\n" +
+											"But no one leaves without a prize!\r\n" +
 											"Better luck next time!";
 
 				.@idx = rand(.consolation_prices_size) * 2;
@@ -176,7 +176,6 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		end;
 
 	OnInit:
-		.CRLF$ = sprintf("%c%c", 13, 10);
 		if($lotto_next_draw_id == 0) {
 			$lotto_next_draw_id = 1;
 			$lotto_latest_draw_id = 0;
