@@ -2,20 +2,13 @@ prontera,156,184,4	script	Lotto Manager	604,{
 	mes("[Lotto Manager]");
 	mes("Welcome friend! Are you interested in playing some lotto? I offer everything you need! How can i help you?");
 	next;
-	menu("I want to register a ticket.", RegisterTicket, "What are the lotto numbers today?", LottoNumbers, "Check my ticket, please!", CheckTicket, "Can you give me more information?", Information, "Can i have a Lotto Ring?", GetRing,  "No, thank you.", Cancel);
+	menu("I want to register a ticket.", RegisterTicket, "Can you give me more information?", Information, "Can i have a Lotto Ring?", GetRing,  "No, thank you.", Cancel);
 
 	RegisterTicket:
-		if (lotto_ticket_draw_id == $lotto_next_draw_id) {
+		if (inarray($participants$, getcharid(0)) != -1) {
 			mes("[Lotto Manager]");
-			mes("You already registered a ticket for draw #" + $lotto_next_draw_id + "!");
+			mes("You already registered a ticket for the upcoming draw!");
 			close;
-		}
-
-		if (lotto_ticket_draw_id > 0) {
-			mes("[Lotto Manager]");
-			mes("Do you have an old ticket? Let us check that first.");
-			next;
-			goto(CheckTicket);
 		}
 
 		if (Zeny < .registration_fee) {
@@ -80,74 +73,12 @@ prontera,156,184,4	script	Lotto Manager	604,{
 			delitem(.@selected_numbers[.@i], 1);
 		}
 
-		lotto_ticket_numbers$ = .@ticket_numbers$;
-		lotto_ticket_draw_id = $lotto_next_draw_id;
+		.@participant_count = getarraysize($participants$);
+		$participants$[.@participant_count] = "" + getcharid(0);
+		$participants$[.@participant_count + 1] = .@ticket_numbers$;
 
 		mes("[Lotto Manager]");
-		mes("Perfect! I registered your ticket and all you need now is a little bit of luck! Also please keep in mind that you can always check your ticket via @lottoticket.");
-		mes("Come back after 18:00 to see if you won!");
-		close;
-
-	LottoNumbers:
-		if ($lotto_latest_draw_id == 0) {
-			mes("[Lotto Manager]");
-			mes("We just started today. Come back after 18:00, then i will have the numbers of our first draw for you!");
-			close;
-		}
-
-		mes("[Lotto Manager]");
-		mes("The lotto numbers of the latest draw #" + $lotto_latest_draw_id + " are:");
-		mes("^0000FF" + getd("$lotto_saved_draws_" + $lotto_latest_draw_id + "$") + "^000000");
-		close;
-
-	CheckTicket:
-		if (lotto_ticket_draw_id == 0) {
-			mes("[Lotto Manager]");
-			mes("How? It seems like you do not even own a ticket..");
-			close;
-		}
-
-		if (lotto_ticket_draw_id == $lotto_next_draw_id) {
-			mes("[Lotto Manager]");
-			mes("It seems like you messed something up. Your ticket is for the upcoming draw #" + $lotto_next_draw_id + ".");
-			close;
-		}
-
-		.@saved_draw$ = getd("$lotto_saved_draws_" + lotto_ticket_draw_id + "$");
-		if(.@saved_draw$ == "") {
-			mes("[Lotto Manager]");
-			mes("Sadly, it seems this ticket is too old. It is for drawing #" + lotto_ticket_draw_id + " we keep track of the current draw plus the last " + .draws_history_limit + " draws.");
-			mes("Right now we are at drawing #" + $lotto_next_draw_id + ".");
-			close;
-		}
-
-		explode(.@player_numbers, lotto_ticket_numbers$, ", ");
-		explode(.@saved_draw_numbers, .@saved_draw$, ", ");
-		.@tier = countinarray(.@player_numbers, .@saved_draw_numbers);
-
-		mes("[Lotto Manager]");
-		mes("Let's check your ticket for draw #" + lotto_ticket_draw_id + "...");
-		mes("The numbers of the draw are " + .@saved_draw$ + "...");
-		mes("and your numbers are " + lotto_ticket_numbers$ + ".");
-		mes("That means you have ^0000FF" + .@tier + "^000000 matching number" + ((.@tier == 1) ? "" : "s") + "!");
-		next;
-
-		if (.@tier >= 3) {
-			mes("[Lotto Manager]");
-			mes("Congratulations! You are a winner! Here is your price!");
-
-			.@idx = rand(getd(".prices_tier_" + .@tier + "_size")) * 2;
-			getitem(getd(".prices_tier_" + .@tier + "[" + .@idx + "]"), getd(".prices_tier_" + .@tier + "[" + (.@idx + 1) + "]"));
-		} else {
-			mes("[Lotto Manager]");
-			mes("Unfortunately, you didn't win this time.. But noone leaves without a price! Take this small gift and better luck next time!");
-
-			.@idx = rand(.consolation_prices_size) * 2;
-			getitem(.consolation_prices[.@idx], .consolation_prices[.@idx + 1]);
-		}
-
-		lotto_ticket_draw_id = 0;
-		lotto_ticket_numbers$ = "";
+		mes("Perfect! I registered your ticket and all you need now is a little bit of luck! If you won we will send your price to you via mail!");
 		close;
 
 	Information:
@@ -189,46 +120,63 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		mes("Alright, do not hesitate to come back, if you change your mind. Have a nice day!");
 		close;
 
-	OnLottoTicket:
-		if (lotto_ticket_draw_id == 0) {
-			dispbottom("You do not own a ticket.");
-			end;
-		}
-
-		dispbottom("##### LOTTO TICKET #####");
-		dispbottom("Your numbers are " + lotto_ticket_numbers$);
-		dispbottom("Drawing #" + lotto_ticket_draw_id);
-		end;
-
 	OnHour18:
 		$lotto_latest_draw_id = $lotto_next_draw_id;
 		$lotto_next_draw_id++;
 
+		deletearray($lotto_latest_draw);
+
 		while (.@i < 6) {
 			.@number = rand(1, 45);
 			if (!getd(".@drawn_" + .@number)) {
-				.@lotto_latest_draw$ += "" + .@number;
-				if (.@i < 5) {
-					.@lotto_latest_draw$ += ", ";
-				}
+				$lotto_latest_draw[.@i] = .@number;
 				setd(".@drawn_" + .@number, 1);
 				.@i++;
 			}
 		}
 
-		setd("$lotto_saved_draws_" + $lotto_latest_draw_id + "$", .@lotto_latest_draw$);
+		.@lotto_latest_draw_str$ = implode($lotto_latest_draw, ", ");
 
-		.@old_draw = $lotto_latest_draw_id - (.draws_history_limit + 1);
-		if (.@old_draw > 0) {
-			setd("$lotto_saved_draws_" + .@old_draw + "$", "");
+		for(.@i = 0; .@i < getarraysize($participants$); .@i += 2) {
+			.@player_number_str$ = $participants$[.@i + 1];
+
+			explode(.@player_numbers, .@player_number_str$, ", ");
+			.@tier = countinarray($lotto_latest_draw, .@player_numbers);
+
+			.@body_prefix$ = "Draw #" + $lotto_latest_draw_id + " details" + .CRLF$ +
+			                 "-------------------------" + .CRLF$ +
+			                 "Drawn: [" + .@lotto_latest_draw_str$ + "]" + .CRLF$ +
+			                 "Yours: [" + .@player_number_str$ + "]" + .CRLF$ +
+			                 "Matches: " + .@tier + .CRLF$ +
+			                 "-------------------------" + .CRLF$;
+
+			if (.@tier >= 3) {
+				.@body$ = .@body_prefix$ + "Congratulations! You are a winner!" + .CRLF$ +
+											"Enjoy your price!";
+
+				.@idx = rand(getd(".prices_tier_" + .@tier + "_size")) * 2;
+				setarray(.@mailitem[0], getd(".prices_tier_" + .@tier + "[" + .@idx + "]"));
+				setarray(.@mailamount[0], getd(".prices_tier_" + .@tier + "[" + (.@idx + 1) + "]"));
+			} else {
+				.@body$ = .@body_prefix$ + "Unfortunately, you didn't win this time." + .CRLF$ +
+											"But no one leaves without a prize!" + .CRLF$ +
+											"Better luck next time!";
+
+				.@idx = rand(.consolation_prices_size) * 2;
+				setarray(.@mailitem[0], .consolation_prices[.@idx]);
+				setarray(.@mailamount[0], .consolation_prices[.@idx + 1]);
+			}
+
+			mail(atoi($participants$[.@i]), "Lotto Manager", "The results of draw #" + $lotto_latest_draw_id + " are here!", .@body$, 0, .@mailitem, .@mailamount);
 		}
 
-		announce("[Lotto Manager] The latest numbers have been drawn! The numbers for draw #" + $lotto_latest_draw_id + " are " + .@lotto_latest_draw$ + "! Good luck everyone!", bc_all|bc_blue);
+		deletearray($participants$);
+
+		announce("[Lotto Manager] The latest numbers have been drawn! The numbers for draw #" + $lotto_latest_draw_id + " are " + implode($lotto_latest_draw, ", ") + "! The prices have been sendt to the winners. Check your mail! Good luck everyone!", bc_all|bc_blue);
 		end;
 
 	OnInit:
-		bindatcmd("lottoticket", strnpcinfo(0) + "::OnLottoTicket");
-
+		.CRLF$ = sprintf("%c%c", 13, 10);
 		if($lotto_next_draw_id == 0) {
 			$lotto_next_draw_id = 1;
 			$lotto_latest_draw_id = 0;
