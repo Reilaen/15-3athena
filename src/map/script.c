@@ -18466,6 +18466,303 @@ BUILDIN_FUNC(warpportal)
 	return 0;
 }
 
+static bool mail_sub( struct script_state *st, const struct script_data *data, const struct map_session_data *sd, const int32 i, const char **out_name, uint32 *start, uint32 *end, int32 *id ) {
+	// Check if it is a variable
+	if(!data_isreference(data)){
+		ShowError("buildin_mail: argument %d is not a variable.\n", i);
+		return false;
+	}
+
+	const char *name = reference_getname(data);
+
+	if(is_string_variable(name)) {
+		ShowError("buildin_mail: variable \"%s\" is a string variable.\n", name);
+		return false;
+	}
+
+	// Check if the variable requires a player
+	if(not_server_variable(*name) && sd == NULL) {
+		// If no player is attached
+		if(!script_rid2sd(st)){
+			ShowError("buildin_mail: variable \"%s\" was not a server variable, but no player was attached.\n", name);
+			return false;
+		}
+	}
+
+	if(not_array_variable(*name)) {
+		ShowError("buildin_mail: variable \"%s\" is not an array.\n", name);
+		return false;
+	}
+
+	// Store the name for later usage
+	*out_name = name;
+
+	// Get the start and end indices of the array
+	*start = reference_getindex(data);
+	*end = getarraysize(st, reference_getid(data), 0, is_string_variable(name), NULL);
+
+	// For getting the values we need the id of the array
+	*id = reference_getid(data);
+
+	return true;
+}
+
+// mail <destination id>,"<sender name>","<title>","<body>"{,<zeny>{,<item id array>,<item amount array>{,refine{,bound{,<item card0 array>{,<item card1 array>{,<item card2 array>{,<item card3 array>{,<random option id0 array>, <random option value0 array>, <random option parameter0 array>{,<random option id1 array>, <random option value1 array>, <random option parameter1 array>{,<random option id2 array>, <random option value2 array>, <random option parameter2 array>{,<random option id3 array>, <random option value3 array>, <random option parameter3 array>{,<random option id4 array>, <random option value4 array>, <random option parameter4 array>}}}}}}}}};
+BUILDIN_FUNC(mail) {
+	const char *name;
+	struct mail_message msg;
+	const struct map_session_data *sd = NULL;
+	uint32 i, j, k, start, end;
+	int32 id;
+
+	memset(&msg, 0, sizeof(struct mail_message));
+
+	msg.dest_id = script_getnum(st,2);
+
+	const char *sender = script_getstr(st, 3);
+
+	if(strlen(sender) > NAME_LENGTH) {
+		ShowError( "buildin_mail: sender name can not be longer than %d characters.\n", NAME_LENGTH );
+		return 1;
+	}
+
+	safestrncpy(msg.send_name, sender, NAME_LENGTH);
+
+	const char *title = script_getstr(st, 4);
+
+	if(strlen(title) > MAIL_TITLE_LENGTH) {
+		ShowError( "buildin_mail: title can not be longer than %d characters.\n", MAIL_TITLE_LENGTH );
+		return 1;
+	}
+
+	safestrncpy(msg.title, title, MAIL_TITLE_LENGTH);
+
+	const char *body = script_getstr(st, 5);
+
+	if(strlen(body) > MAIL_BODY_LENGTH) {
+		ShowError( "buildin_mail: body can not be longer than %d characters.\n", MAIL_BODY_LENGTH );
+		return 1;
+	}
+
+	safestrncpy(msg.body, body, MAIL_BODY_LENGTH);
+
+	if(script_hasdata(st,6)) {
+		int32 zeny = script_getnum(st, 6);
+
+		if(zeny < 0){
+			ShowError( "buildin_mail: a negative amount of zeny can not be sent.\n" );
+			return 1;
+		}
+
+		if(zeny > MAX_ZENY){
+			ShowError( "buildin_mail: amount of zeny %u is exceeding maximum of %u. Capping...\n", zeny, MAX_ZENY );
+			zeny = MAX_ZENY;
+		}
+
+		msg.zeny = zeny;
+	}
+
+	// Items
+	uint32 num_items = 0;
+	while(script_hasdata(st,7)) {
+		const struct script_data *data = script_getdata(st, 7);
+
+		if(!mail_sub( st, data, sd, 7, &name, &start, &end, &id )) {
+			return 1;
+		}
+
+		num_items = end - start;
+
+		if(num_items == 0) {
+			ShowWarning("buildin_mail: array \"%s\" contained no items.\n", name);
+			break;
+		}
+
+		if(num_items > MAIL_MAX_ITEM) {
+			ShowWarning("buildin_mail: array \"%s\" contained %d items, capping to maximum of %d...\n", name, num_items, MAIL_MAX_ITEM);
+			num_items = MAIL_MAX_ITEM;
+		}
+
+		for(i = 0; i < num_items && start < end; i++, start++) {
+			msg.item[i].nameid = (t_itemid)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+			msg.item[i].identify = 1;
+
+			if(!itemdb_exists(msg.item[i].nameid)) {
+				ShowError("buildin_mail: invalid item id %u.\n", msg.item[i].nameid);
+				return 1;
+			}
+		}
+
+		// Amounts
+		if(!script_hasdata(st,8)) {
+			ShowError("buildin_mail: missing item count variable at position %d.\n", 8);
+			return 1;
+		}
+
+		data = script_getdata(st,8);
+
+		if(!mail_sub( st, data, sd, 8, &name, &start, &end, &id)) {
+			return 1;
+		}
+
+		for(i = 0; i < num_items && start < end; i++, start++) {
+			struct item_data* itm = itemdb_search(msg.item[i].nameid);
+
+			msg.item[i].amount = (int16)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+
+			if(msg.item[i].amount <= 0) {
+				ShowError("buildin_mail: amount %d for item %u is invalid.\n", msg.item[i].amount, msg.item[i].nameid);
+				return 1;
+			}
+
+			if(itemdb_isstackable2(itm)) {
+				if(msg.item[i].amount > MAX_AMOUNT){
+					ShowWarning("buildin_mail: amount %d for item %u is exceeding the maximum of %d. Capping...\n", msg.item[i].amount, msg.item[i].nameid, max);
+					msg.item[i].amount = MAX_AMOUNT;
+				}
+			} else {
+				if(msg.item[i].amount > 1){
+					ShowWarning("buildin_mail: amount %d is invalid for non-stackable item %u.\n", msg.item[i].amount, msg.item[i].nameid);
+					msg.item[i].amount = 1;
+				}
+			}
+		}
+
+		// Refine
+		if (!script_hasdata(st, 9)) {
+			break;
+		}
+
+		data = script_getdata(st, 9);
+
+		if (!mail_sub(st, data, sd, 9, &name, &start, &end, &id)) {
+			return 1;
+		}
+
+		for (i = 0; i < num_items && start < end; i++, start++) {
+			const struct item_data* itm = itemdb_search(msg.item[i].nameid);
+
+			msg.item[i].refine = (char)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+
+			if (!itm->flag.no_refine && (itm->type == IT_WEAPON || itm->type == IT_ARMOR || itm->type == IT_SHADOWGEAR)) {
+				if (msg.item[i].refine > MAX_REFINE)
+					msg.item[i].refine = MAX_REFINE;
+			} else
+				msg.item[i].refine = 0;
+
+			if (msg.item[i].refine < 0)
+				msg.item[i].refine = 0;
+		}
+
+		// Bound
+		if (!script_hasdata(st, 10)) {
+			break;
+		}
+
+		data = script_getdata(st,10);
+
+		if(!mail_sub(st, data, sd, 10, &name, &start, &end, &id)) {
+			return 1;
+		}
+
+		for(i = 0; i < num_items && start < end; i++, start++) {
+			msg.item[i].bound = (char)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+
+			if(msg.item[i].bound < BOUND_NONE || msg.item[i].bound >= BOUND_MAX){
+				ShowError("buildin_mail: bound %d for item %u is invalid.\n", msg.item[i].bound, msg.item[i].nameid);
+				return 1;
+			}
+		}
+
+		// Cards
+		if(!script_hasdata(st,11)) {
+			break;
+		}
+
+		for(i = 0, j = 11; i < MAX_SLOTS && script_hasdata(st,j); i++, j++) {
+			data = script_getdata(st,j);
+
+			if(!mail_sub(st, data, sd, j + 1, &name, &start, &end, &id)) {
+				return 1;
+			}
+
+			for(k = 0; k < num_items && start < end; k++, start++) {
+				msg.item[k].card[i] = (t_itemid)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+
+				if(msg.item[k].card[i] == 0) {
+					// Continue with the next card, no further checks needed
+					continue;
+				}
+
+				if(itemdb_isspecial( msg.item[k].card[0])) {
+					// Continue with the next card, but do not check it against the item database
+					continue;
+				}
+
+				if(!itemdb_exists(msg.item[k].card[i])) {
+					ShowError( "buildin_mail: invalid card id %u.\n", msg.item[k].card[i] );
+					return 1;
+				}
+			}
+		}
+
+		// Random Options
+		if(!script_hasdata(st,11 + MAX_SLOTS)) {
+			break;
+		}
+
+		for(i = 0, j = 11 + MAX_SLOTS; i < MAX_ITEM_RDM_OPT && script_hasdata(st,j) && script_hasdata(st,j + 1) && script_hasdata(st,j + 2); i++, j++) {
+			// Option IDs
+			data = script_getdata(st, j);
+
+			if(!mail_sub(st, data, sd, j + 1, &name, &start, &end, &id)) {
+				return 1;
+			}
+
+			for(k = 0; k < num_items && start < end; k++, start++) {
+				msg.item[k].option[i].id = (int16)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+			}
+
+			j++;
+
+			// Option values
+			data = script_getdata(st, j);
+
+			if(!mail_sub( st, data, sd, j + 1, &name, &start, &end, &id)) {
+				return 1;
+			}
+
+			for(k = 0; k < num_items && start < end; k++, start++){
+				msg.item[k].option[i].value = (int16)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+			}
+
+			j++;
+
+			// Option parameters
+			data = script_getdata(st, j);
+
+			if(!mail_sub( st, data, sd, j + 1, &name, &start, &end, &id)){
+				return 1;
+			}
+
+			for(k = 0; k < num_items && start < end; k++, start++) {
+				msg.item[k].option[i].param = (char)get_val2_num(st, reference_uid(id, start), reference_getref(data));
+			}
+		}
+
+		// Break the pseudo scope
+		break;
+	}
+
+	msg.status = MAIL_NEW;
+	msg.type = MAIL_INBOX_NORMAL;
+	msg.timestamp = time(NULL);
+
+	intif_Mail_send(0, &msg);
+
+	return 0;
+}
+
 BUILDIN_FUNC(openmail)
 {
 	TBL_PC* sd;
@@ -21971,6 +22268,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(getpartyname,"i"),
 	BUILDIN_DEF(getpartymember,"i?"),
 	BUILDIN_DEF(getpartyleader,"i?"),
+	BUILDIN_DEF(mail, "isss*"),
 	// Guild related
 	BUILDIN_DEF(guild_info,"vi"),
 	BUILDIN_DEF(guild_create,"s?"),
