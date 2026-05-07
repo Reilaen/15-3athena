@@ -221,8 +221,8 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 				}
 			}
 
-			setarray(.@mailitem[0], $@pori_price_id);
-			setarray(.@mailamount[0], .@price_amount);
+			.@mailitem[0] = $@pori_price_id;
+			.@mailamount[0] = .@price_amount;
 
 			explode(.@participants, 'participants$, ":");
 			for (.@i = 0; .@i < 'participants_amount; .@i++) {

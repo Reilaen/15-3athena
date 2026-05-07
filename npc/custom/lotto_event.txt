@@ -154,16 +154,16 @@ prontera,156,184,4	script	Lotto Manager	604,{
 				.@body$ = .@body_prefix$ + "Congratulations! You are a winner!\r\n Enjoy your price!";
 
 				.@idx = rand(getd(".prices_tier_" + .@tier + "_size")) * 2;
-				setarray(.@mailitem[0], getd(".prices_tier_" + .@tier + "[" + .@idx + "]"));
-				setarray(.@mailamount[0], getd(".prices_tier_" + .@tier + "[" + (.@idx + 1) + "]"));
+				.@mailitem[0] = getd(".prices_tier_" + .@tier + "[" + .@idx + "]");
+				.@mailamount[0] = getd(".prices_tier_" + .@tier + "[" + (.@idx + 1) + "]");
 			} else {
 				.@body$ = .@body_prefix$ + "Unfortunately, you didn't win this time.\r\n" +
 											"But no one leaves without a prize!\r\n" +
 											"Better luck next time!";
 
 				.@idx = rand(.consolation_prices_size) * 2;
-				setarray(.@mailitem[0], .consolation_prices[.@idx]);
-				setarray(.@mailamount[0], .consolation_prices[.@idx + 1]);
+				.@mailitem[0] = .consolation_prices[.@idx];
+				.@mailamount[0] = .consolation_prices[.@idx + 1];
 			}
 
 			mail(atoi($participants$[.@i]), "Lotto Manager", "The results of draw #" + $lotto_latest_draw_id + " are here!", .@body$, 0, .@mailitem, .@mailamount);
