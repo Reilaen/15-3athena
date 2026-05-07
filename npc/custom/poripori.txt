@@ -192,7 +192,7 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 			stopnpctimer;
 			.@finish_time = getnpctimer(0);
 			.@party_id = getcharid(1);
-	        .@party_name$ = (.@party_id > 0) ? getpartyname(.@party_id) : "No Party";
+	        .@party_name$ = getpartyname(.@party_id);
 
 	        for (.@i = 0; .@i < 20; .@i += 2) {
 	            if ($pori_top_ten$[.@i] == "" || .@finish_time < atoi($pori_top_ten$[.@i + 1])) {
@@ -209,9 +209,27 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 	            }
 	        }
 
-			getitem($@pori_price_id, .@price_amount);
+			.@finish_time_str$ = callfunc("F_FormatMilliseconds", .@finish_time);
+			.@body$ = "You beat the final level in " + .@finish_time_str$ + "!\r\n" +
+						"That is really impressive.\r\n" +
+						"Enjoy your price!";
 
-			mapannounce('map$, "Congratulations you beat the final level! You finished in " + callfunc("F_FormatMilliseconds", .@finish_time) + "! You will now be teleported back.", bc_map, "0x00ff99");
+			for (.@i = 0; .@i < getarraysize($@pori_price_amounts); .@i += 2) {
+				if (.@finish_time <= $@pori_price_amounts[.@i]) {
+					.@price_amount = $@pori_price_amounts[.@i + 1];
+					break;
+				}
+			}
+
+			setarray(.@mailitem[0], $@pori_price_id);
+			setarray(.@mailamount[0], .@price_amount);
+
+			explode(.@participants, 'participants$, ":");
+			for (.@i = 0; .@i < 'participants_amount; .@i++) {
+				mail(.@participants[.@i], "Pori Pori Nyu", "Congratulations!", .@body$, 0, .@mailitem, .@mailamount);
+			}
+
+			mapannounce('map$, "Congratulations you beat the final level! You finished in " + .@finish_time_str$ + "! You will now be teleported back.", bc_map, "0x00ff99");
 			goto(EndChallenge);
 			end;
 		}
