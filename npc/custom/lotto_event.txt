@@ -82,7 +82,6 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		close;
 
 	Information:
-		goto(OnHour18);
 		mes("[Lotto Manager]");
 		mes("It is pretty simple, we provide you a magic Lotto Ring, that sometimes creates an Lotto Box, when you kill a monster.");
 		mes("Those boxes give you a ball with a random number. Each box has a different range, one goes from 1 to 10, the next from 11 to 20.");
