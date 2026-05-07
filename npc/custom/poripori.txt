@@ -43,9 +43,9 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 		.@fee = .base_fee + .@participants_amount * .participant_fee;
 		mes("[Pori Pori Nyu]");
-		mes("Alright! Let's see.. the basic fee is ^0000FF" + callfunc("F_InsertComma", .base_fee) + " Zeny^000000.");
-		mes("The additional fee per participant is ^0000FF" + callfunc("F_InsertComma", .participant_fee) + " Zeny^000000.");
-		mes("That means the final fee is ^0000FF" + callfunc("F_InsertComma", .@fee) + " Zeny^000000.");
+		mes("Alright! Let's see.. the basic fee is ^0000FF" + callfunc("F_InsertComma", .base_fee) + "^000000 Zeny.");
+		mes("The additional fee per participant is ^0000FF" + callfunc("F_InsertComma", .participant_fee) + "^000000 Zeny.");
+		mes("That means the final fee is ^0000FF" + callfunc("F_InsertComma", .@fee) + "^000000 Zeny.");
 		mes("Do you want to create the dimension for the Pori Pori Challenge?");
 		next;
 		if (select("Yes!", "No, i changed my mind.") == 2) {
@@ -54,7 +54,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 		if (Zeny < .@fee) {
 			mes("[Pori Pori Nyu]");
-			mes("You do not have enough Zeny. The fee we agreed upon for the creation of the dimension for the Pori Pori Challenge is ^0000FF" + callsub("F_InsertComma", .@fee) + " Zeny^000000.");
+			mes("You do not have enough Zeny. The fee we agreed upon for the creation of the dimension for the Pori Pori Challenge is ^0000FF" + callsub("F_InsertComma", .@fee) + "^000000 Zeny.");
 			close;
 		}
 

@@ -13,7 +13,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 
 		if (Zeny < .registration_fee) {
 			mes("[Lotto Manager]");
-			mes("I am sorry, but it seems like you do not have enough zeny. Please consider coming back once you have!");
+			mes("I am sorry, but it seems like you do not have enough Zeny. Please consider coming back once you have!");
 			close;
 		}
 
@@ -87,7 +87,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		mes("Those boxes give you a ball with a random number. Each box has a different range, one goes from 1 to 10, the next from 11 to 20.");
 		next;
 		mes("[Lotto Manager]");
-		mes("The final box goes from 41 to 45. So in total you can get numbers from 1 to 45. Everyday until 18:00 you can register a ticket for small fee of ^0000FF" + callfunc("F_InsertComma", .registration_fee) + " Zeny^000000!");
+		mes("The final box goes from 41 to 45. So in total you can get numbers from 1 to 45. Everyday until 18:00 you can register a ticket for small fee of ^0000FF" + callfunc("F_InsertComma", .registration_fee) + "^000000 Zeny!");
 		mes("Registering a ticket simply means, you give me 6 number balls you choose and will put them into my lotto machine.");
 		next;
 		mes("[Lotto Manager]");
@@ -96,7 +96,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 
 	GetRing:
 		mes("[Lotto Manager]");
-		mes("Of course! They are very cheap, only ^0000FF" + callfunc("F_InsertComma", .lotto_ring_price) + " zeny^000000! So are you interested?");
+		mes("Of course! They are very cheap, only ^0000FF" + callfunc("F_InsertComma", .lotto_ring_price) + "^000000 Zeny! So are you interested?");
 		next;
 		if (select("Yes, i want one!", "Thank you, but i pass.") == 2) {
 			goto(Cancel);
