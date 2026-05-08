@@ -19660,18 +19660,6 @@ BUILDIN_FUNC(instance_detachmap)
 	return 0;
 }
 
-BUILDIN_FUNC(instance_attach)
-{
-	int instance_id = -1;
-	
-	instance_id = script_getnum(st, 2);
-	if (!instance_is_valid(instance_id))
-		return 0;
-	
-	st->instance_id = instance_id;
-	return 0;
-}
-
 BUILDIN_FUNC(instance_id) {
 	int mode = IM_NONE;
 
@@ -19777,50 +19765,6 @@ BUILDIN_FUNC(instance_npcname)
 		return 1;
 	}
 
-	return 0;
-}
-
-BUILDIN_FUNC(has_instance) {
-	struct map_session_data *sd;
-	int m;
-	int instance_id = -1;
-
- 	const char *str = script_getstr(st, 2);
-
-	if ((m = map_mapname2mapid(str)) < 0) {
-		script_pushconststr(st, "");
-		return true;
-	}
-
-	if( script_hasdata(st, 3) )
-		instance_id = script_getnum(st, 3);
-	else if(st->instance_id >= 0)
-		instance_id = st->instance_id;
-	else if ((sd = script_rid2sd(st)) != NULL) {
-		struct party_data *p;
-		if (sd->instance_id >= 0) {
-			instance_id = sd->instance_id;
-		}
-
-		if (instance_id == -1 && sd->status.party_id && ((p = party_search(sd->status.party_id))) && p->instance_id >= 0) {
-			instance_id = p->instance_id;
-		}
-
-		if (instance_id == -1 && sd->guild && sd->guild->instance_id >= 0) {
-			instance_id = sd->guild->instance_id;
-		}
-
-		if (instance_id == -1 && sd->clan && sd->clan->instance_id >= 0) {
-			instance_id = sd->clan->instance_id;
-		}
-	}
-
-	if ((m = instance_map2imap(m, instance_id)) < 0) {
-		script_pushconststr(st, "");
-		return 0;
-	}
-
-	script_pushconststr(st, map[m].name);
 	return 0;
 }
 
@@ -22648,13 +22592,11 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(instance_destroy,"?"),
 	BUILDIN_DEF(instance_attachmap,"si??"),
 	BUILDIN_DEF(instance_detachmap,"s?"),
-	BUILDIN_DEF(instance_attach,"i"),
 	BUILDIN_DEF(instance_id,"?"),
 	BUILDIN_DEF(instance_set_timeout,"ii?"),
 	BUILDIN_DEF(instance_init,"i"),
 	BUILDIN_DEF(instance_announce,"isi?????"),
 	BUILDIN_DEF(instance_npcname,"s?"),
-	BUILDIN_DEF(has_instance,"s?"),
 	BUILDIN_DEF(instance_warpall,"sii?"),
 	BUILDIN_DEF(instance_check_party,"i???"),
 	BUILDIN_DEF(instance_mapname,"s?"),
