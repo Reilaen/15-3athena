@@ -19500,8 +19500,8 @@ int script_instancegetid(const struct script_state* st, const enum e_instance_mo
 	if (mode == IM_NONE) {
 		const struct npc_data *nd = map_id2nd(st->oid);
 
-	if (nd && nd->instance_id >= 0)
-		instance_id = nd->instance_id;
+		if (nd && nd->instance_id >= 0)
+			instance_id = nd->instance_id;
 	} else {
 		const struct map_session_data *sd = map_id2sd(st->rid);
 
@@ -19628,7 +19628,7 @@ BUILDIN_FUNC(instance_attachmap)
 		map_name = script_getstr(st, 5);
 
 	if ((m = instance_add_map(name, instance_id, usebasename, map_name)) < 0) { // [Saithis]
-		ShowError("buildin_instance_attachmap: instance creation failed (%s): %d\n", name, m);
+		ShowError("buildin_instance_attachmap: ataching map to instance failed (%s): %d\n", name, m);
 		script_pushconststr(st, "");
 		return 0;
 	}
@@ -19648,10 +19648,9 @@ BUILDIN_FUNC(instance_detachmap)
 	str = script_getstr(st, 2);
 	if( script_hasdata(st, 3) )
 		instance_id = script_getnum(st, 3);
-	else if( st->instance_id >= 0 )
-		instance_id = st->instance_id;
-	else return 0;
- 	
+	else
+		instance_id = script_instancegetid(st, IM_NONE);
+
 	if( (m = map_mapname2mapid(str)) < 0 || (m = instance_map2imap(m,instance_id)) < 0 )
  	{
 		ShowError("buildin_instance_detachmap: Trying to detach invalid map %s\n", str);
@@ -19701,9 +19700,8 @@ BUILDIN_FUNC(instance_set_timeout)
 
 	if( script_hasdata(st, 4) )
 		instance_id = script_getnum(st, 4);
-	else if( st->instance_id >= 0 )
-		instance_id = st->instance_id;
-	else return 0;
+	else
+		instance_id = script_instancegetid(st, IM_NONE);
 
 	if( instance_id >= 0 )
 		instance_set_timeout(instance_id, progress_timeout, idle_timeout);
