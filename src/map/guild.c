@@ -460,7 +460,10 @@ void guild_recv_info(struct guild *sg)
 		}
 	}else
 		before=*g;
+
+	int saved_instance_id = g->instance_id;
 	memcpy(g,sg,sizeof(struct guild));
+	g->instance_id = saved_instance_id;
 
 	if(g->max_member > MAX_GUILD)
 	{
