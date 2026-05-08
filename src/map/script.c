@@ -4078,12 +4078,6 @@ void run_script_main(struct script_state *st)
 
 	script_attach_state(st);
 
-	nd = map_id2nd(st->oid);
-	if( nd && nd->bl.m >= 0)
-		st->instance_id = map[nd->bl.m].instance_id;
-	else
-		st->instance_id = -1;
-
 	if(st->state == RERUNLINE) {
 		run_func(st);
 		if(st->state == GOTO)
@@ -9878,8 +9872,9 @@ BUILDIN_FUNC(monster)
 		}
 
 		m = map_mapname2mapid(mapn);
-		if (map[m].flag.src4instance && st->instance_id >= 0) { // Try to redirect to the instance map, not the src map
-			if ((m = instance_mapid2imapid(m, st->instance_id)) < 0) {
+		int instance_id = script_instancegetid(st, IM_NONE);
+		if (map[m].flag.src4instance && instance_id >= 0) { // Try to redirect to the instance map, not the src map
+			if ((m = instance_mapid2imapid(m, instance_id)) < 0) {
 				ShowError("buildin_monster: Trying to spawn monster (%d) on instance map (%s) without instance attached.\n", class_, mapn);
 				return 1;
 			}
@@ -9988,8 +9983,9 @@ BUILDIN_FUNC(areamonster)
 	else
 	{
 		m = map_mapname2mapid(mapn);
-		if (map[m].flag.src4instance && st->instance_id >= 0) { // Try to redirect to the instance map, not the src map
-			if ((m = instance_mapid2imapid(m, st->instance_id)) < 0) {
+		int instance_id = script_instancegetid(st, IM_NONE);
+		if (map[m].flag.src4instance && instance_id >= 0) { // Try to redirect to the instance map, not the src map
+			if ((m = instance_mapid2imapid(m, instance_id)) < 0) {
 				ShowError("buildin_areamonster: Trying to spawn monster (%d) on instance map (%s) without instance attached.\n", class_, mapn);
 				return 1;
 			}
@@ -10054,8 +10050,9 @@ BUILDIN_FUNC(killmonster)
 
 	if( (m=map_mapname2mapid(mapname))<0 )
 		return 0;
-		
-	if( map[m].flag.src4instance && st->instance_id >= 0 && (m = instance_mapid2imapid(m, st->instance_id)) < 0 )
+
+	int instance_id = script_instancegetid(st, IM_NONE);
+	if( map[m].flag.src4instance && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
 		return 0;
 
 	if( script_hasdata(st,4) ) {
@@ -10096,7 +10093,8 @@ BUILDIN_FUNC(killmonsterall)
 	if( (m = map_mapname2mapid(mapname))<0 )
 		return 0;
 
-	if( map[m].flag.src4instance && st->instance_id >= 0 && (m = instance_mapid2imapid(m, st->instance_id)) < 0 )
+	int instance_id = script_instancegetid(st, IM_NONE);
+	if( map[m].flag.src4instance && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
 		return 0;
 
 	if( script_hasdata(st,3) ) {
@@ -12972,8 +12970,9 @@ BUILDIN_FUNC(mobcount)	// Added by RoVeRT
 		script_pushint(st,-1);
 		return 0;
 	}
-	
-	if( map[m].flag.src4instance == -1 && map[m].instance_id >= 0 && st->instance_id >= 0 && (m = instance_mapid2imapid(m, st->instance_id)) < 0 )
+
+	int instance_id = script_instancegetid(st, IM_NONE);
+	if( map[m].flag.src4instance == -1 && map[m].instance_id >= 0 && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
 	{
 		script_pushint(st,-1);
 		return 0;
@@ -20061,7 +20060,7 @@ BUILDIN_FUNC(instance_set_respawn) {
 	if( script_hasdata(st, 5) )
 		instance_id = script_getnum(st, 5);
 	else
-		instance_id = st->instance_id;
+		instance_id = script_instancegetid(st, IM_NONE);
 	
 	if( instance_id == -1 || !instance_is_valid(instance_id) )
 		script_pushint(st, 0);
@@ -20164,7 +20163,8 @@ BUILDIN_FUNC(areamobuseskill)
 		return 0;
 	}
 
-	if( map[m].flag.src4instance && st->instance_id >= 0 && (m = instance_mapid2imapid(m, st->instance_id)) < 0 )
+	int instance_id = script_instancegetid(st, IM_NONE);
+	if( map[m].flag.src4instance && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
 		return 0;
 
 	center.m = m;
