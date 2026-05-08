@@ -5696,6 +5696,23 @@ int pc_setpos(struct map_session_data* sd, unsigned short mapindex, int x, int y
 			}
 		}
 
+		if (!stop && sd->npc_id > 0) {
+			const struct npc_data *nd = map_id2nd(sd->npc_id);
+
+			if (nd != NULL && nd->instance_id >= 0) {
+				const struct instance_data *inst = &instances[nd->instance_id];
+				int j;
+
+				ARR_FIND(0, inst->num_map, j, map[inst->map[j]].instance_src_map == m && !map[inst->map[j]].custom_name);
+
+				if (j < inst->num_map) {
+					m = inst->map[j];
+					mapindex = map_id2index(m);
+					stop = true;
+				}
+			}
+		}
+
 		/* we hit a instance, if empty we populate the spawn data */
 		if (map[m].instance_id >= 0 && instances[map[m].instance_id].respawn.map == 0 &&
 			instances[map[m].instance_id].respawn.x == 0 &&
