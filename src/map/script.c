@@ -19500,8 +19500,8 @@ int script_instancegetid(const struct script_state* st, const enum e_instance_mo
 	if (mode == IM_NONE) {
 		const struct npc_data *nd = map_id2nd(st->oid);
 
-		if (nd && nd->instance_id >= 0)
-			instance_id = nd->instance_id;
+	if (nd && nd->instance_id >= 0)
+		instance_id = nd->instance_id;
 	} else {
 		const struct map_session_data *sd = map_id2sd(st->rid);
 
@@ -19600,9 +19600,8 @@ BUILDIN_FUNC(instance_destroy)
 
 	if( script_hasdata(st, 2) )
 		instance_id = script_getnum(st, 2);
-	else if( st->instance_id >= 0 )
-		instance_id = st->instance_id;
-	else return 0;
+	else
+		instance_id = script_instancegetid(st, IM_NONE);
 
 	if (!instance_is_valid(instance_id)) {
 		ShowError("buildin_instance_destroy: Trying to destroy invalid instance %d.\n", instance_id);
@@ -19743,12 +19742,8 @@ BUILDIN_FUNC(instance_announce)
 
 	int i;
 
-	if (instance_id == -1) {
-		if (st->instance_id >= 0)
-			instance_id = st->instance_id;
-		else 
-			return 0;
-	}
+	if (instance_id < 0)
+		instance_id = script_instancegetid(st, IM_NONE);
 
 	if (!instance_is_valid(instance_id))
 		return 0;
@@ -19769,8 +19764,8 @@ BUILDIN_FUNC(instance_npcname)
 	str = script_getstr(st, 2);
 	if( script_hasdata(st, 3) )
 		instance_id = script_getnum(st, 3);
-	else if( st->instance_id >= 0 )
-		instance_id = st->instance_id;
+	else
+		instance_id = script_instancegetid(st, IM_NONE);
 
 	if( instance_id >= 0 && (nd = npc_name2id(str)) != NULL )
  	{
@@ -19962,10 +19957,8 @@ BUILDIN_FUNC(instance_warpall) {
 
 	if( script_hasdata(st,5) )
 		instance_id = script_getnum(st,5);
-	else if( st->instance_id >= 0 )
-		instance_id = st->instance_id;
 	else
-		return 0;
+		instance_id = script_instancegetid(st, IM_PARTY);
 
 	if ((m = map_mapname2mapid(mapn)) < 0 || (map[m].flag.src4instance && (m = instance_mapid2imapid(m, instance_id)) < 0))
 		return 0;
@@ -20044,7 +20037,7 @@ BUILDIN_FUNC(instance_mapname) {
 	if( script_hasdata(st,3) )
 		instance_id = script_getnum(st,3);
 	else
-		instance_id = st->instance_id;
+		instance_id = script_instancegetid(st, IM_NONE);
 	
 	// Check that instance mapname is a valid map
 	if( instance_id == -1 || (m = instance_mapname2imap(map_name,instance_id)) == -1 )
