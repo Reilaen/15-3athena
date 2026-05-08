@@ -1,0 +1,184 @@
+prontera,162,184,4	script	Genie Auction	660,{
+	mes "[Genie Auction]";
+	mes "Welcome to the Genie Auction! How may i help you today?";
+	next;
+	menu("I want to place a bid.", PlaceBid, "What item is currently auctioned?", ItemInfo, "How does Genie Auction work?", AuctionExplanation);
+
+	PlaceBid:
+		mes("[Genie Auction]");
+		mes("The minimum bid is " + callfunc("F_InsertComma", .minimum_bid) + " ^FF0000Zeny^000000.");
+		mes("The first bid will save you a spot for the draw. All addtional bids will just raise the pool.");
+		next;
+
+		if (input(.@amount, .minimum_bid) != 0) {
+			mes("[Genie Auction]");
+			mes("That's not enough! The minimum bid is " + callfunc("F_InsertComma", .minimum_bid) + " ^FF0000Zeny^000000.");
+			close;
+		}
+
+		if (Zeny < .@amount) {
+			mes("[Genie Auction]");
+			mes("You don't have enough ^FF0000Zeny^000000!");
+			close;
+		}
+
+		Zeny -= .@amount;
+		$genie_pool += .@amount;
+
+		if (inarray($genie_bidders, getcharid(3))) {
+			mes("[Genie Auction]");
+			mes("Thank you for your additional contribution to the pool!");
+			close;
+		} else {
+			$genie_bidders[getarraysize($genie_bidders)] = getcharid(3);
+			mes("[Genie Auction]");
+			mes("Thank you! You have been registered for this auction.");
+			close;
+		}
+
+	ItemInfo:
+			.@max_val = getd(".item_" + $curr_item + "_max_value");
+
+			.@progress = ($genie_pool * 100) / .@max_val;
+			if (.@progress > 100) .@progress = 100;
+
+			.@max_refine = getd(".item_" + $curr_item + "_max_refine");
+			.@curr_refine = (.@progress * .@max_refine) / 100;
+
+			mes("[Genie Auction]");
+			mes("The item this week is: <ITEM>" + getitemname(.items[$curr_item]) + "<INFO>" + .items[$curr_item] + "</INFO></ITEM>");
+			mes(" ");
+			mes("Here is the current state of the item's latent powers:");
+			mes("--- ^00AA00Item Stats^000000 ---");
+			mes("^0088FF[Upgrade]^000000 Refine: ^00AA00+" + .@curr_refine + "^000000 / Max: ^FF0000+" + .@max_refine + "^000000");
+
+			for (.@i = 0; .@i < 5; .@i++) {
+				.@opt_id = getd(".item_" + $curr_item + "_slot_opts[" + .@i + "]");
+				.@min_stat = getd(".item_" + $curr_item + "_opt_val_limits[" + (.@i * 2) + "]");
+				.@max_stat = getd(".item_" + $curr_item + "_opt_val_limits[" + (.@i * 2 + 1) + "]");
+
+				.@lower_limit = .random_opt_tresholds[.@i];
+				.@upper_limit = (.@i < 4) ? .random_opt_tresholds[.@i + 1] : 100;
+
+				if (.@progress < .@lower_limit) {
+					.@curr_stat = 0;
+				} else if (.@progress >= .@upper_limit) {
+					.@curr_stat = .@max_stat;
+				} else {
+					.@relative_progress = (.@progress - .@lower_limit) * 100 / (.@upper_limit - .@lower_limit);
+					.@curr_stat = .@min_stat + ((.@max_stat - .@min_stat) * .@relative_progress / 100);
+				}
+
+				.@opt_name$ = .opt_names$[.@opt_id];
+				if (.@opt_name$ == "") {
+					.@opt_name$ = "Unknown (" + .@opt_id + ")";
+				}
+
+				mes("^0088FF[Slot " + (.@i + 1) + "] " + .@opt_name$ + "^000000");
+				if (.@curr_stat > 0) {
+					mes("  ^00AA00" + .@curr_stat + "^000000 / Max: ^FF0000" + .@max_stat + "^000000");
+				} else {
+					mes("  ^777777Locked^000000 / Max: ^FF0000" + .@max_stat + "^000000");
+				}
+			}
+			close;
+
+	AuctionExplanation:
+		mes("[Genie Auction]");
+		mes("The basic principe is really simple. Each week i will have another item for auction. The higher the sum of the bids is the better the item becomes.");
+		mes("You can place bids as much as you want to raise the overall sum and strenghten the item. But everyone has only 1 chance to obtain the item.");
+		next;
+		mes("[Genie Auction]");
+		mes("Who finally gets the item is decided by chance, not by the amount spent on the bid.");
+		close;
+
+	OnMon2000:
+		if ($genie_pool == 0) {
+			$curr_item = ($curr_item + 1) % getarraysize(.items);
+			$genie_auction_id++;
+			end;
+		}
+
+		.@max_val = getd(".item_" + $curr_item + "_max_value");
+		.@refine = (.@progress * .@max_refine) / 100;
+
+		.@progress = $genie_pool * 100 / .@max_val;
+		if (.@progress > 100) .@progress = 100;
+
+		cleararray($genie_item_opt[0], 0, 5);
+		cleararray($genie_item_val[0], 0, 5);
+
+		.@mailitem[0] = .items[$curr_item];
+		.@mailamount[0] = 1;
+
+		for (.@i = 0; .@i < 5; .@i++) {
+			.@lower_limit = .random_opt_tresholds[.@i];
+			.@upper_limit = (.@i < 4) ? .random_opt_tresholds[.@i + 1] / 100 : 100;
+
+			if (.@progress < .@lower_limit) break;
+
+			.@temp_opt_id = getd(".item_" + $curr_item + "_slot_opts[" + .@i + "]");
+
+			.@min_stat = getd(".item_" + $curr_item + "_opt_val_limits[" + (.@i * 2) + "]");
+			.@max_stat = getd(".item_" + $curr_item + "_opt_val_limits[" + (.@i * 2 + 1) + "]");
+			.@diff_stat = .@max_stat - .@min_stat;
+
+			if (.@progress >= .@upper_limit) {
+				.@temp_opt_val = .@max_stat;
+			} else {
+				.@relative_progress = (.@progress - .@lower_limit) * 100 / (.@upper_limit - .@lower_limit);
+				.@temp_opt_val = .@min_stat + (.@diff_stat * .@relative_progress / 100);
+			}
+
+			setd(".@opt_id" + .@i + "[0]", .@temp_opt_id);
+			setd(".@opt_val" + .@i + "[0]", .@temp_opt_val);
+
+			if (.@progress < .@upper_limit) break;
+		}
+
+		mail($genie_bidders[rand(getarraysize($genie_bidders))], "Genie Auction", "Congratulations!", "You are the winner of the auction!\r\nI hope you enjoy your new item.",
+					0,
+					.@mailitem, .@mailamount,
+					.@refine, 0,
+					0, 0, 0, 0,
+					.@opt_id0, .@opt_val0, 0,
+					.@opt_id1, .@opt_val1, 0,
+					.@opt_id2, .@opt_val2, 0,
+					.@opt_id3, .@opt_val3, 0,
+					.@opt_id4, .@opt_val4, 0);
+
+		$genie_pool = 0;
+		$genie_bidder_count = 0;
+		cleararray($genie_bidders[0], 0, getarraysize($genie_bidders[0]));
+		$genie_auction_id++;
+		$curr_item = ($curr_item + 1) % getarraysize(.items);
+		end;
+
+	OnInit:
+		.minimum_bid = 100000;
+
+		.opt_names$[RDMOPT_VAR_MAXHPAMOUNT] = "Max HP";
+		.opt_names$[RDMOPT_VAR_MAXSPAMOUNT] = "Max SP";
+		.opt_names$[RDMOPT_VAR_MAXHPPERCENT] = "Max HP %";
+		.opt_names$[RDMOPT_VAR_MAXSPPERCENT] = "Max SP %";
+		.opt_names$[RDMOPT_ATTR_TOLERACE_NOTHING] = "Neutral Tolerance %";
+		.opt_names$[RDMOPT_VAR_ATKPERCENT] = "ATK %";
+		.opt_names$[RDMOPT_VAR_DEXAMOUNT] = "DEX";
+		.opt_names$[RDMOPT_VAR_STRAMOUNT] = "STR";
+		.opt_names$[RDMOPT_VAR_HITSUCCESSVALUE] = "HIT";
+		.opt_names$[RDMOPT_VAR_CRITICALSUCCESSVALUE] = "CRIT";
+
+		setarray(.random_opt_tresholds[0], 5, 15, 30, 50, 75);
+
+		setarray(.items[0], 1201, 1202);
+
+		setarray(.item_0_slot_opts[0], RDMOPT_VAR_MAXHPAMOUNT, RDMOPT_VAR_MAXSPAMOUNT, RDMOPT_VAR_MAXHPPERCENT, RDMOPT_VAR_MAXSPPERCENT, RDMOPT_ATTR_TOLERACE_NOTHING);
+		.item_0_max_value = 100000000;
+		.item_0_max_refine = 10;
+		setarray(.item_0_opt_val_limits[0], 10, 100, 5, 50, 1, 5, 1, 5, 1, 10);
+
+		setarray(.item_1_slot_opts[0], RDMOPT_VAR_ATKPERCENT, RDMOPT_VAR_DEXAMOUNT, RDMOPT_VAR_STRAMOUNT, RDMOPT_VAR_HITSUCCESSVALUE, RDMOPT_VAR_CRITICALSUCCESSVALUE);
+		.item_1_max_value = 100000000;
+		.item_1_max_refine = 15;
+		setarray(.item_1_opt_val_limits[0], 1, 10, 1, 5, 1, 5, 5, 20, 1, 10);
+}
