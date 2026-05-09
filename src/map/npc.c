@@ -1230,8 +1230,17 @@ int npc_scriptcont(struct map_session_data* sd, int id, bool closing)
 		}
 	}
 
-	if (closing && sd->st && sd->st->state == CLOSE)
+	/**
+	 * WPE can get to this point with a progressbar; we deny it.
+	 **/
+	if( sd->progressbar.npc_id && DIFF_TICK(sd->progressbar.timeout,gettick()) > 0 )
+		return true;
+
+	if (closing && sd->st && sd->st->state == CLOSE) {
 		sd->st->state = END;
+		if (sd->st->clear_cutin)
+			clif_cutin(sd, "", 255);
+	}
 
 	run_script_main(sd->st);
 
