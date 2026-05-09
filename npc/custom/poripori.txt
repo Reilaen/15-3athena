@@ -96,7 +96,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		warp("quiz_01", 30, 285);
+		warp(instance_mapname("quiz_01", .@instance_id), 30, 285);
 		end;
 
 	Explanation:
