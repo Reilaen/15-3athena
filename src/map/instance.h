@@ -33,6 +33,13 @@ enum e_instance_mode {
 	IM_MAX,
 };
 
+enum e_instance_enter : uint8 {
+	IE_OK,
+	IE_NOMEMBER,
+	IE_NOINSTANCE,
+	IE_OTHER
+};
+
 struct instance_data {
 	unsigned short id;
 	char name[INSTANCE_NAME_LENGTH]; // Instance Name - required for clif functions.
@@ -68,6 +75,7 @@ int instance_map2imap(int m, int instance_id);
 int instance_mapname2imap(const char *map_name, int instance_id);
 int instance_mapid2imapid(int m, int instance_id);
 void instance_destroy(int instance_id);
+enum e_instance_enter instance_enter(struct map_session_data *sd, int32 instance_id, const char *name, int16 x, int16 y);
 void instance_init(int instance_id);
 
 void instance_check_idle(int instance_id);

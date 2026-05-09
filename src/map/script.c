@@ -2518,6 +2518,12 @@ void script_hardcoded_constants(void)
 	export_constant(IM_GUILD);
 	export_constant(IM_CLAN);
 
+	/* instance enter */
+	export_constant(IE_OK);
+	export_constant(IE_NOMEMBER);
+	export_constant(IE_NOINSTANCE);
+	export_constant(IE_OTHER);
+
 	/* pet info */
 	export_constant(PETINFO_ID);
 	export_constant(PETINFO_CLASS);
@@ -19616,6 +19622,34 @@ BUILDIN_FUNC(instance_destroy)
 	return 0;
 }
 
+
+/*==========================================
+ * Warps player to instance
+ * Results:
+ *	IE_OK: Success
+ *	IE_NOMEMBER: Character not in party/guild (for party/guild type instances)
+ *	IE_NOINSTANCE: Character/Party/Guild doesn't have instance
+ *	IE_OTHER: Other errors (instance not in DB, instance doesn't match with character/party/guild, etc.)
+ *------------------------------------------*/
+BUILDIN_FUNC(instance_enter) {
+	struct map_session_data *sd = NULL;
+	int32 x = script_hasdata(st,3) ? script_getnum(st, 3) : -1;
+	int32 y = script_hasdata(st,4) ? script_getnum(st, 4) : -1;
+	int32 instance_id;
+
+	if (script_hasdata(st, 6))
+		instance_id = script_getnum(st, 6);
+	else
+		instance_id = script_instancegetid(st, IM_PARTY);
+
+	if (!script_charid2sd(5,sd))
+		return 1;
+
+	script_pushint(st, instance_enter(sd, instance_id, script_getstr(st, 2), x, y));
+
+	return 0;
+}
+
 BUILDIN_FUNC(instance_attachmap)
 {
 	const char *name, *map_name = NULL;
@@ -22599,6 +22633,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(instance_attachmap,"si??"),
 	BUILDIN_DEF(instance_detachmap,"s?"),
 	BUILDIN_DEF(instance_id,"?"),
+	BUILDIN_DEF(instance_enter,"s????"),
 	BUILDIN_DEF(instance_set_timeout,"ii?"),
 	BUILDIN_DEF(instance_init,"i"),
 	BUILDIN_DEF(instance_announce,"isi?????"),

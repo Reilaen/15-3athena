@@ -549,6 +549,92 @@ void instance_destroy(const int instance_id) {
 	instances[instance_id].state = INSTANCE_FREE;
 }
 
+/**
+* Warp a user into an instance
+* @param sd: Player to warp
+* @param name: Map name
+* @param x: X coordinate
+* @param y: Y coordinate
+* @param instance_id: Instance to warp to
+* @return e_instance_enter value
+*/
+enum e_instance_enter instance_enter(struct map_session_data *sd, const int32 instance_id, const char *name, const int16 x, const int16 y) {
+	nullpo_retr(IE_OTHER, sd);
+
+	struct party_data *pd;
+	struct guild* gd;
+	struct clan *cd;
+	enum e_instance_mode mode = IM_PARTY;
+	const struct instance_data* idata = NULL;
+
+	if (instance_id >= instance_count)
+		return IE_NOINSTANCE;
+
+	if (instance_id >= 0) {
+		idata = &instances[instance_id];
+		mode = idata->mode;
+	}
+
+	switch(mode) {
+		case IM_NONE:
+			break;
+		case IM_CHAR:
+			if (sd->instance_id < 0) // Player must have an instance
+				return IE_NOINSTANCE;
+
+			if (idata->owner_id != sd->status.char_id)
+				return IE_OTHER;
+			break;
+		case IM_PARTY:
+			if (sd->status.party_id == 0) // Character must be in instance party
+				return IE_NOMEMBER;
+			if (!((pd = party_search(sd->status.party_id))))
+				return IE_NOMEMBER;
+			if (pd->instance_id < 0) // Party must have an instance
+				return IE_NOINSTANCE;
+			if (idata == NULL) {
+				idata = &instances[pd->instance_id];
+			}
+			if (idata->owner_id != pd->party.party_id)
+				return IE_OTHER;
+			break;
+		case IM_GUILD:
+			if (sd->status.guild_id == 0) // Character must be in instance guild
+				return IE_NOMEMBER;
+			if (!((gd = guild_search(sd->status.guild_id))))
+				return IE_NOMEMBER;
+			if (gd->instance_id < 0) // Guild must have an instance
+				return IE_NOINSTANCE;
+			if (idata->owner_id != gd->guild_id)
+				return IE_OTHER;
+			break;
+		case IM_CLAN:
+			if (sd->status.clan_id == 0) // Character must be in instance clan
+				return IE_NOMEMBER;
+			if (!((cd = clan_search(sd->status.clan_id))))
+				return IE_NOMEMBER;
+			if (cd->instance_id < 0) // Clan must have an instance
+				return IE_NOINSTANCE;
+			if (idata->owner_id != cd->id)
+				return IE_OTHER;
+			break;
+	}
+
+	if (idata->state != INSTANCE_BUSY)
+		return IE_OTHER;
+
+	int16 m;
+
+	// Does the instance match?
+	if ((m = instance_mapname2imap(name, idata->id)) < 0)
+		return IE_OTHER;
+
+	if (pc_setpos(sd, map_id2index(m), x, y, CLR_OUTSIGHT))
+		return IE_OTHER;
+
+	return IE_OK;
+}
+
 /*--------------------------------------
  * Checks if there are users in the instance or not to start idle timer
  *--------------------------------------*/
