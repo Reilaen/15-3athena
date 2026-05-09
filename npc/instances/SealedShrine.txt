@@ -4,10 +4,10 @@
 //= L0ne_W0lf
 //===== Current Version: =====================================
 //= 2.3
-//===== Description: ========================================= 
+//===== Description: =========================================
 //= [Official Conversion]
 //= Seal away the Great Demon Baphomet.
-//===== Additional Comments: ================================= 
+//===== Additional Comments: =================================
 //= 1.0 First version. [L0ne_W0lf]
 //= 1.1 Added setquest for instance cooldown. [L0ne_W0lf]
 //= 1.2 Fixed Torch#12 not being disabled. (bugreport:4044) [L0ne_w0lf]
@@ -29,7 +29,7 @@
 
 1@cata	mapflag	src4instance
 2@cata	mapflag	src4instance
-//============================================================ 
+//============================================================
 
 // Sealed Catacomb Entrance
 //============================================================
@@ -223,15 +223,20 @@ monk_test,306,151,3	script	Grave of Baphomet#edq	111,{
 	//set .@ins_bapho_check2,checkquest(3045,PLAYTIME);
 
 	if (.@ins_bapho_check == -1) {
-		if (instance_id(IM_PARTY)) {
-			mes "It's cold to the touch. It doesn't respond.";
-			close;
-		} else {
-			mapannounce "monk_test","[" + strcharinfo(0) + "] member of the [" + getpartyname(.@party_id) + "] party has entered the Sealed Shrine.",bc_map,"0x00ff99";
-			setquest 3040;
-			warp "1@cata",100,224;
-			end;
-		}		
+		switch(instance_enter("1@cata", 100, 224)) {
+			case IE_OTHER:
+			case IE_NOINSTANCE:
+				mes "It's cold to the touch. It doesn't respond.";
+				close;
+			case IE_NOMEMBER:
+				mes "[Friar Patrick]";
+				mes "To enter this dangerous place, you can't go alone. Come again after you join a party.";
+				close;
+			case IE_OK:
+				mapannounce "monk_test","[" + strcharinfo(0) + "] member of the [" + getpartyname(.@party_id) + "] party has entered the Sealed Shrine.",bc_map,"0x00ff99";
+				setquest 3040;
+				close;
+		}
 	} else if (.@ins_bapho_check == 0 || .@ins_bapho_check == 1) {
 		mes "[Friar Patrick]";
 		mes "It seems you have entered this shrine recently... You cannot reenter because the curse of Baphomet still remains.";

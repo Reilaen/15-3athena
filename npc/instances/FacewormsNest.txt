@@ -357,7 +357,7 @@ dali,80,60,4	script	Magic Scholar	755,{
 					mes "[Magic Scholar]";
 					mes "The spaces are under control.";
 					mes "Please wait for a minute.";
-					
+
 					if( instance_attachmap( "1@face",$fn_instance ) == "" ){
 						setmapflag "1@face",mf_zone,"Memorial Dungeon";
 						setmapflag "1@face",mf_monster_noteleport;
@@ -368,8 +368,8 @@ dali,80,60,4	script	Magic Scholar	755,{
 						close;
 					}
 					instance_set_timeout 7200,300,$fn_instance;
-					instance_init($fn_instance);	
-				
+					instance_init($fn_instance);
+
 					close;
 				case 2:
 					break;
@@ -421,13 +421,23 @@ dali,72,55,4	script	Interdimensional Device	844,{
 	}
 	switch( checkquest(12325,PLAYTIME) ) {
 		case -1:
-			if(instance_id(IM_PARTY)){
-				mes .instance_name$ + " doesnt exist for Party - "+getpartyname( .@party_id );
-			}
-			else{
-				warp "1@face",112,374;
-				mapannounce "dali", getpartyname(.@party_id) + " party's party member " + strcharinfo(0) + " enters " + .@md_name$ + ".",bc_map,"0x00ff99";
-				setquest 12325;// Faceworm's Nest after-effects
+			switch( instance_enter("1@face", 112, 374) ) {
+				case IE_OTHER:
+					mes "[Interdimensional Device]";
+					mes "An unknown error has occurred.";
+					close;
+				case IE_NOINSTANCE:
+					mes "[Interdimensional Device]";
+					mes "The passage for space travel is not activated yet.";
+					close;
+				case IE_NOMEMBER:// Custom text
+					mes "[Interdimensional Device]";
+					mes "You are not allowed to access the device.";
+					close;
+				case IE_OK:
+					mapannounce "dali", getpartyname(.@party_id) + " party's party member " + strcharinfo(0) + " enters " + .@md_name$ + ".",bc_map,"0x00ff99";
+					setquest 12325;// Faceworm's Nest after-effects
+					end;
 			}
 		case 0:
 		case 1:
@@ -1568,7 +1578,7 @@ OnTimer10000:
 OnTimer12000:
 	donpcevent instance_npcname("#fwormboss5") + "::OnChange";
 	end;
-OnTimer13000:		
+OnTimer13000:
 	if (unitexists('BOSS[5]) == false)
 		stopnpctimer;
 	getunitdata 'BOSS[5],.@arr;
@@ -2292,7 +2302,7 @@ OnInstanceInit:
 	else if (.@ren_e_m < 1315) set .@en_name_4, 4724;	// Dexterity5
 	else if (.@ren_e_m < 1316) set .@en_name_4, 4714;	// Inteligence5
 	else if (.@ren_e_m < 1317) set .@en_name_4, 4754;	// Luck5
-	
+
 	// card slot 3
 	if (.@en_name_4 > 0) {
 		set .@dr_t1, @dr_t * 5;
@@ -2331,7 +2341,7 @@ OnInstanceInit:
 		else if (.@ren_e_m < 1715) set .@en_name_3, 4724;	// Dexterity5
 		else if (.@ren_e_m < 1716) set .@en_name_3, 4714;	// Inteligence5
 		else if (.@ren_e_m < 1717) set .@en_name_3, 4754;	// Luck5
-		
+
 		// card slot 2
 		if (.@en_name_3 > 0) {
 			set .@dr_t1, .@dr_t * 5;
@@ -2411,7 +2421,7 @@ OnInstanceInit:
 		set .@dr_t1, 4;
 	set .@refine_rand[1], 12 - .@dr_t1;
 	set .@refine_rand[0], .@refine_rand[1] - 7;
-	
+
 	// card slot 4 rand
 	set .@dr_t1, .@dr_t * 10;
 	if (.@dr_t1 > 1851)
@@ -2479,7 +2489,7 @@ OnInstanceInit:
 		else if (.@ren_e_m < 1933) set .@en_name_4, 4726;	// Dexterity7
 		else if (.@ren_e_m < 1934) set .@en_name_4, 4716;	// Inteligence7
 		else if (.@ren_e_m < 1935) set .@en_name_4, 4756;	// Luck7
-		
+
 		// card slot 3
 		if (.@en_name_4 > 0) {
 			set .@ren_e_m, rand( .@slot_3_rand,1934 );

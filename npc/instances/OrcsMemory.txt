@@ -7,13 +7,13 @@
 //===== Description: =========================================
 //= [Official Conversion]
 //= Relive the memory of an orc.
-//===== Description: ========================================= 
+//===== Description: =========================================
 //= [Official Conversion]
 //= Relive the memory of an orc.
-//===== Additional Comments: ================================= 
+//===== Additional Comments: =================================
 //= 1.0 First version. [L0ne_W0lf]
 //= 1.1 First round of bugfixes. (bugreport:3928) [L0ne_W0lf]
-//=     Fixed some npcs calling wrong events. 
+//=     Fixed some npcs calling wrong events.
 //=     Fixed Depraved Orc Spirit spawn point
 //=     Fixed an NPC that was never being enabled.
 //= 1.1a Second round from bugreport. (bugreport:3928) [L0ne_W0lf]
@@ -32,7 +32,7 @@
 //= 1.6 Added 'instance_check_party' command to the script for proper checking if
 //=     the invoking party meets the requirements to join the Memorial Dungeon.
 //= 1.7 Instance system rewrite. [Euphy]
-//============================================================ 
+//============================================================
 
 1@orcs	mapflag	src4instance
 2@orcs	mapflag	src4instance
@@ -98,18 +98,22 @@ gef_fild10,242,202,0	script	Dimensional Gorge Piece	406,{
 	mes "In order to generate a dungeon you must be the Party Leader and have at least 2 members in the party.";
 	close;
 L_Enter:
-	if (instance_id(IM_PARTY)) {
-		mes "Memorial Dungeon "+.@md_name$+" does not exist.";
-		mes "The party leader has not reserved entrance to the dungeon yet.";
-		next;
-		mes "Once the reservation is complete, the dungeon will be generated.";
-		mes "If your dungeon has been destroyed you must wait 7 days before re-entering.";
-		close;
-	} else {
-		mapannounce "gef_fild10", .@p_leader$ + " of the party, " + .@p_name$ + " is entering the "+.@md_name$+".",bc_map,"0x00ff99";
-		if (checkquest(12059)== -1) setquest 12059;
-		warp "1@orcs",179,15;
-		end;
+	switch(instance_enter("1@orcs", 179, 15)) {
+		case IE_OTHER:
+			mes "An unknown error has occurred.";
+			close;
+		case IE_NOINSTANCE:
+			mes "Memorial Dungeon Orc's Memory does not exist.";
+			mes "Memorial Dungeon has been destroyed by the Party Leader, or because of the time limit. Please try again after 2 hours.";
+			close;
+		case IE_NOMEMBER:
+			mes "Only a member of the party can enter the Memorial Dungeon.";
+			close;
+		case IE_OK:
+			mapannounce "gef_fild10", getpartyname( getcharid(1) ) +" party's member "+strcharinfo(0)+" has entered the Orc's Memory.",bc_map,"0x00ff99";
+			if (checkquest(12059) == -1) setquest 12059;
+			if (getarg(0) == 0) close;
+			else end;
 	}
 }
 

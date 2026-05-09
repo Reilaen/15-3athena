@@ -25,13 +25,13 @@ moc_para01,26,95,5	script	Roel#sara	10040,{
 		cutin "", 255;
 		end;
 	}
-	
+
 	if (checkquest(13181) == 1) {
 		cutin "roel01.bmp", 0;
 		mes "[Roel]";
 		mes "Are you ready yet? You can give up if you're not confident.";
 		next;
-		
+
 		switch(select("No.:Give up.:")) {
 			case 1:
 				mes "[Roel]";
@@ -46,17 +46,17 @@ moc_para01,26,95,5	script	Roel#sara	10040,{
 				else {
 					erasequest 13181;
 				}
-				
+
 				close2;
 				cutin "", 255;
 				end;
 		}
 	}
-	
+
 	if (checkquest(13183) == 2) {
 		goto L_Skip;
 	}
-	
+
 	if (checkquest(13181) <= 0) {
 		cutin "roel01.bmp", 0;
 		mes "[Roel]";
@@ -65,7 +65,7 @@ moc_para01,26,95,5	script	Roel#sara	10040,{
 		mes "[Roel]";
 		mes "Recruiting guild prospects! Join us in our search for our former master Newoz! Are you interested?";
 		next;
-		
+
 		switch(select("Yes.:No.:")) {
 			case 1:
 				cutin "roel02.bmp", 0;
@@ -102,7 +102,7 @@ moc_para01,26,95,5	script	Roel#sara	10040,{
 				end;
 		}
 	}
-	
+
 	if (checkquest(13181) == 2) {
 		cutin "roel03.bmp", 0;
 		mes "[Roel]";
@@ -111,7 +111,7 @@ moc_para01,26,95,5	script	Roel#sara	10040,{
 		setquest 13183; // State = 1, Time = 0
 		completequest 13183;
 		next;
-		
+
 L_Skip:
 		cutin "roel01.bmp", 0;
 		mes "[Roel]";
@@ -126,7 +126,7 @@ L_Skip:
 		mes "[Roel]";
 		mes "If you want, you can go back in time and experience the same events. Do you want to embark on an adventure again?";
 		next;
-		
+
 		switch(select("Yes.:No.:")) {
 			case 1:
 				mes "[Roel]";
@@ -134,10 +134,10 @@ L_Skip:
 				next;
 				mes "[Roel]";
 				mes "This time, maybe you don't have to leave Shalosh.";
-				
+
 				if (checkquest(13181) > -1)
 					erasequest 13181;
-				
+
 				setquest 13181;
 				close2;
 				cutin "", 255;
@@ -148,7 +148,7 @@ L_Skip:
 				end;
 		}
 	}
-	
+
 	end;
 }
 
@@ -157,24 +157,24 @@ moc_para01,29,95,5	script	Runane#sara	10039,{
 	.@p_name$ = getpartyname(.@party_id);
 	.@md_name$ = "Nightmarish Jitterbug";
 	.@jittDailyCooldown = checkquest(13182, PLAYTIME);
-	
+
 	if (!instance_check_party(.@party_id)) {
 		cutin "lunain01.bmp", 0;
-		mes "[Runane]"; 
+		mes "[Runane]";
 		mes "^ff0000You first must form/join a party of at least 1 person to enter this dungeon.^000000";
 		close2;
 		cutin "", 255;
 		end;
 	}
-	
+
 	if (.@jittDailyCooldown == 2) {
 		erasequest 13181;
 		erasequest 13182;
 		.@jittDailyCooldown = -1;
 	}
-	
+
 	.@jittReentryCooldown = checkquest(13181, PLAYTIME);
-	
+
 	if (.@jittDailyCooldown > -1 && .@jittReentryCooldown == 2) {
 L_Cooldown:
 		cutin "lunain01.bmp", 0;
@@ -184,22 +184,22 @@ L_Cooldown:
 		cutin "", 255;
 		end;
 	}
-	
+
 	if (checkquest(13181) != 1) {
 		cutin "lunain01.bmp", 0;
-		mes "[Runane]"; 
+		mes "[Runane]";
 		mes "^ff0000If you want to use my dimensional portal, then you first have to talk to Roel. The portal is not open for everyone.^000000";
 		close2;
 		cutin "", 255;
 		end;
 	}
-	
+
 	if (.@jittDailyCooldown != -1) {
 		goto L_Cooldown;
 	}
-	
+
 	cutin "lunain01.bmp", 0;
-	
+
 	switch(select((getcharid(0) == getpartyleader(.@party_id, 2) ? "Open the dimensional portal." : "") + ":Enter " + .@md_name$ + ".:Cancel.:")) {
 		case 1:
 			.@instance = instance_create(.@md_name$, .@party_id);
@@ -214,27 +214,42 @@ L_Cooldown:
 				instance_set_timeout(7200, 300, .@instance);
 				instance_init(.@instance);
 			}
-			
+
 			mes "[Runane]";
 			mes "^ff0000Preparing the dimensional portal...^000000";
 			mes "^ff0000Please wait.^000000";
 			break;
 		case 2:
-			if (instance_id(IM_PARTY)) {
-				mes "[Runane]";
-				mes "^ff0000Your party leader has not yet created a Time Crack.^000000";
-				close;
+			switch( instance_enter("1@jtb", 16, 17) ) {
+				case IE_NOMEMBER:
+					close3;
+				case IE_NOINSTANCE:
+					if (is_party_leader() == false) {
+						mes "[Runane]";
+						mes "Teleporting...";
+						next;
+						mes "[Runane]";
+						mes "^ff0000Please note that this portal cannot be accessed for 23 hours after your last access.^000000";
+						next;
+					}
+					mes "[Runane]";
+					mes "^ff0000Your party leader has not yet created a Time Crack.^000000";
+					close3;
+				case IE_OTHER:
+					mes "An unknown error has occurred.";
+					close3;
+				case IE_OK:
+					setquest 13182;// Nightmarish Jitterbug: Waiting
+					mapannounce "moc_para01", "" + strcharinfo(0) + " of the party, " + getpartyname( getcharid(1) ) + ", is entering the " + .@md_name$ + ".", bc_map, 0xFF99;
+					specialeffect2 EF_READYPORTAL2;
+					specialeffect2 EF_PORTAL2;
+					end;
 			}
-//			setquest 13181;
-			setquest 13182;
-			mapannounce "moc_para01", strcharinfo(0) + " of the party, " + .@p_name$ + ", is entering the " + .@md_name$ + ".", bc_map, "0x00ff99";
-			warp "1@jtb", 16, 17;
-			break;
 		case 3:
 			cutin "", 255;
 			end;
 	}
-	
+
 	close2;
 	cutin "", 255;
 	end;
@@ -249,7 +264,7 @@ function	script	Jit_SkipDialogue	{
 function	script	Jit_SpawnMobs	{
 	'map$ = instance_mapname("1@jtb");
 	'label$ = instance_npcname("#jtmain") + sprintf("::OnKilled%02d", getarg(0));
-	
+
 	switch(getarg(0)) {
 		case 1:
 			break;
@@ -327,7 +342,7 @@ function	script	Jit_SpawnMobs	{
 			monster 'map$, 212, 275, "--ja--", 3070, 1, 'label$;
 			monster 'map$, 213, 275, "--ja--", 3070, 1, 'label$;
 			monster 'map$, 213, 276, "--ja--", 3070, 1, 'label$;
-			
+
 			areamonster 'map$, 183, 301, 220, 272, "--ja--", 3069, 5, 'label$;
 			areamonster 'map$, 183, 301, 220, 272, "--ja--", 3070, 8, 'label$;
 			areamonster 'map$, 183, 301, 220, 272, "--ja--", 3071, 5, 'label$;
@@ -368,7 +383,7 @@ function	script	Jit_SpawnMobs	{
 			monster 'map$, 358, 317, "--ja--", 3069, 1, 'label$;
 			monster 'map$, 358, 325, "--ja--", 3069, 1, 'label$;
 			monster 'map$, 358, 338, "--ja--", 3069, 1, 'label$;
-			
+
 			if (jitoptions[4] == 2) {
 				monster 'map$, 325, 357, "--ja--", 3108 + rand(1), 1, 'label$;
 				monster 'map$, 341, 357, "--ja--", 3108 + rand(1), 1, 'label$;
@@ -379,22 +394,22 @@ function	script	Jit_SpawnMobs	{
 			monster 'map$, 321, 313, "--ja--", 3070, 1, 'label$;
 			monster 'map$, 321, 313, "--ja--", 3071, 1, 'label$;
 			monster 'map$, 321, 313, "--ja--", 3072, 1, 'label$;
-			
+
 			monster 'map$, 331, 324, "--ja--", 3069, 1, 'label$;
 			monster 'map$, 331, 324, "--ja--", 3070, 1, 'label$;
 			monster 'map$, 331, 324, "--ja--", 3071, 1, 'label$;
 			monster 'map$, 331, 324, "--ja--", 3072, 1, 'label$;
-			
+
 			monster 'map$, 313, 326, "--ja--", 3069, 1, 'label$;
 			monster 'map$, 313, 326, "--ja--", 3070, 1, 'label$;
 			monster 'map$, 313, 326, "--ja--", 3071, 1, 'label$;
 			monster 'map$, 313, 326, "--ja--", 3072, 1, 'label$;
-			
+
 			'mvpgid = monster('map$, 322, 337, "Awakened Ferre", 3073, 1, instance_npcname("#jtmain") + "::OnBossDead");
 			initnpctimer instance_npcname("#jtboss");
 			return;
 	}
-	
+
 	enablenpc instance_npcname(sprintf("#jtw%02d", getarg(0) - 1));
 	return;
 }
@@ -404,12 +419,12 @@ function	script	Jit_SpawnMobs	{
 //________________________________
 function	script	JitUnhideDelay	{
 	sleep2 1500;
-	
+
 	while(getarg(.@i, "") != "") {
 		hideoffnpc instance_npcname(getarg(.@i));
 		.@i++;
 	}
-	
+
 	return;
 }
 
@@ -418,16 +433,16 @@ function	script	JitUnhide	{
 		hideoffnpc instance_npcname(getarg(.@i));
 		.@i++;
 	}
-	
+
 	return;
 }
 
 function	script	JitDiagClose	{
 	.@name$ = strnpcinfo(1);
-	
+
 	mes "[" + .@name$ + "]";
 	mes getarg(2);
-	
+
 	if (getarg(0, 0) == 0) {
 		cutin "", 255;
 	}
@@ -456,7 +471,7 @@ function	script	JitDiagClose	{
 			cutin "ragi0"+getarg(0)+".bmp", getarg(1);
 		}
 	}
-	
+
 	close2;
 	cutin "", 255;
 	end;
@@ -467,7 +482,7 @@ function	script	JitDiag	{
 	mes "[" + getarg(0) + "]";
 	mes getarg(3);
 	npctalk getarg(3), instance_npcname(getarg(0) + getarg(4, "#" + strnpcinfo(2)));
-	
+
 	if (getarg(1, 0) == 0) {
 		cutin "", 255;
 	}
@@ -496,7 +511,7 @@ function	script	JitDiag	{
 			cutin "ragi0"+getarg(1)+".bmp", getarg(2);
 		}
 	}
-	
+
 	return;
 }
 
@@ -515,11 +530,11 @@ function	script	JitDiag	{
 
 1@jtb,28,30,5	script	Newoz#01	625,{
 	'room = 0;
-	
+
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",2, 0, "Our adventure hasn't started yet, and I'm already hungry.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -598,7 +613,7 @@ L_Normal:
 			cutin "", 255;
 			hideonnpc instance_npcname("Newoz#01");
 			mes "["+strcharinfo(0)+"]";
-			mes	"..."; 
+			mes	"...";
 			next;
 			hideonnpc instance_npcname("Arang#01");
 			hideonnpc instance_npcname("Mingmin#01");
@@ -619,7 +634,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -636,7 +651,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 2, "Please, let there be no more surprises.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -674,7 +689,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -692,7 +707,7 @@ L_Hurry:
 		mes "These monsters are boring.";
 		close;
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -717,7 +732,7 @@ L_Normal:
 			callfunc("JitDiag","Gelkah", 		1, 2, "Ruinous Twelve Heaven's Nets!"); next;
 			emotion e_flash;
 			emotion e_flash;
-			
+
 			mes "[Gelkah/Rotert]";
 			mes "CROSS!!!";
 			specialeffect 226, AREA, instance_npcname("Rotert#03");
@@ -725,7 +740,7 @@ L_Normal:
 			npctalk "CROSS!!!", instance_npcname("Gelkah#03");
 			npctalk "CROSS!!!", instance_npcname("Rotert#03");
 			next;
-			
+
 			cutin "rote01.bmp", 0;
 			mes "[Gelkah/Rotert]";
 			mes "Scatter--Thousand Flashlights!";
@@ -744,7 +759,7 @@ L_Normal:
 			npctalk "Scatter--Thousand Flashlights!", instance_npcname("Gelkah#03");
 			npctalk "Scatter--Thousand Flashlights!", instance_npcname("Rotert#03");
 			next;
-			
+
 			callfunc("JitDiag","Gelkah", 		1, 2, "...Whew."); next;
 			callfunc("JitDiag","Rotert", 		1, 0, "Hm, not good enough, Gelkah. Don't let the guild business distract you from practice."); next;
 			callfunc("JitDiag","Gelkah", 		3, 2, "Yes, Master!"); next;
@@ -759,7 +774,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -773,7 +788,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 2, "...");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -800,7 +815,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -819,7 +834,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 0, "I'll sing again later.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -848,7 +863,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -865,7 +880,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 0, "What's wrong with me? My heart won't stop pounding.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -888,7 +903,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -907,7 +922,7 @@ L_Hurry:
 		mes "...";
 		close;
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -940,7 +955,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -964,7 +979,7 @@ L_Hurry:
 		mes "...";
 		close;
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -988,7 +1003,7 @@ L_Normal:
 			select("Aigu's debut song- Lost Poring:Aigu's single- Only I Didn't Know about the Card Album:Newoz's Red Potion (feat. Muka):Lagi's Self-composed song- Accidental Moon");
 			setarray .@choices$, "", "Aigu's Lost Poring", "Aigu's Only I Didn't Know about the Card Album", "your Red Potion (feat. Muka)", "Lagi's Accidental Moon";
 			unittalk getcharid(3), "I like " + .@choices$[@menu] + ".";
-			
+
 			switch(@menu) {
 				case 1:
 					callfunc("JitDiag","Newoz",	 	1, 0, "You know her debut song. You're a fan of her, huh?"); next;
@@ -1004,7 +1019,7 @@ L_Normal:
 					callfunc("JitDiag","Newoz",	 	1, 0, "Hah hah, I like it too."); next;
 					break;
 			}
-			
+
 			jitoptions[0] = @menu;
 			callfunc("JitDiag","Newoz",	 	1, 0, "Hm, to each his own."); next;
 			callfunc("JitDiag","Lagi",	 		1, 0, "Something else is showing up."); next;
@@ -1022,7 +1037,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1040,7 +1055,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 2, "These guys are different. They seem to understand music... or maybe not.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1062,7 +1077,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1081,7 +1096,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",4, 0, "Arang, why aren't you drinking it?");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1122,7 +1137,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1136,7 +1151,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",2, 0, "I'm glad the mushroom is not poisonous.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1145,7 +1160,7 @@ L_Normal:
 			callfunc("JitDiag","Mingmin",	 	2, 0, "I've harvested a few mushrooms to taste."); next;
 			callfunc("JitDiag","Mingmin",	 	1, 0, "This mushroom is poisonous, but not life threatening. Do you want to have a bite?"); next;
 			select("Decline:Have a bite");
-			
+
 			if (@menu == 2) {
 				callfunc("JitDiag","Mingmin",		1, 0, "You're braver than I thought."); next;
 				mes "- You feel good, possibly a side effect of eating the mushroom. -"; next;
@@ -1158,7 +1173,7 @@ L_Normal:
 				callfunc("JitDiag","Mingmin",	 	1, 0, "Hm?"); next;
 				callfunc("JitDiag","Mingmin",	 	1, 0, "You're not reacting. Maybe the mushroom is not poisonous after all. Maybe I should try one..."); next;
 			}
-			
+
 			callfunc("JitDiag","Mingmin",	 	0, 0, "Hm..."); next;
 			callfunc("JitDiag","Mingmin",	 	0, 0, "It has almost no taste."); next;
 			callfunc("JitDiag","Mingmin",	 	0, 0, "Sheesh, this was a waste of time. You should go first. There's one more thing I want to look at."); close2;
@@ -1170,7 +1185,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1186,7 +1201,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 2, "You made it sound so difficult, when you could just say, 'give and take.'");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1223,7 +1238,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1243,7 +1258,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 0,  "It's possible someone else might be in here.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1301,7 +1316,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1323,7 +1338,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",2, 0, "Don't worry. Children grow by fighting.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1353,7 +1368,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1370,7 +1385,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 0, "Wait, I've collected some Autumn Leaves and Blue Cards to give to other friends as souvenirs. Where are they?");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1402,7 +1417,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1419,7 +1434,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 2, "Friends... Rivalry... Comrades...");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1433,23 +1448,23 @@ L_Normal:
 			callfunc("JitDiag","Aigu",	 		3, 0, "You seem to be found of Roel."); next;
 			callfunc("JitDiag","Runane",	 	3, 2, "I'm not interested in that kid."); next;
 			callfunc("JitDiag","Aigu",	 		3, 0, "How about you, Adventurer? How are things with your significant other?"); next;
-			
+
 			switch (select("You don't even know if I have one:My love is unrequited:We're happy")) {
-				case 1: 
+				case 1:
 					unittalk getcharid(3), "You don't even know if I have one.";
 					callfunc("JitDiag","Aigu",	 		1, 0, "Oh, I'm sorry, but I'm on the verge of bursting into tears."); next;
 					break;
-				case 2: 
+				case 2:
 					unittalk getcharid(3), "My love is unrequited.";
 					callfunc("JitDiag","Aigu",	 		1, 0, "Unrequited love is painful. You'd better let it go before it breaks you."); next;
 					break;
-				case 3: 
+				case 3:
 					// Unconfirmed dialogue
 					unittalk getcharid(3), "We're happy.";
 					callfunc("JitDiag","Aigu",	 		1, 0, "I'm glad to hear it."); next;
 					break;
 			}
-			
+
 			jitoptions[2] = @menu;
 			callfunc("JitDiag","Aigu",	 		0, 0, "I don't mind healthy rivalry, but I prefer friendship, however long it lasts."); next;
 			callfunc("JitDiag","Runane",	 	0, 0, "Let's make a truce for now. But make no mistake--Newoz is mine the moment I find him vulnerable."); next;
@@ -1463,7 +1478,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1480,7 +1495,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 0, "Ferres don't bite me.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1519,7 +1534,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1541,7 +1556,7 @@ L_Hurry:
 	if ('room >= atoi(strnpcinfo(2)) || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 0, "We should find her.");
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1579,7 +1594,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1607,7 +1622,7 @@ L_Hurry:
 		cutin "", 255;
 		end;
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1620,7 +1635,7 @@ L_Normal:
 			emotion e_com;
 			specialeffect 214, AREA, instance_npcname("Roel#20");
 			callfunc("JitDiag","Roel",	 		2, 0, "Impenetrable defense! Roel-style Guard!"); next;
-			
+
 			cutin "gelca01.bmp", 2;
 			mes "[Roel & Gelkah]";
 			mes "CROSS!!!";
@@ -1629,7 +1644,7 @@ L_Normal:
 			specialeffect 220, AREA, instance_npcname("Roel#20");
 			specialeffect 220, AREA, instance_npcname("Gelkah#20");
 			next;
-			
+
 			cutin "roel03.bmp", 0;
 			mes "[Roel & Gelkah]";
 			mes "Last bastion!";
@@ -1646,7 +1661,7 @@ L_Normal:
 			specialeffect 41, AREA, instance_npcname("Gelkah#20");
 			specialeffect 41, AREA, instance_npcname("Roel#20");
 			next;
-			
+
 			callfunc("JitDiag","Roel",	 		2, 0, "By the gods, Gelkah, you're awesome!"); next;
 			select("Awesome, indeed!:You just made up those words to look cool!");
 			// Unconfirmed path - Option 2 is unsure, the next line will probably change?
@@ -1663,7 +1678,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1692,7 +1707,7 @@ L_Hurry:
 		mes "...";
 		close;
 	}
-	
+
 	switch(select("Talk:Hurry")) {
 		case 1:
 L_Normal:
@@ -1752,7 +1767,7 @@ L_Hurry:
 		case 2:
 			if (!callfunc("Jit_SkipDialogue"))
 				goto L_Normal;
-			
+
 			mes "Try to jog your memory while hurrying."; close2;
 			goto L_Hurry;
 	}
@@ -1782,7 +1797,7 @@ L_Hurry:
 		mes "...";
 		close;
 	}
-	
+
 	callfunc("JitDiag","Newoz",	 	1, 0, "I like his spirit, though I can see he's getting exhausted.", "#23t"); next;
 	callfunc("JitDiag","Ferre",	 	0, 0, "Ferre...", "#23"); next;
 	callfunc("JitUnhide","Gelkah#23", "Rotert#23");
@@ -1832,7 +1847,7 @@ L_Hurry:
 	enablenpc instance_npcname("#jtw23");
 	cutin "", 255;
 	'room = 100;
-	
+
 	end;
 }
 
@@ -1842,7 +1857,7 @@ L_Hurry:
 		mes "...";
 		close;
 	}
-	
+
 	callfunc("JitDiag","Newoz",	 	4, 0, "*Pant Pant* I've found you, Shalosh."); next;
 	callfunc("JitDiag","Shalosh",	 	1, 2, "Newoz..."); next;
 	callfunc("JitDiag","Newoz",	 	4, 0, "*Pant Pant* I'm glad you didn't make it too far."); next;
@@ -1854,7 +1869,7 @@ L_Hurry:
 	callfunc("JitDiag","Newoz",	 	1, 0, "Yeah, you don't have to tell me that."); next;
 	callfunc("JitDiag","Shalosh",	 	1, 2, "That is not good. Ferre..."); next;
 	callfunc("JitDiag","Shalosh",	 	1, 2, "No, no!"); next;
-	callfunc("JitDiag","Ferre",	 	0, 0, "Ferre, ferre, ferre, ferre-!"); 
+	callfunc("JitDiag","Ferre",	 	0, 0, "Ferre, ferre, ferre, ferre-!");
 	//sleep2 1000;	// The sleep timers get players stuck for some reason.
 	hideonnpc instance_npcname("Ferre#23");
 	//sleep2 1000;
@@ -1897,18 +1912,18 @@ L_Hurry:
 	if (checkquest(13181) <= 1) {
 		if (checkquest(13181) < 1)
 			setquest 13181;
-		
+
 		if (checkquest(13181) == 1)
 			completequest 13181;
-		
+
 		if (checkquest(13181) == 2)
 			getexp 1500000, 500000;
 	}
-	
+
 	if ('room >= 101 || getpartyleader(getcharid(1), 2) != getcharid(0)) {
 		callfunc("JitDiagClose",1, 2, "It's been a while since I had so much fun.");
 	}
-	
+
 	emotion e_ho;
 	callfunc("JitDiag","Newoz", 		2, 2, "This was my first adventure with my old friends in a long time. I hope we can do this again soon."); next;
 	emotion e_no;
@@ -1956,7 +1971,7 @@ L_Hurry:
 	mes .@n$;
 	mes "I've stolen a few strands of hair from Shalosh, thinking it'd come in handy someday. I want to analyze them, though I already know the results.";
 	next;
-	
+
 	switch(select("Strange Pendant:Jitterbug Tooth:Quit")) {
 		case 1:
 			mes .@n$;
@@ -1972,7 +1987,7 @@ L_Hurry:
 			mes "ATK +6%. MATK +6%. All stats +1. Magic attacks from enemies cast Level 1 Auto Spell Maelstorm. Def:0 Weight: 10 Requried Level: 130";
 			mes "Slot: 1";
 			next;
-			
+
 			if (countitem(2990) >= 1 && countitem(2991) >= 1) {
 				switch(select("Quit:Combine pendants")) {
 					case 1:
@@ -1982,7 +1997,7 @@ L_Hurry:
 							delitem 2990, 1;
 							delitem 2991, 1;
 							getitem 2992, 1;
-							
+
 							// Unconfirmed dialogue
 							mes "[Mingmin]";
 							mes "I hope you like it! I can combine more pendants for you if you need.";
@@ -1993,10 +2008,10 @@ L_Hurry:
 							mes "You don't have enough space in your inventory to carry your reward.";
 						}
 				}
-				
+
 				close2; cutin "", 255; end;
 			}
-			
+
 			mes .@n$;
 			mes "If my description of the combination results is strangely familiar to you, I wouldn't know. But that's how I picture the results. If you find both the pendants, bring them to me, yeah?";
 			next;
@@ -2014,7 +2029,7 @@ L_Hurry:
 			mes .@n$;
 			mes "I'll exchange 50 Jitterbug Teeth with ^ff0000a random item.^000000";
 			next;
-			
+
 			switch(select("Quit:Exchange 50")) {
 				case 2:
 					if (countitem(6719) < 50) {
@@ -2024,14 +2039,14 @@ L_Hurry:
 						cutin "", 255;
 						end;
 					}
-					
+
 					// Unconfirmed formula?
 					.@itemId = callfunc("F_Rand",18123, 18122, 2989, 2990, 2991, 1990, 2988, 1935, 15100, 15101, 616);
-					
+
 					if (checkweight(.@itemId, 1)) {
 						delitem 6719, 50;
 						getitem .@itemId, 1;
-						
+
 						// Unconfirmed dialogue
 						mes "[Mingmin]";
 						mes "I hope you like it! You can bring me more Jitterbug Teeth for other items.";
@@ -2046,13 +2061,13 @@ L_Hurry:
 						cutin "", 255;
 						end;
 					}
-					
+
 					break;
 			}
-			
+
 			break;
 	}
-	
+
 L_End:
 	mes "[Mingmin]";
 	mes "This place is still full of things to study.";
@@ -2087,20 +2102,20 @@ L_End:
 1@jtb,220,359,0	script	#jtw21	45,2,2,{ end; OnTouch: warp instance_mapname("1@jtb"), 287, 356; end; }
 1@jtb,311,358,0	script	#jtw22	45,2,2,{ end; OnTouch: warp instance_mapname("1@jtb"), 335, 320; end; }
 1@jtb,325,325,0	script	#jtw23	45,2,2,{ end; OnTouch: warp instance_mapname("1@jtb"), 320, 22; end; }
-1@jtb,391,30,0	script	#jtw24	45,2,2,{ 
+1@jtb,391,30,0	script	#jtw24	45,2,2,{
 	end;
-OnTouch: 
+OnTouch:
 	if (checkquest(13181) <= 1) {
 		if (checkquest(13181) < 1)
 			setquest 13181;
-		
+
 		if (checkquest(13181) == 1)
 			completequest 13181;
-		
+
 		if (checkquest(13181) == 2)
 			getexp 1500000, 500000;
 	}
-	
+
 	warp "moc_para01", 28, 87;
 	end;
 }
@@ -2112,7 +2127,7 @@ OnTimer30000:
 		stopnpctimer;
 		end;
 	}
-	
+
 	emotion e_ho;
 	emotion e_ho;
 	npctalk callfunc("F_Rand",
@@ -2122,7 +2137,7 @@ OnTimer30000:
 		"Why do bananas wear suntan lotion? Because they peel!",
 		"Um, hold on. One of the ukulele strings snapped. How about I sing instead?"),
 		instance_npcname("Newoz#23s");
-	
+
 	unittalk 'mvpgid, "FERRE! FERRE!";
 	areamobuseskill instance_mapname("1@jtb"), 322, 325, 20, 3073, 89, 10, 0, 0, 0, 1;
 	initnpctimer;
@@ -2132,44 +2147,44 @@ OnTimer30000:
 1@jtb,45,48,0	script	#jtmain	139,{
 	end;
 OnInstanceInit:
-	setarray .@npcs$, 
-		"Aigu#02", "???#02", "Runane#02", 
-		"Gelkah#03", "Rotert#03", 
-		"???#04", 
+	setarray .@npcs$,
+		"Aigu#02", "???#02", "Runane#02",
+		"Gelkah#03", "Rotert#03",
+		"???#04",
 		"Aigu#06", "Arang#06", "???#06", "Newoz#06", "Shalosh#06",
-		"Aigu#07", "Runane#07", "Roel#07", 
-		"Shalosh#08", "Newoz#08", "Mingmin#08", 
-		"Shalosh#09", "Lagi#09", "Newoz#09", 
-		"Roel#10", "Shalosh#10", "Runane#10", "Newoz#10", 
-		"Roel#11", "Mingmin#11", "Aigu#11", "Arang#11", "Runane#11", 
-		"Mingmin#12", 
-		"Melody-Jack#13", "Newoz#13", 
-		"Aigu#14", "Lagi#14", "Shalosh#14", "Roel#14", "Mingmin#14", "Newoz#14", 
-		"Shalosh#15", "Roel#15", "Mingmin#15", "Runane#15", "Arang#15", "Rotert#15", "Gelkah#15", "Newoz#15", 
-		"Mingmin#16", "Rotert#16", "Newoz#16", 
-		"Aigu#17", "Runane#17", "Shalosh#17", 
-		"Roel#18", "Runane#18", "Shalosh#18", 
-		"Arang#19", "Lagi#19", "Gelkah#19", "Rotert#19", "Aigu#19", "Mingmin#19", "Melody-Jack#19", "Newoz#19", 
-		"Gelkah#20", "Roel#20", 
-		"Rotert#21", "Arang#21", "Aigu#21", "Lagi#21", "Runane#21", "Roel#21", "Shalosh#21", "Gelkah#21", "Mingmin#21", "Melody-Jack#21", "Ferre#21", "Ferre#21s", "Newoz#21", 
+		"Aigu#07", "Runane#07", "Roel#07",
+		"Shalosh#08", "Newoz#08", "Mingmin#08",
+		"Shalosh#09", "Lagi#09", "Newoz#09",
+		"Roel#10", "Shalosh#10", "Runane#10", "Newoz#10",
+		"Roel#11", "Mingmin#11", "Aigu#11", "Arang#11", "Runane#11",
+		"Mingmin#12",
+		"Melody-Jack#13", "Newoz#13",
+		"Aigu#14", "Lagi#14", "Shalosh#14", "Roel#14", "Mingmin#14", "Newoz#14",
+		"Shalosh#15", "Roel#15", "Mingmin#15", "Runane#15", "Arang#15", "Rotert#15", "Gelkah#15", "Newoz#15",
+		"Mingmin#16", "Rotert#16", "Newoz#16",
+		"Aigu#17", "Runane#17", "Shalosh#17",
+		"Roel#18", "Runane#18", "Shalosh#18",
+		"Arang#19", "Lagi#19", "Gelkah#19", "Rotert#19", "Aigu#19", "Mingmin#19", "Melody-Jack#19", "Newoz#19",
+		"Gelkah#20", "Roel#20",
+		"Rotert#21", "Arang#21", "Aigu#21", "Lagi#21", "Runane#21", "Roel#21", "Shalosh#21", "Gelkah#21", "Mingmin#21", "Melody-Jack#21", "Ferre#21", "Ferre#21s", "Newoz#21",
 		"Shalosh#23", "Ferre#23", "Ferre#23s", "Newoz#23", "Newoz#23s", "Newoz#23t", "Rotert#23", "Gelkah#23", "Aigu#23", "Lagi#23", "Melody-Jack#23", "Arang#23", "Runane#23", "Roel#23", "Mingmin#23";
-	
+
 	.@size = getarraysize(.@npcs$);
-	
+
 	for (.@i = 0; .@i < .@size; .@i++) {
 		hideonnpc instance_npcname(.@npcs$[.@i]);
 	}
-	
+
 	// Variable used for debugging specific rooms.
 	// Leave at 1 for normal behavior.
 	$JIT_DEBUG_ROOM = 1;
-	
+
 	for (.@i = $JIT_DEBUG_ROOM; .@i < 25; .@i++) {
 		disablenpc instance_npcname(sprintf("#jtw%02d", .@i));
 	}
-	
+
 	'room = 0;
-	
+
 	if ($JIT_DEBUG_ROOM != 1)
 		callfunc("Jit_SpawnMobs",$JIT_DEBUG_ROOM + 1);
 	end;
@@ -2256,7 +2271,7 @@ OnKilled21:
 OnKilled22:
 	if (mobcount(instance_mapname("1@jtb"), 'label$) == 0) {
 		callfunc("JitUnhideDelay","Shalosh#23", "Ferre#23", "Newoz#23");
-		
+
 		enablenpc instance_npcname("#jtw22");
 	}
 	end;

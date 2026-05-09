@@ -149,15 +149,24 @@ dali02,41,134,0	script	Interdimensional Device::gpportal	10007,{
 		mes("We must save the princess no matter how much fear grips our hearts!");
 		close();
 	}
-	if (instance_id(IM_PARTY)) {
-		mes("^FF0000Inside the device you see a dark hole. If you wish to enter you may wish to talk to the Unpleasant Royal Guard first.^000000");
-		close();
+
+	.@md_name$ = "Ghost Palace";
+	switch(instance_enter("1@spa", 42, 196)) {
+		case IE_OTHER:
+			mes "An unknown error occurred.";
+			close;
+		case IE_NOINSTANCE:
+			mes "^ff0000Inside the devices you see a dark hole. If you wish to enter you must to talk to the Unpleasent Royal Guard first.^000000";
+			close;
+		case IE_NOMEMBER:
+			mes "Only registered members can enter the " + .@md_name$ + " instance.";
+			close;
+		case IE_OK:
+			mapannounce "dali", "" + strcharinfo(0) + " of the party, " + getpartyname(.@party_id) + ", is entering the Ghost Palace.", bc_map, 0x00ff99;
+			if (checkquest(1260) == -1) setquest 1260;
+			setquest 1261;// Cursed Swordman
+			end;
 	}
-	mapannounce("dali", sprintf("%s of the party, %s, is entering the Ghost Palace.", strcharinfo(PC_NAME), getpartyname(getcharid(1))), bc_map, 0x00FF99);
-	if (checkquest(1260) == -1) setquest 1260;
-	setquest 1261;
-	warp("1@spa", 198, 188);
-	close();
 }
 
 1@spa,197,204,5	script	King#gp1	965,{
@@ -829,4 +838,3 @@ OnInstanceInit:
 1@spa,40,41,0	script	Thanatos Magic Trace	844,{
 	end;
 }
-

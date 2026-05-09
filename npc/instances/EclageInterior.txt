@@ -68,40 +68,35 @@ ecl_hub01,130,15,0	script	It is closed shut.	844,{
 		mes "This door connects to the plaza's ceiling.";
 		mes "It's also a place where the lighting is set up to make Orb seem more beautiful.";
 		next;
-		switch (select("Enter it.:Forget it.")) {
-			case 1:
-				set .@party_id, getcharid(1);
-
-				if (instance_id(IM_PARTY)) {
-					mes "It is closed shut.";
-					close;
-				}
-				if (.@party_id) {
-					set .@md_name$, "Eclage Interior";
-					if (getpartyleader(.@party_id,2) != getcharid(0)){
-						mes "-! Warning !-";
-						mes "This current quest will be held at Memorial dungeon.";
-						mes "Only the party leader will enter. Please create your party.";
-						close;
-					}
-					if (gettimetick(2) >= ecl_interior_time){
-						mes "[Shenime]";
-						mes "Looks like the soldiers inside are really tense.";
-						mes "It is pretty difficult to guide an outsider like you.";
-						close;
-					}
-					close2;
-					mapannounce "ecl_hub01",getpartyname(.@party_id) + " Party leader " + strcharinfo(0) + " is entering " + .@md_name$,bc_map,"0x00ff99";
-					warp "1@ecl",60,50;
-					end;
-				}
+		if (select("Enter it.:Forget it.") == 1) {
+			.@party_id = getcharid(1);
+			.@md_name$ = "Eclage Interior";
+			if (.@party_id == 0 || is_party_leader() == false) {
 				mes "-! Warning !-";
 				mes "This current quest will be held at Memorial dungeon.";
 				mes "Only the party leader will enter. Please create your party.";
 				close;
-			case 2:
+			}
+			if (gettimetick(2) >= ecl_interior_time){
+				mes "[Shenime]";
+				mes "Looks like the soldiers inside are really tense.";
+				mes "It is pretty difficult to guide an outsider like you.";
 				close;
-		}
+			}
+			switch (instance_enter("1@ecl", 60, 50)) {
+				case IE_OTHER:
+					mes "An unknown error has occurred.";
+					close;
+				case IE_NOINSTANCE:
+					mes "It is closed shut.";
+					close;
+				case IE_OK:
+					mapannounce "ecl_hub01",getpartyname(.@party_id) + " Party leader " + strcharinfo(0) + " is entering " + .@md_name$,bc_map,"0x00ff99";
+					end;
+				default:
+			}
+		} else
+			close;
 	}
 	mes "This door connects to the plaza's ceiling.";
 	mes "It's also a place where the lighting is set up to make Orb seem more beautiful.";

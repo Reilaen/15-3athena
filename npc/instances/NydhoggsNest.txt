@@ -4,10 +4,10 @@
 //= L0ne_W0lf, various sources
 //===== Current Version: =====================================
 //= 1.6
-//===== Description: ========================================= 
+//===== Description: =========================================
 //= [Official Conversion]
 //= Nidhoggr's Nest Instance
-//===== Additional Comments: ================================= 
+//===== Additional Comments: =================================
 //= 1.0 First version.
 //= 1.1 Minor dialog updates.
 //= 1.2 No longer glitches when anyone but party leader talks to the first NPC.
@@ -16,7 +16,7 @@
 //= 1.4 Cleaning. [Euphy]
 //= 1.5 Instance system rewrite. [Euphy]
 //= 1.6 Added GM management NPCs. [Euphy]
-//============================================================ 
+//============================================================
 
 1@nyd	mapflag	src4instance
 2@nyd	mapflag	src4instance
@@ -201,16 +201,24 @@ nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	111,8,8,{
 	close;
 
 L_Enter:
-	if (instance_id(IM_PARTY)) {
-		mes "[Yggdrasil Gatekeeper]";
-		mes "You did not request for entrance. Please let your leader request entrance.";
-		close;
-	} else {
-		mapannounce "nyd_dun02", getpartyname(getcharid(1))+"'s party member "+strcharinfo(0)+" has entered Nidhoggur's Nest.",bc_map,"0x00ff99";
-		if (checkquest(3135) == -1) setquest 3135;
-		if (checkquest(3136) == -1) setquest 3136;
-		warp "1@nyd",32,37;
-		close;
+	switch(instance_enter("1@nyd", 32, 36)) {
+		case IE_OTHER:
+			mes "[Yggdrasil Gatekeeper]";
+			mes "An unknown error has occurred.";
+			close;
+		case IE_NOINSTANCE:
+			mes "[Yggdrasil Gatekeeper]";
+			mes "You didn't ask to be admitted... You should accept admission first before entering.";
+			close;
+		case IE_NOMEMBER:
+			mes "[Yggdrasil Gatekeeper]";
+			mes "Where are the other servants, so you can work together? Each servant cannot be admitted here individually...";
+			close;
+		case IE_OK:
+			mapannounce "nyd_dun02", getpartyname(getcharid(1))+"'s party member "+strcharinfo(0)+" has entered Nidhoggur's Nest.",bc_map,"0x00ff99";
+			if (checkquest(3135) == -1) setquest 3135;
+			if (checkquest(3136) == -1) setquest 3136;
+			close;
 	}
 
 OnTouch_:

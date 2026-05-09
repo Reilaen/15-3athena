@@ -431,20 +431,23 @@ mal_in01,160,34,4	script	Missing, the Cleaner	545,{
 	}
 	end;
 L_Enter:
-	if (instance_id(IM_PARTY)) {
-		if (checkquest(12254,PLAYTIME) == 0 || checkquest(12254,PLAYTIME) == 1) {
+	switch(instance_enter("1@pump", 63, 98)) {
+		case IE_OTHER:
+			mes "An unknown error has occurred.";
+			close;
+		case IE_NOINSTANCE:
 			mes "The gate to the Culvert is still closed.";
 			mes "You must wait until you are able to enter or find a party leader who can create the instance.";
 			close;
-		}
-		mes "The memorial dungeon Culvert does not exist.";
-		mes "The party leader has not reserved entrance to the dungeon yet.";
-		close;
+		case IE_NOMEMBER:
+			mes "Only party members can participate.";
+			close;
+		case IE_OK:
+			mapannounce "mal_in01", strcharinfo(0)+" of the party "+getpartyname(getcharid(1))+" is entering the Culvert.",bc_map,"0x00ff99";
+			if (checkquest(12254) == -1) setquest 12254;
+			if (getarg(0) == 0) close;
+			else end;
 	}
-	mapannounce "mal_in01", strcharinfo(PC_NAME)+" of the party "+getpartyname(.@party_id)+" is entering the Culvert.",bc_map,"0x00ff99";
-	if (checkquest(12254) == -1) setquest 12254;
-	warp "1@pump",63,98;
-	end;
 }
 
 //== Instance: Common Scripts ==============================

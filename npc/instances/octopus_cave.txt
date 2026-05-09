@@ -124,24 +124,30 @@ mal_dun01,153,237,5	script	Weird Entrance	844,{
 	next;
 	switch(select("Go in.", "Stop.")) {
 	case 1:
-		if (countitem(6442) > 0) {
-			if (instance_id(IM_PARTY)) {
-				if (checkquest(4197,PLAYTIME) == 0 || checkquest(4197,PLAYTIME) == 1) {
+		if (countitem(6442)) {
+			switch(instance_enter("1@cash", 199, 99)) {
+				case IE_OTHER:
 					mes "[Starfish]";
 					mes "Ah, now is not the time...";
 					mes "Would you come back later? Hehe.";
 					close;
-				}
-				mes "[Starfish]";
-				mes "Shhh... Weird aura is";
-				mes "coming from that entrance.";
-				mes "Big trouble is waiting, if you go in now.";
-				close;
+				case IE_NOINSTANCE:
+				case IE_NOMEMBER:
+					mes "[Starfish]";
+					mes "There is a secret with that entrance.";
+					mes "So, please be careful with it, will ya? Hehe.";
+					close;
+				case IE_OK:
+					mapannounce "mal_dun01", getpartyname(getcharid(1))+" party's "+strcharinfo(0)+" member started to hunt the Octopus!",bc_map,"0x00ff99";
+					if (checkquest(4197) == -1) setquest 4197;
+					close;
+				default:
+					mes "[Starfish]";
+					mes "Shhh... Weird aura is";
+					mes "coming from that entrance.";
+					mes "Big trouble is waiting, if you go in now.";
+					close;
 			}
-			mapannounce "mal_dun01", getpartyname(getcharid(1))+" party's "+strcharinfo(0)+" member started to hunt the Octopus!",bc_map,"0x00ff99";
-			if (checkquest(4197) == -1) setquest 4197;
-			warp "1@cash",199,99;
-			end;
 		}
 		mes "[Starfish]";
 		mes "You should definitely prepare";

@@ -433,7 +433,7 @@ lighthalzen,342,291,4	script	Weird old man#Bio4Reward	847,{
 			mes "These are the armors I have.";
 			next;
 			for(set .@i, 1; .@i < 8; set .@i,.@i+1) {
-				if(((.@i == 1 || .@i == 5) && (countitem(6469) >= 100) && (countitem(6470) >= 50) && (countitem(6471) >= 35)) || 
+				if(((.@i == 1 || .@i == 5) && (countitem(6469) >= 100) && (countitem(6470) >= 50) && (countitem(6471) >= 35)) ||
 				((.@i == 2 || .@i == 3) && (countitem(6469) >= 100) && (countitem(6470) >= 50) && (countitem(6471) >= 22)) ||
 				((.@i == 4 || .@i == 7) && (countitem(6469) >= 300) && (countitem(6470) >= 300) && (countitem(6471) >= 400)) ||
 				((.@i == 6) && (countitem(6469) >= 100) && (countitem(6470) >= 50) && (countitem(6471) >= 30))) {
@@ -504,7 +504,7 @@ lighthalzen,342,291,4	script	Weird old man#Bio4Reward	847,{
 					break;
 				}
 				if(.@break)
-					break;				
+					break;
 			}
 		case 3:
 			mes "[Weird old man]";
@@ -514,15 +514,15 @@ lighthalzen,342,291,4	script	Weird old man#Bio4Reward	847,{
 			mes "These are the weapons I've got.";
 			next;
 			for(set .@i, 1; .@i < 15; set .@i,.@i+1) {
-				if(((.@i == 1) && (countitem(6469) >= 50) && (countitem(6470) >= 100) && 
+				if(((.@i == 1) && (countitem(6469) >= 50) && (countitem(6470) >= 100) &&
 				(countitem(6471) >= 10)) ||
-				((.@i == 2) && (countitem(6469) >= 50) && (countitem(6470) >= 100) && 
+				((.@i == 2) && (countitem(6469) >= 50) && (countitem(6470) >= 100) &&
 				(countitem(6471) >= 85)) ||
-				((.@i == 3 || .@i == 4 || (.@i >= 8 && .@i < 11) || .@i >= 12) && (countitem(6469) >= 50) && 
+				((.@i == 3 || .@i == 4 || (.@i >= 8 && .@i < 11) || .@i >= 12) && (countitem(6469) >= 50) &&
 				(countitem(6470) >= 100) && (countitem(6471) >= 35)) ||
 				((.@i == 5 || .@i == 7 || .@i == 11) && (countitem(6469) >= 50) && (countitem(6470) >= 100)
 				&& (countitem(6471) >= 40)) ||
-				((.@i == 6) && (countitem(6469) >= 300) && (countitem(6470) >= 300) && 
+				((.@i == 6) && (countitem(6469) >= 300) && (countitem(6470) >= 300) &&
 				(countitem(6471) >= 400))) {
 						set .@weapon$[.@i], "^0000FF";
 				} else {
@@ -864,7 +864,7 @@ lhz_cube,233,24,4	script	Sorcerer#Bio4Reward	786,{
 			set .@equipped$[.@i], getequipname(.@parts[.@i]);
 		}
 	}
-	switch(select("I changed my mind.", .@equipped$[0], .@equipped$[1], .@equipped$[2], .@equipped$[3], .@equipped$[4], 
+	switch(select("I changed my mind.", .@equipped$[0], .@equipped$[1], .@equipped$[2], .@equipped$[3], .@equipped$[4],
 	.@equipped$[5], .@equipped$[6])) {
 	case 1:
 		mes "[Pudding]";
@@ -946,8 +946,8 @@ lhz_cube,233,24,4	script	Sorcerer#Bio4Reward	786,{
 	set .@refine_count, getequiprefinerycnt(.@position);
 	set .@equip_item, getequipid(.@position);
 	set .@lhz_max_num, 4000;
-	if(.@equip_item == 1290 || .@equip_item == 1291 || .@equip_item == 1392 || 
-	.@equip_item == 1393 || .@equip_item == 1435 || .@equip_item == 1490 || 
+	if(.@equip_item == 1290 || .@equip_item == 1291 || .@equip_item == 1392 ||
+	.@equip_item == 1393 || .@equip_item == 1435 || .@equip_item == 1490 ||
 	.@equip_item == 13069 || .@equip_item == 13070 || .@equip_item == 16017) {
 		set .@type, 1;
 		if(.@equip_item == 1490)
@@ -957,7 +957,7 @@ lhz_cube,233,24,4	script	Sorcerer#Bio4Reward	786,{
 	} else if(.@equip_item == 1584 || .@equip_item == 1659) {
 		set .@type, 3;
 	} else if(.@equip_item== 2160 || .@equip_item == 2161 || .@equip_item == 2162 ||
-		.@equip_item == 2582 || .@equip_item == 2892 || .@equip_item == 15044 || 
+		.@equip_item == 2582 || .@equip_item == 2892 || .@equip_item == 15044 ||
 		.@equip_item == 18570) {
 		set .@type, 4;
 		if(.@equip_item == 2582 || .@equip_item == 18570)
@@ -1432,7 +1432,7 @@ lhz_cube,233,24,4	script	Sorcerer#Bio4Reward	786,{
 		if (.@socket_type==3){ delitem 6470, 10; }
 		else{ delitem 6469, 10; }
 		delequip .@position;
-		
+
 		if (.@enchant == 0){
 			specialeffect2 EF_SUI_EXPLOSION;
 			emotion e_ohnoes;
@@ -2000,7 +2000,7 @@ lhz_dun04,151,276,3	script	Researcher#memo	865,{
 							close;
 						}
 						instance_set_timeout 14400, 300, .@instance;
-						instance_init(.@instance);						
+						instance_init(.@instance);
 					}
 					mes "[Wolfchev]";
 					mes "Please hold on..";
@@ -2057,7 +2057,7 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 			mes "You have stopped entering to Wolfchev's laboratory.";
 			close;
 		}
-		if (instance_id(IM_PARTY)) {
+		if (instance_enter("1@lhz", 45, 148) != IE_OK) {  // probably missing failure cases
 			mes "^FF0000Warning^000000";
 			mes ""+ strcharinfo(PC_NAME) +". . .";
 			mes "^FF0000Unregistered personnel^000000";
@@ -2071,7 +2071,6 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 		} else {
 			mapannounce "lhz_dun04","Laboratory entrance system ["+ strcharinfo(1) +"] member ["+ strcharinfo(PC_NAME) +"] access granted..",bc_map,"0x0DF297";
 			setquest 5112;
-			warp "1@lhz.gat", 45, 148;
 			close;
 		}
 	} else if (.@lhz_time == 0) {
@@ -2239,7 +2238,7 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 	OnEnable:
 		specialeffect EF_LIGHTSPHERE;
 		enablenpc instance_npcname("Manual Sheet#1_1");
-		end; 
+		end;
 }
 
 // Left Valve
@@ -2849,7 +2848,7 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 		monster .@map$,85,58,"Starving Lab animal",2242,1,.@label$;
 		monster .@map$,82,60,"Starving Lab animal",2243,1,.@label$;
 		monster .@map$,83,58,"Starving Lab animal",2243,1,.@label$;
-		monster .@map$,85,56,"Starving Lab animal",2243,1,.@label$;		
+		monster .@map$,85,56,"Starving Lab animal",2243,1,.@label$;
 		monster .@map$,86,60,"Starving Lab animal",2243,1,.@label$;
 		monster .@map$,87,58,"Starving Lab animal",2243,1,.@label$;
 		end;
@@ -3119,7 +3118,7 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 			end;
 		case 13:
 			donpcevent instance_npcname("Howard Alt-Eisen#boss13")+"::OnEnable";
-			end; 
+			end;
 		}
 
 	OnDisable:

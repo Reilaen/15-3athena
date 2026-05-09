@@ -60,8 +60,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 		.@instance_id = instance_create("Pori Pori Challenge");
 		if (.@instance_id < 0 || instance_attachmap("quiz_01", .@instance_id, 1) == "") {
-			.@p_name$ = getpartyname(.@party_id);
-			mes("Party Name: " + .@p_name$);
+			mes("Party Name: " + getpartyname(.@party_id));
 			mes("Party Leader: " + strcharinfo(0));
 			mes("Error #" + .@instance_id);
 			mes("Message: Reservation failed!");
@@ -82,10 +81,9 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 	JoinChallenge:
 		.@instance_id = instance_id(IM_PARTY);
-
-		if (.@instance_id < 0) {
+		if (.@instance_id == -1) {
 			mes("[Pori Pori Nyu]");
-			mes("There is no Pori Pori Challenge you can join right now.");
+			mes("There is no Pori Pori Challenge you can join.");
 			close;
 		}
 
@@ -96,8 +94,11 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		warp(instance_mapname("quiz_01", .@instance_id), 30, 285);
-		end;
+		if(instance_enter("quiz_01", 30, 285) == IE_OTHER) {
+			mes("[Pori Pori Nyu]");
+			mes("Something unexpected happened..");
+			close;
+		}
 
 	Explanation:
 		mes("[Pori Pori Nyu]");

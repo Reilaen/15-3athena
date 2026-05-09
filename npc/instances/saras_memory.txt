@@ -7,7 +7,7 @@
 //= Copyright (C)  Ziu
 //===== Current Version: =====================================
 //= 1.2
-//===== Description: ========================================= 
+//===== Description: =========================================
 //= [Official Conversion]
 //= When Sarah Irine was only 4 years old, a terrible tragedy took place
 //= in her home: her mother was struck down by an assailant. The only
@@ -15,7 +15,7 @@
 //= who attacked her mother. Too shocked and afraid by the sight of her
 //= dying mother, little Sarah is not convinced and flees while Payon
 //= guards chase her down.
-//===== Additional Comments: ================================= 
+//===== Additional Comments: =================================
 //= 1.2 Ported from hercules to 15-3athena. [15peaces]
 //============================================================
 
@@ -180,16 +180,22 @@ dali,138,118,0	script	Dimensional Device#dimen	10007,{
 			mes "^FF0000The dimensional boots up cleanly. Use the device to enter the crack in space and time.^000000";
 			close;
 		case 2:
-			if (instance_id(IM_PARTY)) {
-				mes sprintf("The memorial dungeon ^0000FF%s^000000 does not exist.", .@md_name$);
-				mes "The party leader did not generate the dungeon yet.";
-				close;
+			switch(instance_enter("1@sara", 250, 155)) {
+				case IE_OTHER:
+					mes "An unknown error has occurred.";
+					close;
+				case IE_NOINSTANCE:
+					mes "The memorial dungeon "+.@md_name$+" does not exist.";
+					mes "The party leader did not generate the dungeon yet.";
+					close;
+				case IE_NOMEMBER:
+					mes "Only the registered members can enter the instance "+.@md_name$+".";
+					close;
+				case IE_OK:
+					mapannounce "dali",strcharinfo(0)+", member of the party "+.@p_name$+" entered the instance "+.@md_name$+".",bc_map,"0x00ff99";
+					setquest 15002;
+					end;
 			}
-			mapannounce("dali", sprintf("%s, member of the party %s entered the instance %s.", strcharinfo(0), .@p_name$, .@md_name$), bc_map, C_SPRINGGREEN);
-			setquest 15002;
-			warp "1@sara", 250, 155;
-			end;
-			break;
 		case 3:
 			close;
 		}
@@ -678,7 +684,7 @@ OnTimer5000:
 	end;
 OnRespawn:
 	set .@map$, instance_mapname("1@sara");
-	
+
 	monster .@map$, .@x, .@y, "Maggot", 2467, .@mobs, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
 	monster .@map$, 107, 325, "Payon Town Guard", 2543, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
 	monster .@map$, 115, 325, "Payon Town Guard", 2543, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
@@ -954,7 +960,7 @@ OnRespawn:
 	monster .@map$, 155, 180, "Payon Town Guard", 2544, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
 	monster .@map$, 157, 180, "Payon Town Guard", 2544, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
 	monster .@map$, 159, 180, "Payon Town Guard", 2544, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
-	
+
 	monster .@map$, 173, 139, "Payon Town Guard", 2543, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
 	monster .@map$, 170, 139, "Payon Town Guard", 2543, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
 	monster .@map$, 167, 139, "Payon Town Guard", 2543, 1, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
