@@ -5042,8 +5042,6 @@ ACMD_FUNC(mapinfo)
 		strcat(atcmd_output, "GuildLock | ");
 	if (map[m_id].flag.loadevent)
 		strcat(atcmd_output, "Loadevent |");
-	if (map[m_id].flag.src4instance)
-		strcat(atcmd_output, "Src4instance |");
 	if (map[m_id].flag.nosunmoonstarmiracle)
 		strcat(atcmd_output, "NoSunMoonStarMiracle | ");
 	if (map[m_id].flag.notomb)

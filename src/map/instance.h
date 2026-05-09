@@ -73,7 +73,7 @@ int instance_add_map(const char *name, int instance_id, bool usebasename, const 
 void instance_del_map(int m);
 int instance_map2imap(int m, int instance_id);
 int instance_mapname2imap(const char *map_name, int instance_id);
-int instance_mapid2imapid(int m, int instance_id);
+int16 instance_mapid(int16 m, int32 instance_id);
 void instance_destroy(int instance_id);
 enum e_instance_enter instance_enter(struct map_session_data *sd, int32 instance_id, const char *name, int16 x, int16 y);
 void instance_init(int instance_id);

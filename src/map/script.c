@@ -9875,20 +9875,17 @@ BUILDIN_FUNC(monster)
 
 	if( sd && strcmp(mapn,"this") == 0 )
 		m = sd->bl.m;
-	else
-	{
+	else {
 		if (strcmp(mapn, "") == 0) {
-			ShowError("buildin_monster: Trying to spawn monster (%d) on instance failed because there was no name provided for the map.\n", class_);
+			ShowError("buildin_monster: Trying to spawn monster (%d) failed because there was no name provided for the map.\n", class_);
 			return 1;
 		}
 
 		m = map_mapname2mapid(mapn);
-		int instance_id = script_instancegetid(st, IM_NONE);
-		if (map[m].flag.src4instance && instance_id >= 0) { // Try to redirect to the instance map, not the src map
-			if ((m = instance_mapid2imapid(m, instance_id)) < 0) {
-				ShowError("buildin_monster: Trying to spawn monster (%d) on instance map (%s) without instance attached.\n", class_, mapn);
-				return 1;
-			}
+
+		if (m < 0) {
+			ShowError("buildin_monster: Map not found '%s'\n", mapn);
+			return 1;
 		}
 	}
 
@@ -9900,6 +9897,7 @@ BUILDIN_FUNC(monster)
 
 	return 0;
 }
+
 /*==========================================
  * Request List of Monster Drops
  *------------------------------------------*/
@@ -9989,17 +9987,19 @@ BUILDIN_FUNC(areamonster)
 
 	sd = map_id2sd(st->rid);
 
-	if( sd && strcmp(mapn,"this") == 0 )
+	if(sd && strcmp(mapn,"this") == 0)
 		m = sd->bl.m;
-	else
-	{
+	else {
+		if (strcmp(mapn, "") == 0) {
+			ShowError("buildin_areamonster: Trying to spawn monster (%d) failed because there was no name provided for the map.\n", class_);
+			return 1;
+		}
+
 		m = map_mapname2mapid(mapn);
-		int instance_id = script_instancegetid(st, IM_NONE);
-		if (map[m].flag.src4instance && instance_id >= 0) { // Try to redirect to the instance map, not the src map
-			if ((m = instance_mapid2imapid(m, instance_id)) < 0) {
-				ShowError("buildin_areamonster: Trying to spawn monster (%d) on instance map (%s) without instance attached.\n", class_, mapn);
-				return 1;
-			}
+
+		if (m < 0) {
+			ShowError("buildin_areamonster: Map not found '%s'\n", mapn);
+			return 1;
 		}
 	}
 	
@@ -10048,8 +10048,8 @@ static int buildin_killmonster_sub(struct block_list *bl,va_list ap)
 	}
 	return 0;
 }
-BUILDIN_FUNC(killmonster)
-{
+
+BUILDIN_FUNC(killmonster) {
 	const char *mapname,*event;
 	int m,allflag=0;
 	mapname=script_getstr(st,2);
@@ -10060,10 +10060,6 @@ BUILDIN_FUNC(killmonster)
 		check_event(st, event);
 
 	if( (m=map_mapname2mapid(mapname))<0 )
-		return 0;
-
-	int instance_id = script_instancegetid(st, IM_NONE);
-	if( map[m].flag.src4instance && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
 		return 0;
 
 	if( script_hasdata(st,4) ) {
@@ -10095,17 +10091,13 @@ static int buildin_killmonsterall_sub(struct block_list *bl,va_list ap)
 	status_kill(bl);
 	return 0;
 }
-BUILDIN_FUNC(killmonsterall)
-{
+
+BUILDIN_FUNC(killmonsterall) {
 	const char *mapname;
 	int m;
 	mapname=script_getstr(st,2);
 	
 	if( (m = map_mapname2mapid(mapname))<0 )
-		return 0;
-
-	int instance_id = script_instancegetid(st, IM_NONE);
-	if( map[m].flag.src4instance && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
 		return 0;
 
 	if( script_hasdata(st,3) ) {
@@ -12969,8 +12961,7 @@ static int buildin_mobcount_sub(struct block_list *bl,va_list ap)	// Added by Ro
 	return 0;
 }
 
-BUILDIN_FUNC(mobcount)	// Added by RoVeRT
-{
+BUILDIN_FUNC(mobcount) { // Added by RoVeRT
 	const char *mapname,*event;
 	int m;
 	mapname=script_getstr(st,2);
@@ -12982,17 +12973,11 @@ BUILDIN_FUNC(mobcount)	// Added by RoVeRT
 		return 0;
 	}
 
-	int instance_id = script_instancegetid(st, IM_NONE);
-	if( map[m].flag.src4instance == -1 && map[m].instance_id >= 0 && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
-	{
-		script_pushint(st,-1);
-		return 0;
-	}
-
 	script_pushint(st,map_foreachinmap(buildin_mobcount_sub, m, BL_MOB, event));
 
 	return 0;
 }
+
 BUILDIN_FUNC(marriage)
 {
 	const char *partner=script_getstr(st,2);
@@ -19915,37 +19900,88 @@ BUILDIN_FUNC(setinstancevar)
 
 
 static int buildin_instance_warpall_sub(struct block_list *bl, va_list ap) {
-	struct map_session_data *sd = ((TBL_PC*)bl);
-	int mapindex = va_arg(ap, int);
-	int x = va_arg(ap, int);
-	int y = va_arg(ap, int);
+	uint32 m = va_arg(ap,uint32);
+	int32 x = va_arg(ap,int32);
+	int32 y = va_arg(ap,int32);
+	int32 instance_id = va_arg(ap, int32);
+	int32 flag = va_arg(ap, int32);
+	struct map_session_data *sd;
 
-	pc_setpos(sd, mapindex, x, y, CLR_TELEPORT);
+	nullpo_retr(0, bl);
 
-	return 0;
+	if (bl->type != BL_PC)
+		return 0;
+
+	sd = (TBL_PC *)bl;
+
+	if ((flag & IWA_NOTDEAD) != 0 && pc_isdead(sd))
+		return 0;
+
+	if (instance_id < 0 || instance_id >= instance_count)
+		return 0;
+
+	struct instance_data* idata = &instances[instance_id];
+
+	if (!idata)
+		return 0;
+
+	int32 owner_id = idata->owner_id;
+
+	switch(idata->mode) {
+		case IM_NONE:
+			break;
+		case IM_CHAR:
+			if (sd->status.char_id != owner_id)
+				return 0;
+			break;
+		case IM_PARTY:
+			if (sd->status.party_id != owner_id)
+				return 0;
+			break;
+		case IM_GUILD:
+			if (sd->status.guild_id != owner_id)
+				return 0;
+			break;
+		case IM_CLAN:
+			if (sd->status.clan_id != owner_id)
+				return 0;
+			break;
+	}
+
+	pc_setpos(sd, m, x, y, CLR_TELEPORT);
+
+	return 1;
 }
+
 BUILDIN_FUNC(instance_warpall) {
 	int16 m;
 	int instance_id = -1;
-	const char *mapn;
-	int x, y;
-	int mapindex;
 
-	mapn = script_getstr(st,2);
-	x    = script_getnum(st,3);
-	y    = script_getnum(st,4);
+	const char *mapn = script_getstr(st,2);
 
 	if( script_hasdata(st,5) )
 		instance_id = script_getnum(st,5);
 	else
 		instance_id = script_instancegetid(st, IM_PARTY);
 
-	if ((m = map_mapname2mapid(mapn)) < 0 || (map[m].flag.src4instance && (m = instance_mapid2imapid(m, instance_id)) < 0))
-		return 0;
+	if (instance_id < 0 || instance_id >= instance_count) {
+		ShowError("buildin_instance_warpall: Instance is not found.\n");
+		return 1;
+	}
 
-	mapindex = map_id2index(m);
+	if((m = map_mapname2mapid(mapn)) < 0 || (m = instance_mapid(m, instance_id)) < 0) {
+		ShowError("buildin_instance_warpall: Instance map for instance ID %d is not found.\n", instance_id);
+		return 1;
+	}
 
-	map_foreachininstance(buildin_instance_warpall_sub, instance_id, BL_PC, mapindex, x, y);
+	int32 flag = IWA_NONE;
+	int32 x = script_getnum(st,3);
+	int32 y = script_getnum(st,4);
+
+	if(script_hasdata(st, 6))
+		flag = script_getnum(st, 6);
+
+	map_foreachininstance(buildin_instance_warpall_sub, instance_id, BL_PC, map_id2index(m), x, y, instance_id, flag);
 
 	return 0;
 }
@@ -20134,8 +20170,7 @@ static int buildin_mobuseskill_sub(struct block_list *bl,va_list ap)
 /*==========================================
  * areamobuseskill "Map Name",<x>,<y>,<range>,<Mob ID>,"Skill Name"/<Skill ID>,<Skill Lv>,<Cast Time>,<Cancelable>,<Emotion>,<Target Type>;
  *------------------------------------------*/
-BUILDIN_FUNC(areamobuseskill)
-{
+BUILDIN_FUNC(areamobuseskill) {
 	struct block_list center;
 	struct script_data *data;
 	int m,range,mobid,skill_id,skill_lv,casttime,emotion,target,cancel;
@@ -20145,10 +20180,6 @@ BUILDIN_FUNC(areamobuseskill)
 		ShowError("areamobuseskill: invalid map name.\n");
 		return 0;
 	}
-
-	int instance_id = script_instancegetid(st, IM_NONE);
-	if( map[m].flag.src4instance && instance_id >= 0 && (m = instance_mapid2imapid(m, instance_id)) < 0 )
-		return 0;
 
 	center.m = m;
 	center.x = script_getnum(st,3);

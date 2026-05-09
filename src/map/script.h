@@ -579,6 +579,11 @@ enum e_hat_effects {
 	HAT_EF_MAX
 };
 
+enum e_instance_warpall_flag{
+	IWA_NONE    = 0x00,
+	IWA_NOTDEAD = 0x01,
+};
+
 /**
  * Player blocking actions related flags.More actions
  */

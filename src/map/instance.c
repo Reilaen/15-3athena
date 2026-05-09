@@ -249,8 +249,6 @@ int instance_add_map(const char *name, int instance_id, bool usebasename, const 
 	map[im].m = im;
 	map[im].instance_id = instance_id;
 	map[im].instance_src_map = m;
-	map[im].flag.src4instance = 0; //clear
-	map[m].flag.src4instance = 1; // Flag this map as a src map for instances
 
 	RECREATE(instances[instance_id].map, unsigned short, ++instances[instance_id].num_map);
 
@@ -292,27 +290,35 @@ int instance_mapname2imap(const char *map_name, int instance_id) {
  	return -1;
 }
 
-/*--------------------------------------
- * m : source map
- * instance_id : where to search
- * result : mapid of map "m" in this instance
- *--------------------------------------*/
-int instance_mapid2imapid(int m, int instance_id)
-{
-	Assert_retr(-1, m >= 0 && m < map_num);
-
-	if( map[m].flag.src4instance == 0 )
-		return m; // not instances found for this map
-	else if( map[m].instance_id >= 0 )
-	{ // This map is a instance, not a src map instance
-		ShowError("instance_mapid2imapid: already instanced (%d / %d)\n", m, instance_id);
+/**
+ * Returns an instance map ID
+ * @param m: Source map ID
+ * @param instance_id: Instance to search
+ * @return Map ID in this instance or -1 on failure
+ */
+int16 instance_mapid(const int16 m, const int32 instance_id) {
+	if (m < 0 || m >= map_num) {
+		ShowError("instance_mapid: Map ID %d does not exist.\n", m);
 		return -1;
 	}
 
-	if( !instance_is_valid(instance_id) )
+	if (instance_id < 0 || instance_id >= instance_count)
 		return -1;
 
-	return(instance_map2imap(m, instance_id));
+	const struct instance_data *idata = &instances[instance_id];
+
+	if (idata->state != INSTANCE_BUSY)
+		return -1;
+
+	for (int i = 0; i < idata->num_map; i++) {
+		const int16 im = idata->map[i];
+
+		if (map[im].instance_src_map == m && !map[im].custom_name) {
+			return im;
+		}
+	}
+
+	return -1;
 }
 
 /*--------------------------------------
@@ -797,43 +803,26 @@ void instance_reload_map_flags(int instance_id)
 		const struct map_data *srcMap = &map[dstMap->instance_src_map];
 
 		memcpy(&dstMap->flag, &srcMap->flag, sizeof(struct map_flag));
-
-		dstMap->flag.src4instance = 0;
 	}
 }
 
 void do_reload_instance(void) {
-	struct s_mapiterator *iter;
-	struct map_session_data *sd;
-	int i, k;
-
 	do_final_instance();
 	
-	for(i = 0; i < instance_count; i++) {
+	for(int i = 0; i < instance_count; i++) {
 		if (!instance_is_valid(i))
-			continue; // don't try to restart an invalid instance
+			continue;
 
-		for(k = 0; k < instances->num_map; k++) {
-			if( !map[map[instances[i].map[k]].instance_src_map].flag.src4instance )
-				break;
-		}
-		
-		if( k != instances[i].num_map ) /* any (or all) of them were disabled, we destroy */
-			instance_destroy(i);
-		else {
-			/* populate the instance again */
-			instance_init(i);
-			instance_reload_map_flags(i);
-			/* restart timers */
-			instance_set_timeout(i,instances[i].original_progress_timeout,instances[i].idle_timeoutval);
-		}
+		instance_init(i);
+		instance_reload_map_flags(i);
+		instance_set_timeout(i, instances[i].original_progress_timeout, instances[i].idle_timeoutval);
 	}
 
 	if (instance_count == 0)
 		return;
 	
-	iter = mapit_getallusers();
-	for( sd = (TBL_PC*)mapit_first(iter); mapit_exists(iter); sd = (TBL_PC*)mapit_next(iter) ) {
+	struct s_mapiterator *iter = mapit_getallusers();
+	for( struct map_session_data *sd = (TBL_PC *) mapit_first(iter); mapit_exists(iter); sd = (TBL_PC*)mapit_next(iter) ) {
 		if(sd && map[sd->bl.m].instance_id)
 			pc_setpos(sd,instances[map[sd->bl.m].instance_id].respawn.map,instances[map[sd->bl.m].instance_id].respawn.x,instances[map[sd->bl.m].instance_id].respawn.y,CLR_TELEPORT);
 	}

@@ -3224,7 +3224,7 @@ int npc_duplicate4instance(struct npc_data *snd, int m)
 		int dm = map_mapindex2mapid(snd->u.warp.mapindex), im;
 		if( dm < 0 ) return 1;
 
-		if ((im = instance_mapid2imapid(dm, map[m].instance_id)) == -1) {
+		if ((im = instance_mapid(dm, map[m].instance_id)) == -1) {
 			ShowError("npc_duplicate4instance: warp (%s) leading to instanced map (%s), but instance map is not attached to current instance (%d).\n", map[dm].name, snd->exname, map[m].instance_id);
 			return 1;
 		}
@@ -3991,8 +3991,6 @@ static const char* npc_parse_mapflag(char* w1, char* w2, char* w3, char* w4, con
 		map[m].flag.guildlock=state;
 	else if (!strcmpi(w3,"reset"))
 		map[m].flag.reset=state;
-	else if ( !strcmpi(w3,"src4instance") )
-		map[m].flag.src4instance = (state) ? 1 : 0;
 	else if (!strcmpi(w3, "nosunmoonstarmiracle"))
 		map[m].flag.nosunmoonstarmiracle = state;
 	else if (!strcmpi(w3, "pairship_startable"))
