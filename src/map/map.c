@@ -173,7 +173,7 @@ char *map_cache_buffer = NULL; // Has the uncompressed gat data of all maps, so 
  * @return map_data on success or nullptr on failure
  */
 struct map_data *map_getmapdata(const int16 mapid) {
-	if (mapid < 0 || mapid >= MAX_MAP_PER_SERVER)
+	if (mapid < 0 || mapid >= map_num)
 		return NULL;
 
 	return &map[mapid];

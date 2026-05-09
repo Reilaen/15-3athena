@@ -86,8 +86,6 @@
 	#define MAX_HOTKEYS 38
 #endif
 
-#define MAX_MAP_PER_SERVER 1500
-
 #ifndef INVENTORY_BASE_SIZE
 	#define INVENTORY_BASE_SIZE 100 // Amount of inventory slots each player has
 #endif
