@@ -72,7 +72,7 @@ ecl_hub01,130,15,0	script	It is closed shut.	844,{
 			case 1:
 				set .@party_id, getcharid(1);
 
-				if (has_instance("1@ecl") == "") {
+				if (instance_id(IM_PARTY)) {
 					mes "It is closed shut.";
 					close;
 				}

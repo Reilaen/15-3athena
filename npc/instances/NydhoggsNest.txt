@@ -201,7 +201,7 @@ nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	111,8,8,{
 	close;
 
 L_Enter:
-	if (has_instance("1@nyd") == "") {
+	if (instance_id(IM_PARTY)) {
 		mes "[Yggdrasil Gatekeeper]";
 		mes "You did not request for entrance. Please let your leader request entrance.";
 		close;

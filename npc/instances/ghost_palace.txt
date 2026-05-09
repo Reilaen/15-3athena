@@ -47,7 +47,7 @@ dali02,44,129,5	script	Unpleasent Royal Guard	686,{
 		close();
 	}
 	if (checkquest(1260) >= 0) {
-		if (has_instance("1@spa") == "") {
+		if (instance_id(IM_PARTY)) {
 			mes("[Unpleasent Royal Guard]");
 			mes("Did the gate close?");
 			mes("Please enter the gate as soon as you can next time.");
@@ -149,7 +149,7 @@ dali02,41,134,0	script	Interdimensional Device::gpportal	10007,{
 		mes("We must save the princess no matter how much fear grips our hearts!");
 		close();
 	}
-	if (has_instance("1@spa") == "") {
+	if (instance_id(IM_PARTY)) {
 		mes("^FF0000Inside the device you see a dark hole. If you wish to enter you may wish to talk to the Unpleasant Royal Guard first.^000000");
 		close();
 	}

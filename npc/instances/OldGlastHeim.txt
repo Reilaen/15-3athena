@@ -108,7 +108,7 @@ glast_01,204,273,6	script	Hugin#ghinstance	755,{
 			mes("The time gap was created. When you're ready, talk to me again.");
 			close;
 		case 2:
-			if (has_instance("1@gl_k") == "" ) {
+			if (instance_id(IM_PARTY)) {
 				mes("The memorial dungeon ^0000FF"+.@md_name$+"^000000 does not exist.");
 				mes("The party leader did not generate the dungeon yet.");
 				close;

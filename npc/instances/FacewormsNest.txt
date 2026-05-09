@@ -421,7 +421,7 @@ dali,72,55,4	script	Interdimensional Device	844,{
 	}
 	switch( checkquest(12325,PLAYTIME) ) {
 		case -1:
-			if( has_instance( "1@face") == "" ){
+			if(instance_id(IM_PARTY)){
 				mes .instance_name$ + " doesnt exist for Party - "+getpartyname( .@party_id );
 			}
 			else{

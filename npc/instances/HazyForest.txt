@@ -144,7 +144,7 @@ bif_fild01,161,355,0	script	Log Tunnel	844,{
 	if(select("Enter the tunnel.:Give up.") == 2)
 		close;
 	set .@playtime, checkquest(7211,PLAYTIME);
-	if (has_instance("1@mist") == "") {
+	if (instance_id(IM_PARTY)) {
 		if (.@playtime == 0 || .@playtime == 1) {
 			mes "You try to crawl into the log, but some mysterious power pushes you back with a gush of wind.";
 			mes "It seems like you can't force your way into the forest.";

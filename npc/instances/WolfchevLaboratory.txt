@@ -2057,7 +2057,7 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 			mes "You have stopped entering to Wolfchev's laboratory.";
 			close;
 		}
-		if (has_instance("1@lhz") == "") {
+		if (instance_id(IM_PARTY)) {
 			mes "^FF0000Warning^000000";
 			mes ""+ strcharinfo(PC_NAME) +". . .";
 			mes "^FF0000Unregistered personnel^000000";

@@ -125,7 +125,7 @@ mal_dun01,153,237,5	script	Weird Entrance	844,{
 	switch(select("Go in.", "Stop.")) {
 	case 1:
 		if (countitem(6442) > 0) {
-			if (has_instance("1@cash") == "") {
+			if (instance_id(IM_PARTY)) {
 				if (checkquest(4197,PLAYTIME) == 0 || checkquest(4197,PLAYTIME) == 1) {
 					mes "[Starfish]";
 					mes "Ah, now is not the time...";
