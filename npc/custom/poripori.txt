@@ -1,5 +1,3 @@
-quiz_01	mapflag	src4instance
-
 prontera,159,184,4	script	Pori Pori Nyu	10242,{
 	.@instance_id = instance_id(IM_PARTY);
 

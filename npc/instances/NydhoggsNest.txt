@@ -18,8 +18,6 @@
 //= 1.6 Added GM management NPCs. [Euphy]
 //============================================================
 
-1@nyd	mapflag	src4instance
-2@nyd	mapflag	src4instance
 //============================================================
 nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	111,8,8,{
 	if (ins_nyd == 0) {

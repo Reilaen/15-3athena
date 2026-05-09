@@ -34,8 +34,6 @@
 //= 1.7 Instance system rewrite. [Euphy]
 //============================================================
 
-1@orcs	mapflag	src4instance
-2@orcs	mapflag	src4instance
 //============================================================
 
 // Entrance

@@ -10,7 +10,6 @@
 //= 1.0 First version.
 //= 1.1 Ported from rAthena to 15-3athena. [15peaces]
 //============================================================
-1@jtb	mapflag	src4instance
 
 //��������������������������������
 //  Jitterbug start

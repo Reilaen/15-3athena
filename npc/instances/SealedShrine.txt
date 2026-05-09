@@ -27,8 +27,6 @@
 //= 2.3 Instance system rewrite. [Euphy]
 //============================================================
 
-1@cata	mapflag	src4instance
-2@cata	mapflag	src4instance
 //============================================================
 
 // Sealed Catacomb Entrance

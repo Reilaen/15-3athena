@@ -12,8 +12,6 @@
 //= 1.1 Updated to hercules v. 1.0.2 [15peaces]
 //============================================================
 
-1@lhz	mapflag	src4instance
-
 // Giacomo Girolam
 //==============================================================================
 lighthalzen,303,303,6	script	Giacomo Girolamo#kiup2	904,3,3,{

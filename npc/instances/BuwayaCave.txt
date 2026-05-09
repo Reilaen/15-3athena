@@ -13,7 +13,6 @@
 //= 1.1 Ported from hercules to 15-3athena. [15peaces]
 //============================================================
 
-1@ma_c	mapflag	src4instance
 //============================================================
 ma_fild02,312,317,5	script	Guard#buwaya_cave	570,{
 	if (BaseLevel < 130) {
