@@ -52,28 +52,28 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 		if (Zeny < .@fee) {
 			mes("[Pori Pori Nyu]");
-			mes("You do not have enough Zeny. The fee we agreed upon for the creation of the dimension for the Pori Pori Challenge is ^0000FF" + callsub("F_InsertComma", .@fee) + "^000000 Zeny.");
+			mes("You do not have enough Zeny. The fee we agreed upon for the creation of the dimension for the Pori Pori Challenge is ^0000FF" + callfunc("F_InsertComma", .@fee) + "^000000 Zeny.");
 			close;
 		}
 
-		.@instance_id = instance_create("Pori Pori Challenge");
-		if (.@instance_id < 0 || instance_attachmap("quiz_01", .@instance_id, 1) == "") {
-			mes("Party Name: " + getpartyname(.@party_id));
-			mes("Party Leader: " + strcharinfo(0));
-			mes("Error #" + .@instance_id);
-			mes("Message: Reservation failed!");
-			close;
+		if (instance_create("Pori Pori Challenge") < 0) {
+			goto(OnError);
 		}
-		instance_set_timeout(300, 300, .@instance_id);
-		instance_init(.@instance_id);
+
+		if (instance_attachmap("quiz_01", 1) == "") {
+			goto(OnError);
+		}
+
+		instance_set_timeout(300, 300);
+		instance_init();
 		Zeny -= .@fee;
 
 		mes("[Pori Pori Nyu]");
 		mes("Everything is ready. Please note that you have 5 minutes to start the Pori Pori Challenge or it will fail!");
 		next;
 
-		setinstancevar('participants$, implode(.@participants[0], ":"), .@instance_id);
-		setinstancevar('participants_amount, .@participants_amount, .@instance_id);
+		setinstancevar('participants$, implode(.@participants[0], ":"));
+		setinstancevar('participants_amount, .@participants_amount);
 		goto(JoinChallenge);
 		end;
 
@@ -85,7 +85,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		explode(.@participants[0], getinstancevar('participants$, .@instance_id), ":");
+		explode(.@participants[0], getinstancevar('participants$), ":");
 		if (inarray(.@participants[0], getcharid(0)) == -1) {
 			mes("[Pori Pori Nyu]");
 			mes("You are not part of the registered participants of your party.");
@@ -97,6 +97,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			mes("Something unexpected happened..");
 			close;
 		}
+		end;
 
 	Explanation:
 		mes("[Pori Pori Nyu]");
@@ -129,6 +130,12 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 	Cancel:
 		mes("[Pori Pori Nyu]");
 		mes("Alright, come back any time if you need something!");
+		close;
+
+	OnError:
+		mes("Party Name: " + getpartyname(.@party_id));
+		mes("Party Leader: " + strcharinfo(0));
+		mes("Message: Reservation failed!");
 		close;
 
 	OnInit:

@@ -88,20 +88,19 @@ glast_01,204,273,6	script	Hugin#ghinstance	755,{
 		case 1:
 			if (getcharid(0) != getpartyleader(.@party_id, 2))
 				end;
-			set .@instance, instance_create(.@md_name$, .@party_id);
-			if (.@instance >= 0) {
-				for (set .@i, 1; .@i <= 2; set .@i,.@i+1) {
-					if (instance_attachmap(.@i + "@gl_k", .@instance) == "") {
-						mes "Party Name: "+.@p_name$;
-						mes "Party Leader: "+strcharinfo(PC_NAME);
-						mes "^0000ff"+.@md_name$+"^000000 - Reservation Failed!";
-						instance_destroy(.@instance);
-						close;
-					}
-				}
-				instance_set_timeout(3600, 300, .@instance);
-				instance_init(.@instance);
+
+			if (instance_create(.@md_name$) < 0) {
+				goto(OnError);
 			}
+
+			for (set .@i, 1; .@i <= 2; set .@i,.@i+1) {
+				if (instance_attachmap(.@i + "@gl_k") == "") {
+					goto(OnError);
+				}
+			}
+			instance_set_timeout(3600, 300);
+			instance_init();
+
 			mes("[Hugin]");
 			mes("The time gap was created. When you're ready, talk to me again.");
 			close;
@@ -122,8 +121,8 @@ glast_01,204,273,6	script	Hugin#ghinstance	755,{
 				case IE_OK:
 					mapannounce "glast_01", "" + getpartyname( getcharid(1) ) + " party member " + strcharinfo(0) + " enters the " + .@md_name$ + ".", bc_map,0x00FF99;
 					setquest 12317;// Trace of Time Travel
-					end;
 			}
+			end;
 		case 3:
 			close;
 		}
@@ -144,6 +143,12 @@ glast_01,204,273,6	script	Hugin#ghinstance	755,{
 		if (checkquest(12319) > -1) erasequest 12319;
 		close;
 	}
+
+	OnError:
+		mes "Party Name: "+getpartyname(.@party_id);
+		mes "Party Leader: "+strcharinfo(PC_NAME);
+		mes "^0000ffOld Glast Heim^000000 - Reservation Failed!";
+		close;
 }
 
 // Floor 1

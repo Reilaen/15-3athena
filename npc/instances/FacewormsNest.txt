@@ -342,33 +342,30 @@ dali,80,60,4	script	Magic Scholar	755,{
 				next;
 				switch( select("Reserve Faceworm's Nest:What are you doing here?:Stop Talking.") ) {
 				case 1:
-					set $fn_instance, instance_create(.@md_name$, .@party_id);
-					switch( $fn_instance ) {
-					case -3:
-						dispbottom "Memorial Dungeon, '" + .@md_name$ + "' is already in progress.";
-						break;
-					case -4:
-					case -2:
-					case -1:
-						mes "[Magic Scholar]";
-						mes "Oops, my hands are slip off. It is required to activate the craks again.";
-						close;
+					switch(instance_create(.@md_name$)) {
+						case -3:
+							dispbottom "Memorial Dungeon, '" + .@md_name$ + "' is already in progress.";
+							break;
+						case -4:
+						case -2:
+						case -1:
+							mes "[Magic Scholar]";
+							mes "Oops, my hands are slip off. It is required to activate the craks again.";
+							close;
 					}
 					mes "[Magic Scholar]";
 					mes "The spaces are under control.";
 					mes "Please wait for a minute.";
 
-					if( instance_attachmap( "1@face",$fn_instance ) == "" ){
+					if(instance_attachmap( "1@face") == ""){
 						setmapflag "1@face",mf_zone,"Memorial Dungeon";
 						setmapflag "1@face",mf_monster_noteleport;
 						npctalk .instance_name$ + " reservation failed due to map attach failure.";
 						mes "- ^FF0000Reservation Failed!^000000";
-						instance_destroy( $fn_instance );
-						set $fn_instance, -1;
 						close;
 					}
-					instance_set_timeout 7200,300,$fn_instance;
-					instance_init($fn_instance);
+					instance_set_timeout(7200,300);
+					instance_init();
 
 					close;
 				case 2:
@@ -439,6 +436,7 @@ dali,72,55,4	script	Interdimensional Device	844,{
 					setquest 12325;// Faceworm's Nest after-effects
 					end;
 			}
+			end;
 		case 0:
 		case 1:
 			mes "[Interdimensional Device]";

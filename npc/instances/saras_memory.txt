@@ -163,21 +163,18 @@ dali,138,118,0	script	Dimensional Device#dimen	10007,{
 			set .@menu1$, "";
 		switch (select(.@menu1$, "Use the dimensional device", "Cancel")) {
 		case 1:
-			if (getcharid(0) != getpartyleader(.@party_id, 2))
-				end;
-			set .@instance, instance_create(.@md_name$, .@party_id);
-			if (.@instance >= 0) {
-				if (instance_attachmap("1@sara", .@instance) == "") {
-					mes "Party Name: "+.@p_name$;
-					mes "Party Leader: "+strcharinfo(PC_NAME);
-					mes "^0000FF"+.@md_name$+"^000000 - Reservation Failed!";
-					instance_destroy(.@instance);
-					close;
-				}
-				instance_set_timeout(3600, 300, .@instance);
-				instance_init(.@instance);
+			if (instance_create(.@md_name$) < 0) {
+				goto OnError;
 			}
-			mes "^FF0000The dimensional boots up cleanly. Use the device to enter the crack in space and time.^000000";
+
+			if (instance_attachmap("1@sara") == "") {
+				goto OnError;
+			}
+
+			instance_set_timeout(3600, 300);
+			instance_init();
+
+			mes "^FF0000The dimensional device boots up cleanly. Use the device to enter the crack in space and time.^000000";
 			close;
 		case 2:
 			switch(instance_enter("1@sara", 250, 155)) {
@@ -194,12 +191,19 @@ dali,138,118,0	script	Dimensional Device#dimen	10007,{
 				case IE_OK:
 					mapannounce "dali",strcharinfo(0)+", member of the party "+.@p_name$+" entered the instance "+.@md_name$+".",bc_map,"0x00ff99";
 					setquest 15002;
-					end;
 			}
+			break;
 		case 3:
 			close;
 		}
 	}
+	end;
+
+	OnError:
+		mes "Party Name: " + .@p_name$;
+		mes "Party Leader: " + strcharinfo(PC_NAME);
+		mes "^0000FF" + .@md_name$ + "^000000 - Reservation Failed!";
+		close;
 }
 
 1@sara,261,156,5	script	A girl#sarains	668,{

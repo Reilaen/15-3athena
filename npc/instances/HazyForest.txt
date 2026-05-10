@@ -79,23 +79,17 @@ bif_fild01,158,340,5	script	Laphine Soldier#mist	447,{
 			mes "[Laphine Soldier]";
 			mes "Party Name "+getpartyname(.@party_id)+"...";
 			mes "Party Leader "+strcharinfo(0)+"...";
-			set .@instance, instance_create(.@md_name$, .@party_id);
-			if (.@instance >= 0) {
-				if (instance_attachmap("1@mist", .@instance) == "") {
-					mes "Hmm...";
-					next;
-					mes "[Laphine Soldier]";
-					if (.@playtime == -1)
-						mes "It's dangerous in the forest.";
-					else
-						mes "The atmosphere is somewhat tense in the forest.";
-					mes "...Why don't you just go back today?";
-					instance_destroy(.@instance);
-					close;
-				}
-				instance_set_timeout 7200,300,.@instance;
-				instance_init(.@instance);
+
+			if (instance_create("Ghost Palace") < 0) {
+				goto(OnError);
 			}
+
+			if (instance_attachmap("1@mist") == "") {
+				goto(OnError);
+			}
+			instance_set_timeout(7200,300);
+			instance_init();
+
 			mes "I've got it. I've written them down on the report here.";
 			next;
 			mes "[Laphine Soldier]";
@@ -133,7 +127,18 @@ bif_fild01,158,340,5	script	Laphine Soldier#mist	447,{
 		mes "I have to discuss some things with him/her.";
 		close;
 	}
-}
+
+	OnError:
+		mes "Hmm...";
+		next;
+		mes "[Laphine Soldier]";
+		if (.@playtime == -1)
+			mes "It's dangerous in the forest.";
+		else
+			mes "The atmosphere is somewhat tense in the forest.";
+		mes "...Why don't you just go back today?";
+		close;
+	}
 
 bif_fild01,161,355,0	script	Log Tunnel	844,{
 	mes "I see the forest through the log tunnel.";

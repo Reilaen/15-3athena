@@ -113,18 +113,19 @@ monk_test,309,146,3	script	Friar Patrick#edq	412,{
 					mes "[Friar Patrick]";
 					mes "Party name is "+getpartyname(.@party_id)+"...";
 					mes "Name of the leader is "+strcharinfo(0)+"...";
-					set .@instance, instance_create("Sealed Catacomb",.@party_id);
-					if (.@instance >= 0) {
-						for( set .@i, 1; .@i <= 2; set .@i, .@i + 1 ) {
-							if( instance_attachmap(.@i + "@cata", .@instance) == "" ) {
-								mes "Umm... But it seems that there is a problem here... I'll check quickly. Please wait.";
-								instance_destroy(.@instance);
-								close;
-							}
-						}
-						instance_set_timeout 7200,300,.@instance;
-						instance_init(.@instance);
+
+					if (instance_create(.@md_name$) < 0) {
+						goto OnError;
 					}
+
+					for( set .@i, 1; .@i <= 2; set .@i, .@i + 1 ) {
+						if(instance_attachmap(.@i + "@cata") == "") {
+							goto OnError;
+						}
+					}
+
+					instance_set_timeout(7200,300);
+					instance_init();
 					mes "Okay... I'll adjust the shrine's seal so that you and your group can enter.";
 					next;
 					mes "[Friar Patrick]";
@@ -206,6 +207,15 @@ monk_test,309,146,3	script	Friar Patrick#edq	412,{
 	close2;
 	cutin "",255;
 	end;
+
+	OnError:
+		mes "Umm... But it seems that there is a problem here... I'll check quickly. Please wait.";
+		mes "Party Name: " + .@p_name$;
+		mes "Party Leader: " + strcharinfo(PC_NAME);
+		mes "^0000FF" + .@md_name$ + "^000000 - Reservation Failed!";
+		close2;
+		cutin "",255;
+		end;
 }
 
 monk_test,306,151,3	script	Grave of Baphomet#edq	111,{
@@ -233,8 +243,8 @@ monk_test,306,151,3	script	Grave of Baphomet#edq	111,{
 			case IE_OK:
 				mapannounce "monk_test","[" + strcharinfo(0) + "] member of the [" + getpartyname(.@party_id) + "] party has entered the Sealed Shrine.",bc_map,"0x00ff99";
 				setquest 3040;
-				close;
 		}
+		end;
 	} else if (.@ins_bapho_check == 0 || .@ins_bapho_check == 1) {
 		mes "[Friar Patrick]";
 		mes "It seems you have entered this shrine recently... You cannot reenter because the curse of Baphomet still remains.";

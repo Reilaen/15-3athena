@@ -1989,17 +1989,16 @@ lhz_dun04,151,276,3	script	Researcher#memo	865,{
 					}
 				}
 				if (getpartyleader(getcharid(1),2) == getcharid(0)) {
-					set .@instance, instance_create("Worsef", getcharid(1));
-					if (.@instance >= 0) {
-						if (instance_attachmap("1@lhz", .@instance) == "") {
-							mes "[Wolfchev]";
-							mes "Hmm.. Lab entering system is a bit weird. Would wait for me to check the system?";
-							instance_destroy(.@instance);
-							close;
-						}
-						instance_set_timeout 14400, 300, .@instance;
-						instance_init(.@instance);
+					if (instance_create("Wolfchev's Laboratory") < 0) {
+						goto(OnError);
 					}
+
+					if (instance_attachmap("1@lhz") == "") {
+						goto(OnError);
+					}
+					instance_set_timeout(14400, 300);
+					instance_init();
+
 					mes "[Wolfchev]";
 					mes "Please hold on..";
 					next;
@@ -2033,6 +2032,11 @@ lhz_dun04,151,276,3	script	Researcher#memo	865,{
 		mes "Woot! Something weird just happen. If this keep happening, maybe we should try other way..";
 		close;
 	}
+
+	OnError:
+		mes "[Wolfchev]";
+		mes "Hmm.. Lab entering system is a bit weird. Would wait for me to check the system?";
+		close;
 }
 
 //
@@ -2071,6 +2075,7 @@ lhz_dun04,147,279,0	script	Laboratory Entrance#memo	844,{
 			setquest 5112;
 			close;
 		}
+		end;
 	} else if (.@lhz_time == 0) {
 		mes "Di Rit- Di- Di- Dit-";
 		next;

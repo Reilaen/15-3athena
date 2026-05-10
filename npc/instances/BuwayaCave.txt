@@ -73,20 +73,17 @@ ma_fild02,312,317,5	script	Guard#buwaya_cave	570,{
 					erasequest 4229;
 					// fall through
 				}
-				set .@instance, instance_create(.@md_name$,.@party_id);
-				if (.@instance >= 0) {
-					if (instance_attachmap("1@ma_c", .@instance) == "") {
-						mes "[Guard]";
-						mes "Party name is... "+getpartyname(.@party_id);
-						mes "Party leader is... "+strcharinfo(PC_NAME);
-						mes "^0000ff"+.@md_name$+"^000000 cannot be opened now.";
-						mes "Please try a moment later.";
-						instance_destroy(.@instance);
-						close;
-					}
-					instance_set_timeout(3600, 300, .@instance);
-					instance_init(.@instance);
+
+				if (instance_create(.@md_name$) < 0) {
+					goto(OnError);
 				}
+
+				if (instance_attachmap("1@ma_c") == "") {
+					goto(OnError);
+				}
+				instance_set_timeout(3600, 300);
+				instance_init();
+
 				mes "[Guard]";
 				mes "I will open up the tunnel to ^0000ff"+.@md_name$+"^000000.";
 				mes "I wish you good luck.";
@@ -103,6 +100,14 @@ ma_fild02,312,317,5	script	Guard#buwaya_cave	570,{
 		mes "Please call forth the leader.";
 		close;
 	}
+
+	OnError:
+		mes "[Guard]";
+		mes "Party name is... "+getpartyname(.@party_id);
+		mes "Party leader is... "+strcharinfo(PC_NAME);
+		mes "^0000ff"+.@md_name$+"^000000 cannot be opened now.";
+		mes "Please try a moment later.";
+		close;
 }
 
 ma_fild02,315,323,0	script	Cave Entrance#buwaya	45,2,2,{
@@ -149,6 +154,7 @@ OnTouch:
 				mes "- Could not enter due to an unidentified force. -";
 				close;
 		}
+		end;
 	case 2:
 		mes "[Guard]";
 		mes "You must value your life.";

@@ -56,20 +56,18 @@ gef_fild10,242,202,0	script	Dimensional Gorge Piece	406,{
 			next;
 			switch(select("Reserve the "+.@md_name$+":Enter the Dungeon:Cancel")) {
 			case 1:
-				set .@instance,instance_create(.@md_name$,.@party_id);
-				if (.@instance >= 0) {
-					for (set .@i, 1; .@i <= 2; set .@i,.@i+1) {
-						if (instance_attachmap(.@i + "@orcs", .@instance) == "") {
-							mes "Party Name: "+.@p_name$;
-							mes "Party Leader: "+strcharinfo(PC_NAME);
-							mes "^0000ff"+.@md_name$+" ^000000 - Reservation Failed.";
-							instance_destroy(.@instance);
-							close();
-						}
-					}
-					instance_set_timeout(7200, 300, .@instance);
-					instance_init(.@instance);
+				if (instance_create(.@md_name$) < 0) {
+					goto OnError;
 				}
+
+				for (set .@i, 1; .@i <= 2; set .@i,.@i+1) {
+					if (instance_attachmap(.@i + "@orcs") == "") {
+						goto OnError;
+					}
+				}
+
+				instance_set_timeout(7200, 300);
+				instance_init();
 				mes "^0000ff"+.@md_name$+"^000000- Attempting to book an entrance";
 				mes "After making a reservation, you have to select 'Enter the Dungeon' from the menu if you wish to enter the "+.@md_name$+".";
 				close;
@@ -95,24 +93,32 @@ gef_fild10,242,202,0	script	Dimensional Gorge Piece	406,{
 	}
 	mes "In order to generate a dungeon you must be the Party Leader and have at least 2 members in the party.";
 	close;
-L_Enter:
-	switch(instance_enter("1@orcs", 179, 15)) {
-		case IE_OTHER:
-			mes "An unknown error has occurred.";
-			close;
-		case IE_NOINSTANCE:
-			mes "Memorial Dungeon Orc's Memory does not exist.";
-			mes "Memorial Dungeon has been destroyed by the Party Leader, or because of the time limit. Please try again after 2 hours.";
-			close;
-		case IE_NOMEMBER:
-			mes "Only a member of the party can enter the Memorial Dungeon.";
-			close;
-		case IE_OK:
-			mapannounce "gef_fild10", getpartyname( getcharid(1) ) +" party's member "+strcharinfo(0)+" has entered the Orc's Memory.",bc_map,"0x00ff99";
-			if (checkquest(12059) == -1) setquest 12059;
-			if (getarg(0) == 0) close;
-			else end;
-	}
+
+	L_Enter:
+		switch(instance_enter("1@orcs", 179, 15)) {
+			case IE_OTHER:
+				mes "An unknown error has occurred.";
+				close;
+			case IE_NOINSTANCE:
+				mes "Memorial Dungeon Orc's Memory does not exist.";
+				mes "Memorial Dungeon has been destroyed by the Party Leader, or because of the time limit. Please try again after 2 hours.";
+				close;
+			case IE_NOMEMBER:
+				mes "Only a member of the party can enter the Memorial Dungeon.";
+				close;
+			case IE_OK:
+				mapannounce "gef_fild10", getpartyname( getcharid(1) ) +" party's member "+strcharinfo(0)+" has entered the Orc's Memory.",bc_map,"0x00ff99";
+				if (checkquest(12059) == -1) setquest 12059;
+				if (getarg(0) == 0) close;
+				else end;
+		}
+		end;
+
+	OnError:
+		mes "Party Name: "+.@p_name$;
+		mes "Party Leader: "+strcharinfo(PC_NAME);
+		mes "^0000ff"+.@md_name$+" ^000000 - Reservation Failed.";
+		close;
 }
 
 gef_fild10,238,202,6	script	Mad Scientist#orc	865,{

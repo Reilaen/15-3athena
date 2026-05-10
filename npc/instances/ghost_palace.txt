@@ -88,27 +88,32 @@ dali02,44,129,5	script	Unpleasent Royal Guard	686,{
 		mes("We must save the princess no matter how much fear grips our hearts!");
 		close();
 	}
-	set .@instance, instance_create("Ghost Palace", .@party_id);
-	set .@p_name$, getpartyname(.@party_id);
-	set .@md_name$, "Ghost Palace";
-	if (.@instance >= 0) {
-		if (instance_attachmap("1@spa", .@instance) == "") {
-			mes("Party Name: "+.@p_name$);
-			mes("Party Leader: "+strcharinfo(PC_NAME));
-			mes("^0000FF"+.@md_name$+"^000000 - Reservation Failed!");
-			instance_destroy(.@instance);
-			close();
-		}
-		instance_set_timeout(3600, 300, .@instance);
-		instance_init(.@instance);
-		if (checkquest(1260) == -1)
-			setquest 1260;
+
+	if (instance_create("Ghost Palace") < 0) {
+		goto(OnError);
 	}
+
+	if (instance_attachmap("1@spa") == "") {
+		goto(OnError);
+	}
+
+	instance_set_timeout(3600, 300);
+	instance_init();
+
+	if (checkquest(1260) == -1)
+		setquest 1260;
+
 	mes("[Unpleasent Royal Guard]");
 	mes("Thank You..");
 	mes("I will open the secret passage to ^0000FFGhost Palace.^000000");
 	mes("Please be ready!");
 	close();
+
+	OnError:
+		mes("Party Name: " + getpartyname(.@party_id));
+		mes("Party Leader: " + strcharinfo(PC_NAME));
+		mes("^0000FFGhost Palace^000000 - Reservation Failed!");
+		close();
 }
 
 dali02,41,134,0	script	Interdimensional Device::gpportal	10007,{
@@ -164,7 +169,6 @@ dali02,41,134,0	script	Interdimensional Device::gpportal	10007,{
 			mapannounce "dali", "" + strcharinfo(0) + " of the party, " + getpartyname(.@party_id) + ", is entering the Ghost Palace.", bc_map, 0x00ff99;
 			if (checkquest(1260) == -1) setquest 1260;
 			setquest 1261;// Cursed Swordman
-			end;
 	}
 }
 

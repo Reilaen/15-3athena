@@ -257,20 +257,16 @@ L_Enter:
 	next;
 	switch(select(((getarg(0))?"Prepare to enter the second floor.":"")+":Enter the second floor.:Do not enter.")) {
 	case 1:
-		set .@instance, instance_create(.@md_name$,getcharid(1));
-		if (.@instance >= 0) {
-			if (instance_attachmap("1@ma_h", .@instance) == "") {
-				mes "[Nurse Maenne]";
-				mes "A critical situation has happened.";
-				mes "You can't go up to the 2nd floor.";
-				instance_destroy(.@instance);
-				close2;
-				cutin "",255;
-				end;
-			}
-			instance_set_timeout(3600, 300, .@instance);
-			instance_init(.@instance);
+		if (instance_create(.@md_name$) < 0) {
+			goto(OnError);
 		}
+
+		if (instance_attachmap("1@ma_h") == "") {
+			goto(OnError);
+		}
+		instance_set_timeout(3600, 300);
+		instance_init(.@instance);
+
 		mes "[Nurse Maenne]";
 		mes "We are preparing to go up";
 		mes "to the second floor.";
@@ -283,9 +279,7 @@ L_Enter:
 		mes "When you finish everything,";
 		mes "please talk to me again.";
 		mes "I really appreciate it.";
-		close2;
-		cutin "",255;
-		end;
+		break;
 	case 2:
 		switch(instance_enter("1@ma_h", 40, 157)) {
 			case IE_OTHER:
@@ -320,32 +314,40 @@ L_Enter:
 				}
 				if (isbegin_quest(9224) == 0)
 					setquest 9224;
-				cutin "",255;
-				end;
 		}
+		break;
 	case 3:
 		mes "[Nurse Maenne]";
 		mes "Alright.";
-		mes "If you change mind, come back again.";
+		mes "If you change your mind, come back again.";
+		break;
+	}
+	close2;
+	cutin "",255;
+	end;
+
+	L_Complete:
+		mes "[Nurse Maenne]";
+		mes "You returned safely from the Bangungot on the second floor!!";
+		mes "However, it's not";
+		mes "really over yet.";
+		next;
+		mes "[Nurse Maenne]";
+		mes "I'm pretty sure it";
+		mes "never disappears easily.";
+		mes "I don't know what will happen";
+		mes "about Bangungot, so";
+		mes "after a lapse of time";
+		mes "please return to me.";
+		return;
+
+	OnError:
+		mes "[Nurse Maenne]";
+		mes "A critical situation has happened.";
+		mes "You can't go up to the 2nd floor.";
 		close2;
 		cutin "",255;
 		end;
-	}
-
-L_Complete:
-	mes "[Nurse Maenne]";
-	mes "You returned safely from the Bangungot on the second floor!!";
-	mes "However, it's not";
-	mes "really over yet.";
-	next;
-	mes "[Nurse Maenne]";
-	mes "I'm pretty sure it";
-	mes "never disappears easily.";
-	mes "I don't know what will happen";
-	mes "about Bangungot, so";
-	mes "after a lapse of time";
-	mes "please return to me.";
-	return;
 }
 
 sec_in02,27,30,0	script	Bangungot Gate	406,{

@@ -201,18 +201,15 @@ L_Cooldown:
 
 	switch(select((getcharid(0) == getpartyleader(.@party_id, 2) ? "Open the dimensional portal." : "") + ":Enter " + .@md_name$ + ".:Cancel.:")) {
 		case 1:
-			.@instance = instance_create(.@md_name$, .@party_id);
-			if (.@instance >= 0) {
-				if (instance_attachmap("1@jtb", .@instance) == "") {
-					mes "Party Name: "+.@p_name$;
-					mes "Party Leader: "+strcharinfo(0);
-					mes "^0000ff"+.@md_name$+" ^000000- Reservation Failed!";
-					instance_destroy(.@instance);
-					close2; cutin "", 255; end;
-				}
-				instance_set_timeout(7200, 300, .@instance);
-				instance_init(.@instance);
+			if (instance_create(.@md_name$) < 0) {
+				goto(OnError);
 			}
+
+			if (instance_attachmap("1@jtb") == "") {
+				goto(OnError);
+			}
+			instance_set_timeout(7200, 300);
+			instance_init();
 
 			mes "[Runane]";
 			mes "^ff0000Preparing the dimensional portal...^000000";
@@ -242,16 +239,21 @@ L_Cooldown:
 					mapannounce "moc_para01", "" + strcharinfo(0) + " of the party, " + getpartyname( getcharid(1) ) + ", is entering the " + .@md_name$ + ".", bc_map, 0xFF99;
 					specialeffect2 EF_READYPORTAL2;
 					specialeffect2 EF_PORTAL2;
-					end;
 			}
+			break;
 		case 3:
 			cutin "", 255;
 			end;
 	}
-
 	close2;
 	cutin "", 255;
 	end;
+
+	OnError:
+		mes "Party Name: "+getpartyname(.@party_id);
+		mes "Party Leader: "+strcharinfo(0);
+		mes "^0000ffNightmarish Jitterbug^000000- Reservation Failed!";
+		close2; cutin "", 255; end;
 }
 
 function	script	Jit_SkipDialogue	{

@@ -62,17 +62,17 @@ ma_scene01,174,179,4	script	Taho	541,{
 		}
 		switch(.@i) {
 		case 1:
-			set .@instance, instance_create(.@md_name$,.@party_id);
-			if (.@instance >= 0) {
-				if (instance_attachmap("1@ma_b", .@instance) == "") {
-					mes "[Taho]";
-					mes "Oh, the rope got dropped. I have to make a new one.";
-					instance_destroy(.@instance);
-					close();
-				}
-				instance_set_timeout(7200, 300, .@instance);
-				instance_init(.@instance);
+			if (instance_create(.@md_name$) < 0) {
+				goto(OnError);
 			}
+
+			if (instance_attachmap("1@ma_b") == "") {
+				goto(OnError);
+			}
+
+			instance_set_timeout(7200, 300);
+			instance_init();
+
 			mes "[Taho]";
 			mes "Now I'm weaving, so you can go down when I'm done.";
 			close;
@@ -95,6 +95,7 @@ ma_scene01,174,179,4	script	Taho	541,{
 					setquest 12278;
 					close;
 			}
+			break;
 		case 3:
 			close;
 		}
@@ -108,6 +109,12 @@ ma_scene01,174,179,4	script	Taho	541,{
 		erasequest 12278;
 		close;
 	}
+	end;
+
+	OnError:
+		mes "[Taho]";
+		mes "Oh, the rope got dropped. I have to make a new one.";
+		close();
 }
 
 sec_in02,26,26,4	script	Bakonawa's Rage	541,{

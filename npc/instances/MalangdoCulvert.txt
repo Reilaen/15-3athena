@@ -373,8 +373,7 @@ mal_in01,160,34,4	script	Missing, the Cleaner	545,{
 		mes "You don't look like you have Seagod Protection. I can't open door at the moment!";
 		close;
 	}
-	set .@party_id, getcharid(1);
-	set .@md_name$, "Culvert";
+
 	if (!.@party_id) {
 		mes "^0000ffYou have to organize a party of";
 		mes "more than 1 member or be a member";
@@ -393,20 +392,19 @@ mal_in01,160,34,4	script	Missing, the Cleaner	545,{
 				mes "What a rookie.";
 				close;
 			case 2:
-				set .@instance, instance_create(.@md_name$,.@party_id);
-				if (.@instance >= 0) {
-					for (set .@i, 1; .@i <= 2; set .@i,.@i+1) {
-						if (instance_attachmap(.@i + "@pump", .@instance) == "") {
-							mes "Party name: "+getpartyname(.@party_id);
-							mes "Party leader: "+strcharinfo(PC_NAME);
-							mes "^0000ff"+.@md_name$+"^000000 - Reservation Failed!";
-							instance_destroy(.@instance);
-							close;
-						}
-					}
-					instance_set_timeout(3600, 300, .@instance);
-					instance_init(.@instance);
+				.@md_name$ = "Culvert";
+				if (instance_create(.@md_name$) < 0) {
+					goto(OnError);
 				}
+
+				for (set .@i, 1; .@i <= 2; set .@i,.@i+1) {
+					if (instance_attachmap(.@i + "@pump") == "") {
+						goto(OnError);
+					}
+				}
+				instance_set_timeout(3600, 300);
+				instance_init();
+
 				mes "^3333FF"+.@md_name$+"^000000 - Reserving";
 				mes "After making the reservation, you";
 				mes "have to select Enter the Culvert.";
@@ -430,24 +428,31 @@ mal_in01,160,34,4	script	Missing, the Cleaner	545,{
 		close;
 	}
 	end;
-L_Enter:
-	switch(instance_enter("1@pump", 63, 98)) {
-		case IE_OTHER:
-			mes "An unknown error has occurred.";
-			close;
-		case IE_NOINSTANCE:
-			mes "The gate to the Culvert is still closed.";
-			mes "You must wait until you are able to enter or find a party leader who can create the instance.";
-			close;
-		case IE_NOMEMBER:
-			mes "Only party members can participate.";
-			close;
-		case IE_OK:
-			mapannounce "mal_in01", strcharinfo(0)+" of the party "+getpartyname(getcharid(1))+" is entering the Culvert.",bc_map,"0x00ff99";
-			if (checkquest(12254) == -1) setquest 12254;
-			if (getarg(0) == 0) close;
-			else end;
-	}
+	L_Enter:
+		switch(instance_enter("1@pump", 63, 98)) {
+			case IE_OTHER:
+				mes "An unknown error has occurred.";
+				close;
+			case IE_NOINSTANCE:
+				mes "The gate to the Culvert is still closed.";
+				mes "You must wait until you are able to enter or find a party leader who can create the instance.";
+				close;
+			case IE_NOMEMBER:
+				mes "Only party members can participate.";
+				close;
+			case IE_OK:
+				mapannounce "mal_in01", strcharinfo(0)+" of the party "+getpartyname(getcharid(1))+" is entering the Culvert.",bc_map,"0x00ff99";
+				if (checkquest(12254) == -1) setquest 12254;
+				if (getarg(0) == 0) close;
+				else end;
+		}
+		end;
+
+	OnEnter:
+		mes "Party name: "+getcharid(1);
+		mes "Party leader: "+strcharinfo(PC_NAME);
+		mes "^0000ff" + .@md_name$ + "^000000 - Reservation Failed!";
+		close;
 }
 
 //== Instance: Common Scripts ==============================

@@ -81,20 +81,15 @@ mal_dun01,151,235,5	script	Starfish	551,{
 			if (.@playtime == 2)
 				erasequest 4197;
 			if (countitem(6442) > 0) {
-				set .@instance, instance_create(.@md_name$,.@party_id);
-				if (.@instance >= 0) {
-					if (instance_attachmap("1@cash", .@instance) == "") {
-						mes "[Starfish]";
-						mes "Party name is... "+getpartyname(.@party_id)+".";
-						mes "Party leader is... "+strcharinfo(PC_NAME)+".";
-						mes "^0000FF"+.@md_name$+"^000000, I cannot open now, hehe.";
-						mes "Now is not the time, please wait.";
-						instance_destroy(.@instance);
-						close();
-					}
-					instance_set_timeout(3600, 300, .@instance);
-					instance_init(.@instance);
+				if (instance_create(.@md_name$) < 0) {
+					goto(OnError);
 				}
+
+				if (instance_attachmap("1@cash") == "") {
+					goto(OnError);
+				}
+				instance_set_timeout(3600, 300);
+				instance_init();
 
 				mes "[Starfish]";
 				mes "I will open the gate for a while to ^0000ff"+.@md_name$+"^000000.";
@@ -114,6 +109,14 @@ mal_dun01,151,235,5	script	Starfish	551,{
 			close;
 		}
 	}
+
+	OnError:
+		mes "[Starfish]";
+		mes "Party name is... "+getpartyname(.@party_id)+".";
+		mes "Party leader is... "+strcharinfo(PC_NAME)+".";
+		mes "^0000FFOctopus Cave^000000, I cannot open now, hehe.";
+		mes "Now is not the time, please wait.";
+		close();
 }
 
 mal_dun01,153,237,5	script	Weird Entrance	844,{
@@ -138,7 +141,6 @@ mal_dun01,153,237,5	script	Weird Entrance	844,{
 				case IE_OK:
 					mapannounce "mal_dun01", getpartyname(getcharid(1))+" party's "+strcharinfo(0)+" member started to hunt the Octopus!",bc_map,"0x00ff99";
 					if (checkquest(4197) == -1) setquest 4197;
-					close;
 				default:
 					mes "[Starfish]";
 					mes "Shhh... Weird aura is";
@@ -146,6 +148,7 @@ mal_dun01,153,237,5	script	Weird Entrance	844,{
 					mes "Big trouble is waiting, if you go in now.";
 					close;
 			}
+			end;
 		}
 		mes "[Starfish]";
 		mes "You should definitely prepare";
