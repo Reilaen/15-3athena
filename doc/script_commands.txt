@@ -8423,10 +8423,10 @@ The command returns IE_OK upon success, and these values upon failure:
 
 ---------------------------------------
 
-*instance_attachmap("<map name>", <instance id>{, <use base name>{, "<new map name>"}})
+*instance_attachmap("<map name>",{<use base name>{, "<new map name>"}},{<instance id>})
 
 Attaches the map "<map name>" to the instance specified with
-<instance id>. The optional parameter specifies, whether a map requires
+<instance id> or if none is given the IM_PARTY. The optional parameter specifies, whether a map requires
 emulation for instancing (true) or not (false = default). if use base name is specified,
 and "<new map name>" too the server will instance the map under the "<new map name>",
 name.
@@ -8443,9 +8443,9 @@ end no instance_id is found the command halts the script execution.
 
 ---------------------------------------
 
-*instance_init <instance id>;
+*instance_init({instance id});
 
-Initializes the instance given by <instance id>. This copies all NPCs from the
+Initializes the instance given by <instance id> defaults to IM_PARTY if none is given. This copies all NPCs from the
 source maps to the instanced maps.
 
 ---------------------------------------
@@ -8502,10 +8502,10 @@ the command fails and causes the script to halt.
 
 ---------------------------------------
 
-*instance_set_timeout(<alive timeout>, <idle timeout>{, <instance id>})
+*instance_set_timeout(<alive timeout>,<idle timeout>{,<instance id>})
 
 Sets the timeout values for an instance given by <instance id>. If no ID
-is specified, the instance the script is attached to is used. If in the end,
+is specified, IM_PARTY is used. If in the end,
 no instance_id is found the command halts the script execution.
 
 Parameter <alive timeout> specifies the total amount of time the instance
@@ -8564,10 +8564,10 @@ that fails, the command returns an empty string instead.
 
 ---------------------------------------
 
-*getinstancevar(<variable>,<instance id>);
+*getinstancevar(<variable>{,<instance id>});
 
 Returns a reference to an instance variable (' prefix) of the specific instance ID.
-This can only be used to get ' variables.
+This can only be used to get ' variables. If instance id is not specified, IM_PARTY is used.
 
 Examples:
 	// This will set the .@s variable to the value of 'var variable of the specific instance ID.
@@ -8578,10 +8578,10 @@ Examples:
 
 ---------------------------------------
 
-*setinstancevar(<variable>,<value>,<instance id>);
+*setinstancevar(<variable>,<value>{,<instance id>});
 
 This command will set an instance variable to the value that the expression results in.
-See 'set' command for more information.
+See 'set' command for more information. If instance id is not specified, IM_PARTY is used.
 
 Returns the variable reference.
 

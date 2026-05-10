@@ -19643,19 +19643,24 @@ BUILDIN_FUNC(instance_attachmap)
 	bool usebasename = false;
 	
 	name = script_getstr(st,2);
-	instance_id = script_getnum(st,3);
-	if( script_hasdata(st,4) && script_getnum(st,4) > 0)
+
+	if(script_hasdata(st,5))
+		instance_id = script_getnum(st,5);
+	else
+		instance_id = script_instancegetid(st, IM_PARTY);
+
+	if( script_hasdata(st,3) && script_getnum(st,3) > 0)
 		usebasename = true;
 
-	if (script_hasdata(st, 5))
-		map_name = script_getstr(st, 5);
+	if (script_hasdata(st, 4))
+		map_name = script_getstr(st, 4);
 
 	if ((m = instance_add_map(name, instance_id, usebasename, map_name)) < 0) { // [Saithis]
 		ShowError("buildin_instance_attachmap: ataching map to instance failed (%s): %d\n", name, m);
 		script_pushconststr(st, "");
 		return 0;
 	}
-	//ShowDebug("buildin_instance_attachmap: Map attached (%s): %d\n", name, m);
+
 	script_pushconststr(st, map[m].name);
 	
 	return 0;
@@ -19667,12 +19672,11 @@ BUILDIN_FUNC(instance_detachmap)
 	int m;
 	int instance_id = -1;
 
- 	
 	str = script_getstr(st, 2);
 	if( script_hasdata(st, 3) )
 		instance_id = script_getnum(st, 3);
 	else
-		instance_id = script_instancegetid(st, IM_NONE);
+		instance_id = script_instancegetid(st, IM_PARTY);
 
 	if( (m = map_mapname2mapid(str)) < 0 || (m = instance_map2imap(m,instance_id)) < 0 )
  	{
@@ -19712,7 +19716,7 @@ BUILDIN_FUNC(instance_set_timeout)
 	if( script_hasdata(st, 4) )
 		instance_id = script_getnum(st, 4);
 	else
-		instance_id = script_instancegetid(st, IM_NONE);
+		instance_id = script_instancegetid(st, IM_PARTY);
 
 	if( instance_id >= 0 )
 		instance_set_timeout(instance_id, progress_timeout, idle_timeout);
@@ -19720,9 +19724,12 @@ BUILDIN_FUNC(instance_set_timeout)
 	return 0;
 }
 
-BUILDIN_FUNC(instance_init)
-{
-	int instance_id = script_getnum(st, 2);
+BUILDIN_FUNC(instance_init) {
+	int instance_id = -1;
+	if(script_hasdata(st, 2))
+		instance_id = script_getnum(st, 2);
+	else
+		instance_id = script_instancegetid(st, IM_PARTY);
 
 	if (!instance_is_valid(instance_id)) {
 		ShowError("instance_init: invalid instance id %d.\n", instance_id);
@@ -19817,7 +19824,11 @@ BUILDIN_FUNC(getinstancevar) {
 		return 1;
 	}
 
-	const int instance_id = script_getnum(st, 3);
+	int instance_id = -1;
+	if(script_hasdata(st,3))
+		instance_id = script_getnum(st,3);
+	else
+		instance_id = script_instancegetid(st, IM_PARTY);
 
 	if (instance_id < 0) {
 		ShowError("buildin_getinstancevar: Invalid instance ID %d.\n", instance_id);
@@ -19868,7 +19879,11 @@ BUILDIN_FUNC(setinstancevar)
 		return 1;
 	}
 
-	const int instance_id = script_getnum(st, 4);
+	int instance_id = -1;
+	if(script_hasdata(st,4))
+		instance_id = script_getnum(st,4);
+	else
+		instance_id = script_instancegetid(st, IM_PARTY);
 
 	if (instance_id < 0) {
 		ShowError("buildin_%s: Invalid instance ID %d.\n", command, instance_id);
@@ -20079,7 +20094,7 @@ BUILDIN_FUNC(instance_set_respawn) {
 	if( script_hasdata(st, 5) )
 		instance_id = script_getnum(st, 5);
 	else
-		instance_id = script_instancegetid(st, IM_NONE);
+		instance_id = script_instancegetid(st, IM_PARTY);
 	
 	if( instance_id == -1 || !instance_is_valid(instance_id) )
 		script_pushint(st, 0);
@@ -22661,12 +22676,12 @@ struct script_function buildin_func[] = {
 	// Instancing
 	BUILDIN_DEF(instance_create,"s??"),
 	BUILDIN_DEF(instance_destroy,"?"),
-	BUILDIN_DEF(instance_attachmap,"si??"),
+	BUILDIN_DEF(instance_attachmap,"s???"),
 	BUILDIN_DEF(instance_detachmap,"s?"),
 	BUILDIN_DEF(instance_id,"?"),
 	BUILDIN_DEF(instance_enter,"s????"),
 	BUILDIN_DEF(instance_set_timeout,"ii?"),
-	BUILDIN_DEF(instance_init,"i"),
+	BUILDIN_DEF(instance_init,"?"),
 	BUILDIN_DEF(instance_announce,"isi?????"),
 	BUILDIN_DEF(instance_npcname,"s?"),
 	BUILDIN_DEF(instance_warpall,"sii?"),
@@ -22731,8 +22746,8 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(getequiprefinecost, "iii?"),
 	BUILDIN_DEF(camerainfo, "iii?"),
 	BUILDIN_DEF(identifyall, "??"),
-	BUILDIN_DEF(getinstancevar,"ri"),
-	BUILDIN_DEF(setinstancevar,"rvi"),
+	BUILDIN_DEF(getinstancevar,"r?"),
+	BUILDIN_DEF(setinstancevar,"rv?"),
 	BUILDIN_DEF(openlapineddukddakboxui, "i"),
 	BUILDIN_DEF(openlapineupgradeui, "i"),
 	{NULL,NULL,NULL},
