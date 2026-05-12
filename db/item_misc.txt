@@ -808,8 +808,8 @@ IG_Token_Of_Siegfried,6293,1	// F_Token_Of_Siegfried
 IG_Token_Of_Siegfried,6316,1	// E_Token_Of_Siegfried
 IG_Token_Of_Siegfried,7621,1	// Token_Of_Siegfried
 
-61,12035,1 // Lotto_Box01
-61,12036,1 // Lotto_Box02
-61,12037,1 // Lotto_Box03
-61,12038,1 // Lotto_Box04
-61,12039,1 // Lotto_Box05
+65,12035,1 // Lotto_Box01
+65,12036,1 // Lotto_Box02
+65,12037,1 // Lotto_Box03
+65,12038,1 // Lotto_Box04
+65,12039,1 // Lotto_Box05
