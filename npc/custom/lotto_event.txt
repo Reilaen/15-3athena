@@ -2,7 +2,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 	mes("[Lotto Manager]");
 	mes("Welcome friend! Are you interested in playing some lotto? I offer everything you need! How can i help you?");
 	next;
-	menu("I want to register a ticket.", RegisterTicket, "Can you give me more information?", Information, "Can i have a Lotto Ring?", GetRing,  "No, thank you.", Cancel);
+	menu("I want to register a ticket.", RegisterTicket, "Can you give me more information?", Information, "Can i have a Lotto Buff?", GetBuff,  "No, thank you.", Cancel);
 
 	RegisterTicket:
 		if (inarray($participants$, getcharid(0)) != -1) {
@@ -83,7 +83,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 
 	Information:
 		mes("[Lotto Manager]");
-		mes("It is pretty simple, we provide you a magic Lotto Ring, that sometimes creates an Lotto Box, when you kill a monster.");
+		mes("It is pretty simple, we provide you a Lotto Buff, that sometimes creates an Lotto Box, when you kill a monster.");
 		mes("Those boxes give you a ball with a random number. Each box has a different range, one goes from 1 to 10, the next from 11 to 20.");
 		next;
 		mes("[Lotto Manager]");
@@ -94,25 +94,41 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		mes("Everyday at 18:00 i will draw 6 random numbers and those lucky people that got atleast 3 numbers right get a price. You should not miss this opportunity!");
 		close;
 
-	GetRing:
+	GetBuff:
+		if(callsub(S_BuffIsActive)) {
+			mes("[Lotto Manager]");
+			mes("Your Lotto Buff is still running for " + callfunc("Time2Str", lotto_buff_expiration) + ". Please come back later.");
+			close;
+		}
+
 		mes("[Lotto Manager]");
-		mes("Of course! They are very cheap, only " + callfunc("F_InsertComma", .lotto_ring_price) + " ^0000FFZeny^000000! So are you interested?");
+		mes("Of course! They are very cheap. They come in variety of durations you can buy. Buying a Buff more than once will renew the duration. So are you interested?");
 		next;
 		if (select("Yes, i want one!", "Thank you, but i pass.") == 2) {
 			goto(Cancel);
 		}
 
-		if (Zeny < .lotto_ring_price) {
+		for(.@i = 0; .@i < getarraysize(.lotto_buff_prices); .@i += 2) {
+			.@menu$[.@i] = "" + .lotto_buff_prices[.@i] + " hour" + (.lotto_buff_prices[.@i] > 1 ? "s" : "") + " " + callfunc("F_InsertComma", .lotto_buff_prices[.@i + 1]) + "z";
+		}
+
+		.@selected = select(implode(.@menu$, ":")) - 1;
+		.@duration = .lotto_buff_prices[.@selected] * 3600;
+		.@price = .lotto_buff_prices[.@selected + 1];
+
+		lotto_buff_expiration = gettimetick(2) + .@duration;
+
+		if (Zeny < .@price) {
 			mes("[Lotto Manager]");
 			mes("It seems you do not have enough ^0000FFZeny^000000.. Please come back once you have!");
 			close;
 		}
 
-		Zeny -= .lotto_ring_price;
-		getitem(.lotto_ring_id, 1);
+		Zeny -= .@price;
+		callsub(S_ActivateBuff, .@duration);
 
 		mes("[Lotto Manager]");
-		mes("There you go! Enjoy your Lotto Ring and Good luck!");
+		mes("There you go! Enjoy your Lotto Buff and remember that you can use the command .lottobuff to always see how much duration is left on your buff. Good luck!");
 		close;
 
 	Cancel:
@@ -174,16 +190,39 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		announce("[Lotto Manager] The latest numbers have been drawn! The numbers for draw #" + $lotto_latest_draw_id + " are " + implode($lotto_latest_draw, ", ") + "! The prices have been sendt to the winners. Check your mail! Good luck everyone!", bc_all|bc_blue);
 		end;
 
+	S_ActivateBuff:
+		bonus_script("{ bonus2 bAddMonsterDropItemGroup,IG_Lottoboxes," + .droprate + "; }", getarg(0), 8);
+		return;
+
+	S_BuffIsActive:
+		return gettimetick(2) < lotto_buff_expiration;
+
+	OnPCLoginEvent:
+		if(!callsub(S_BuffIsActive)) end;
+
+		callsub(S_ActivateBuff, lotto_buff_expiration - gettimetick(2));
+		end;
+
+	OnLottoBuff:
+		if(!callsub(S_BuffIsActive)) {
+			dispbottom("Your Lotto Buff has expired.");
+			end;
+		}
+
+		dispbottom("Your Lotto Buff runs out in " + callfunc("Time2Str", lotto_buff_expiration) + ".");
+		end;
+
 	OnInit:
+		bindatcmd("lottobuff", strnpcinfo(0) + "::OnLottoBuff");
+
 		if($lotto_next_draw_id == 0) {
 			$lotto_next_draw_id = 1;
 			$lotto_latest_draw_id = 0;
 		}
 
-		.lotto_ring_id = 25000;
-		.lotto_ring_price = 100000;
+		setarray(.lotto_buff_prices, 1, 10000, 5, 50000, 10, 100000);
 		.registration_fee = 100000;
-		.draws_history_limit = 7;
+		.droprate = 5 * 100;
 
 		.@current_lotto_id = 7361;
 		for(.@i = 1; .@i < 46; .@i++) {
