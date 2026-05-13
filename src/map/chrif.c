@@ -304,6 +304,8 @@ int chrif_save(struct map_session_data *sd, int flag)
 	if(!chrif_isconnected())
 		return -1; //Character is saved on reconnect.
 
+	chrif_bsdata_save(sd, flag&CSAVE_QUITTING && !(flag&CSAVE_AUTOTRADE));
+
 	if (sd->storage.dirty)
 		intif_storage_save(sd, &sd->storage);
 	if (flag&CSAVE_INVENTORY)
@@ -1571,9 +1573,10 @@ int chrif_bsdata_request(uint32 char_id) {
  * <cmd>.W <len>.W <char_id>.L <count>.B { <bonus_script>.?B }
  * Stores bonus_script data(s) to the table
  * @param sd
+ * @param quit
  * @author [Cydh]
  **/
-int chrif_bsdata_save(struct map_session_data *sd, bool quit) {
+int chrif_bsdata_save(struct map_session_data *sd, const bool quit) {
 	uint8 i = 0;
 
 	chrif_check(-1);
@@ -1824,8 +1827,8 @@ int send_users_tochar(void)
 }
 
 /*==========================================
- * timerŠÖ”
- * charI‚Æ‚ÌÚ‘±‚ğŠm”F‚µA‚à‚µØ‚ê‚Ä‚¢‚½‚çÄ“xÚ‘±‚·‚é
+ * timerï¿½Öï¿½
+ * charï¿½Iï¿½Æ‚ÌÚ‘ï¿½ï¿½ï¿½ï¿½mï¿½Fï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½Ä“xï¿½Ú‘ï¿½ï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 static int check_connect_char_server(int tid, int64 tick, int id, intptr_t data)
 {
@@ -1893,7 +1896,7 @@ int auth_db_final(DBKey key, DBData *data, va_list ap)
 }
 
 /*==========================================
- * I—¹
+ * ï¿½Iï¿½ï¿½
  *------------------------------------------*/
 void do_final_chrif(void)
 {
