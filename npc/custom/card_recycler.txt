@@ -173,7 +173,7 @@ prontera,152,184,4	script	Card Collector	408,{
 	.@card_amount = countitem(.@chosen_card_id);
 	if(.@card_amount > 1) {
 		mes("[Card Collector]");
-		mes "How many cards do you want to trade?";
+		mes "How many <ITEM>" + callfunc("F_GetPlural", getitemname(.@chosen_card_id)) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> do you want to trade?";
 		next;
 		if(input(.@selected_card_amount, 1, .@card_amount) != 0) {
 			mes("[Card Collector]");
