@@ -71,8 +71,6 @@ prontera,150,184,4	script	Velcarde	528,{
 		return;
 
 	S_CheckQuestItems:
-		.@missing = 0;
-
 		.@zenyNeeded = .min_zeny_price + (#VC_SEED % (.max_zeny_price - .min_zeny_price + 1));
 	    if (Zeny < .@zenyNeeded) .@missing++;
 
@@ -94,7 +92,8 @@ prontera,150,184,4	script	Velcarde	528,{
         }
 
         for(.@i = 0; .@i < .quest_item_amount; .@i++) {
-			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + countitem(.@temp_ids[.@i]) + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + getitemname(.@temp_ids[.@i]) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
+        	.@current = countitem(.@temp_ids[.@i]);
+			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + .@current + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + getitemname(.@temp_ids[.@i]) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
 		}
 
 		return .@missing;
