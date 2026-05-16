@@ -36,9 +36,9 @@
 		setarray($@fi_ra_dp_ayothaya, 6902, 7768);
 		setarray($@fi_ra_dp_ayothaya_wgts, 3000, 7000);
 
-		// Giant Squid, Giant Octopus
-		setarray($@fi_ra_dp_izlu2dun, 6900, 6899);
-		setarray($@fi_ra_dp_izlu2dun_wgts, 5000, 5000);
+		// Giant Octopus
+		setarray($@fi_ra_dp_izlu2dun, 6899);
+		setarray($@fi_ra_dp_izlu2dun_wgts, 10000);
 
 		// Piranha
 		setarray($@fi_ra_dp_niflheim, 6774);
@@ -94,9 +94,9 @@
 		setarray($@fi_bait_909, 7768);
 		setarray($@fi_bait_909_wgts, 300);
 
-		// Squid Ink: Giant Octopus, Jumbo Shrimp, Giant Squid
-		setarray($@fi_bait_1024, 6899, 6902, 6900);
-		setarray($@fi_bait_1024_wgts, 500, 500, 500);
+		// Squid Ink: Giant Octopus, Jumbo Shrimp
+		setarray($@fi_bait_1024, 6899, 6902);
+		setarray($@fi_bait_1024_wgts, 500, 500);
 
 		// Fresh Fish: Shark, Tuna
 		setarray($@fi_bait_579, 6770, 6771);
