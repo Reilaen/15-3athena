@@ -1,5 +1,5 @@
 prontera,150,184,4	script	Velcarde	528,{
-	.@today = callsub(S_GetDateYYYYMMDD);
+	.@today = gettimestr("Ymd", 8);
 	if (#vc_reset_date != .@today) {
 	    #vc_seed = rand(1, 1000000);
 		#vc_state = 0;
@@ -104,9 +104,6 @@ prontera,150,184,4	script	Velcarde	528,{
 				delitem(.itemlist[(#vc_seed + (.@i * 123)) % .itemlist_size], .min_item_price + ((#vc_seed + (.@i * 77)) % (.max_item_price - .min_item_price + 1)));
 			}
 			return;
-
-	S_GetDateYYYYMMDD:
-		return (gettime(DT_YEAR) * 10000) + (gettime(DT_MONTH) * 100) + gettime(DT_DAYOFMONTH);
 
 	OnCancel:
 		mes("[Velcarde]");
