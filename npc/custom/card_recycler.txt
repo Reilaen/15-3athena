@@ -1,12 +1,12 @@
 prontera,150,184,4	script	Velcarde	528,{
 	.@today = callsub(S_GetDateYYYYMMDD);
-	if (#VC_RESET_DATE != .@today) {
-	    #VC_SEED = rand(1, 1000000);
-		#VC_STATE = 0;
-	    #VC_RESET_DATE = .@today;
+	if (#vc_reset_date != .@today) {
+	    #vc_seed = rand(1, 1000000);
+		#vc_state = 0;
+	    #vc_reset_date = .@today;
 	}
 
-	switch(#VC_STATE) {
+	switch(#vc_state) {
 		case 0:
 			mes("[Velcarde]");
 			mes("Hey you there! Currently i am in need of assistance, if you help me i will reward you greatly. If you bring me:");
@@ -20,7 +20,7 @@ prontera,150,184,4	script	Velcarde	528,{
 					mes("I am Velcarde the creator of glorious inventions like the <ITEM>" + getitemname(105530) + "<INFO>105530</INFO></ITEM> and");
 					mes("<ITEM>" + getitemname(105529) + "<INFO>105529</INFO></ITEM>! Right now i am working on my next great invention and i need some help.");					close;
 				case 2:
-					#VC_STATE = 1;
+					#vc_state = 1;
 					mes("[Velcarde]");
 					mes("I see you are a smart one and know you will never get");
 					mes(.reward_item_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(105530))  + "<INFO>105530</INFO></ITEM> as easy as this.");
@@ -43,7 +43,7 @@ prontera,150,184,4	script	Velcarde	528,{
 
 					callsub(S_TakeQuestRequirements);
 					getitem(105530, .reward_item_amount);
-					#VC_STATE = 2;
+					#vc_state = 2;
 
 					mes("Great you got everything i need! Asking you for help was a great idea. Have fun with your <ITEM>" + callfunc("F_GetPlural", getitemname(105530)) + "<INFO>105530</INFO></ITEM>!");
 					close;
@@ -63,20 +63,20 @@ prontera,150,184,4	script	Velcarde	528,{
 	}
 
 	S_ListQuestItems:
-		mes("- " + callfunc("F_InsertComma", (.min_zeny_price + (#VC_SEED % (.max_zeny_price - .min_zeny_price + 1)))) + " ^0000FFZeny^000000");
+		mes("- " + callfunc("F_InsertComma", (.min_zeny_price + (#vc_seed % (.max_zeny_price - .min_zeny_price + 1)))) + " ^0000FFZeny^000000");
 
 		for(.@i = 0; .@i < .quest_item_amount; .@i++) {
-		    mes("- " + (.min_item_price + ((#VC_SEED + (.@i * 77)) % (.max_item_price - .min_item_price + 1))) + " <ITEM>" + callfunc("F_GetPlural", getitemname(.itemlist[(#VC_SEED + (.@i * 123)) % .itemlist_size])) + "<INFO>" + .itemlist[(#VC_SEED + (.@i * 123)) % .itemlist_size] + "</INFO></ITEM>");
+		    mes("- " + (.min_item_price + ((#vc_seed + (.@i * 77)) % (.max_item_price - .min_item_price + 1))) + " <ITEM>" + callfunc("F_GetPlural", getitemname(.itemlist[(#vc_seed + (.@i * 123)) % .itemlist_size])) + "<INFO>" + .itemlist[(#vc_seed + (.@i * 123)) % .itemlist_size] + "</INFO></ITEM>");
 		}
 		return;
 
 	S_CheckQuestItems:
-		.@zenyNeeded = .min_zeny_price + (#VC_SEED % (.max_zeny_price - .min_zeny_price + 1));
+		.@zenyNeeded = .min_zeny_price + (#vc_seed % (.max_zeny_price - .min_zeny_price + 1));
 	    if (Zeny < .@zenyNeeded) .@missing++;
 
 	    for(.@i = 0; .@i < .quest_item_amount; .@i++) {
-	        .@temp_ids[.@i] = .itemlist[(#VC_SEED + (.@i * 123)) % .itemlist_size];
-	        .@temp_needed[.@i] = .min_item_price + ((#VC_SEED + (.@i * 77)) % (.max_item_price - .min_item_price + 1));
+	        .@temp_ids[.@i] = .itemlist[(#vc_seed + (.@i * 123)) % .itemlist_size];
+	        .@temp_needed[.@i] = .min_item_price + ((#vc_seed + (.@i * 77)) % (.max_item_price - .min_item_price + 1));
 
 	        if (countitem(.@temp_ids[.@i]) < .@temp_needed[.@i]) {
 	            .@missing++;
@@ -99,9 +99,9 @@ prontera,150,184,4	script	Velcarde	528,{
 		return .@missing;
 
 		S_TakeQuestRequirements:
-			Zeny -= .min_zeny_price + (#VC_SEED % (.max_zeny_price - .min_zeny_price + 1));
+			Zeny -= .min_zeny_price + (#vc_seed % (.max_zeny_price - .min_zeny_price + 1));
 			for(.@i = 0; .@i < .quest_item_amount; .@i++) {
-				delitem(.itemlist[(#VC_SEED + (.@i * 123)) % .itemlist_size], .min_item_price + ((#VC_SEED + (.@i * 77)) % (.max_item_price - .min_item_price + 1)));
+				delitem(.itemlist[(#vc_seed + (.@i * 123)) % .itemlist_size], .min_item_price + ((#vc_seed + (.@i * 77)) % (.max_item_price - .min_item_price + 1)));
 			}
 			return;
 
