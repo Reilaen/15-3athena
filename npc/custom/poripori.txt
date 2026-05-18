@@ -24,7 +24,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 		.@participants_amount = $@partymembercount;
 		copyarray(.@participants[0], $@partymembercid[0], .@participants_amount);
 
-		if ($@participants_amount < $@pori_min_group_size) {
+		if (.@participants_amount < $@pori_min_group_size) {
 			mes("[Pori Pori Nyu]");
 			mes("Your party is really small. Recommended are at least " + $@pori_min_group_size + " people. Do you want to try it anyway?");
 			next;
