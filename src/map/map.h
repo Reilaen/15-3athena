@@ -881,7 +881,7 @@ int map_addblock(struct block_list* bl);
 int map_delblock(struct block_list* bl);
 int map_moveblock(struct block_list *, int, int, int64);
 int map_foreachinrange(int(*func)(struct block_list*, va_list), struct block_list* center, int range, int type, ...);
-int map_pickrandominrange(int(*func)(struct block_list*, va_list), struct block_list* center, int range, int max, int ignore_id, int type, ...);
+int map_pickrandominrange(int(*func)(struct block_list*, va_list), struct block_list* center, int range, int max_value, int ignore_id, int type, ...);
 int map_foreachinshootrange(int(*func)(struct block_list*, va_list), struct block_list* center, int range, int type, ...);
 int map_foreachinarea(int(*func)(struct block_list*, va_list), int m, int x0, int y0, int x1, int y1, int type, ...);
 int map_foreachinshootarea(int(*func)(struct block_list*, va_list), int16 m, int16 x0, int16 y0, int16 x1, int16 y1, int type, ...);

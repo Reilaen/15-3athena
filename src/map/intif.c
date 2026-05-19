@@ -963,7 +963,7 @@ int mapif_parse_WisToGM(int fd)
 // �A�J�E���g�ϐ��ʒm
 int intif_parse_Registers(int fd)
 {
-	int j,p,len,max, flag;
+	int j,p,max, flag;
 	struct map_session_data *sd;
 	struct global_reg *reg;
 	int *qty;

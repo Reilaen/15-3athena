@@ -1611,7 +1611,7 @@ int map_pickrandominrange(int (*func)(struct block_list*,va_list), struct block_
 			bl_list[index2] = temp;
 		}
 		
-		map_freeblock_lock();
+		map_freeblock_lock(); // ©çÌðúðÖ~·é
 
 		for( i = blockcount; i < bl_list_count; i ++ )
 		{
@@ -1623,7 +1623,7 @@ int map_pickrandominrange(int (*func)(struct block_list*,va_list), struct block_
 				va_end(ap);
 				count ++;
 			}
-			if( max_value && count && count >= max_value )
+			if(max_value && count && count >= max_value)
 				break; // Limit the number of targets processed. [LimitLine]
 		}
 		map_freeblock_unlock();

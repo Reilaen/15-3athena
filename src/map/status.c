@@ -659,7 +659,7 @@ void initChangeTables(void)
 	set_sc( SR_CRESCENTELBOW			, SC_CRESCENTELBOW			, SI_CRESCENTELBOW			, SCB_NONE );
 	set_sc( SR_CURSEDCIRCLE				, SC_CURSEDCIRCLE_TARGET	, SI_CURSEDCIRCLE_TARGET	, SCB_NONE );
 	set_sc( SR_LIGHTNINGWALK			, SC_LIGHTNINGWALK			, SI_LIGHTNINGWALK			, SCB_NONE );
-	set_sc( SR_RAISINGDRAGON			, SC_RAISINGDRAGON			, SI_RAISINGDRAGON			, SCB_REGEN | SCB_MAXHP | SCB_MAXSP );
+	set_sc( SR_RAISINGDRAGON			, SC_RAISINGDRAGON			, SI_RAISINGDRAGON			, SCB_MAXHP | SCB_MAXSP );
 	set_sc( SR_GENTLETOUCH_ENERGYGAIN	, SC_GENTLETOUCH_ENERGYGAIN	, SI_GENTLETOUCH_ENERGYGAIN	, SCB_NONE );
 	set_sc( SR_GENTLETOUCH_CHANGE		, SC_GENTLETOUCH_CHANGE		, SI_GENTLETOUCH_CHANGE		, SCB_WATK|SCB_MDEF|SCB_ASPD|SCB_MAXHP );
 	set_sc( SR_GENTLETOUCH_REVITALIZE	, SC_GENTLETOUCH_REVITALIZE	, SI_GENTLETOUCH_REVITALIZE	, SCB_MAXHP | SCB_DEF2 | SCB_REGEN );
@@ -3325,6 +3325,12 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 	pc_delautobonus(sd,sd->autobonus2,ARRAYLENGTH(sd->autobonus2),true);
 	pc_delautobonus(sd,sd->autobonus3,ARRAYLENGTH(sd->autobonus3),true);
 
+	if (sd->pd != NULL) {
+		pet_delautobonus(sd, sd->pd->autobonus, true);
+		pet_delautobonus(sd, sd->pd->autobonus2, true);
+		pet_delautobonus(sd, sd->pd->autobonus3, true);
+	}
+
 	pc_itemgrouphealrate_clear(sd);
 
 	// Parse equipment.
@@ -3532,12 +3538,12 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 
 	pc_bonus_script(sd);
 
-	if( sd->pd )
-	{ // Pet Bonus
-		struct pet_data *pd = sd->pd;
-		if( pd && pd->petDB && pd->petDB->pet_loyal_script && pd->pet.intimate >= battle_config.pet_equip_min_friendly )
+	if (sd->pd) { // Pet Bonus
+		const struct pet_data* pd = sd->pd;
+		if (pd && pd->petDB && pd->petDB->pet_loyal_script)
 			run_script(pd->petDB->pet_loyal_script,0,sd->bl.id,0);
-		if( pd && pd->pet.intimate > 0 && (!battle_config.pet_equip_required || pd->pet.equip > 0) && pd->state.skillbonus == 1 && pd->bonus )
+
+		if (pd && pd->pet.intimate > PET_INTIMATE_NONE && (!battle_config.pet_equip_required || pd->pet.equip > 0) && pd->state.skillbonus == 1 && pd->bonus)
 			pc_bonus(sd,pd->bonus->type, pd->bonus->val);
 	}
 
@@ -13009,9 +13015,8 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 		break;
 
 	case SC_RAISINGDRAGON:
-		// 1% every 5 seconds [Jobbie]
-		if( --(sce->val3)>0 && status_charge(bl, sce->val2, 0) ){
-			if( !sc->data[type] ) return 0;
+		if (--sce->val3 > 0) {
+			if (!sc->data[type]) return 0;
 			sc_timer_next(5000 + tick, status_change_timer, bl->id, data);
 			return 0;
 		}

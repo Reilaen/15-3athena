@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct DBMap *char_achievements = NULL;
+struct DBMap* char_achievements = NULL;
 
 /**
  * Saves changed achievements for a character.

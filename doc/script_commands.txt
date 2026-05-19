@@ -5,21 +5,21 @@
 //= Commands are sorted depending on their functionality.
 //============================================================
 
-This document is a reference manual for all the scripting commands and functions
-available in current eAthena SVN. It is not a simple tutorial. When people tell
+This document is a reference manual for all the scripting commands and functions 
+available in current eAthena SVN. It is not a simple tutorial. When people tell 
 you to "Read The F***ing Manual", they mean this.
 
-The information was mostly acquired through looking up how things actually work
-in the source code of the server, which was written by many people over time,
-and lots of them don't speak English and never left any notes - or are otherwise
-not available for comments. As such, anything written in here might not be
+The information was mostly acquired through looking up how things actually work 
+in the source code of the server, which was written by many people over time, 
+and lots of them don't speak English and never left any notes - or are otherwise 
+not available for comments. As such, anything written in here might not be 
 correct, it is only correct to the best of our knowledge, which is limited.
 
-This is not a place to teach you basic programming. This document will not teach
-you basic programming by itself. It's more of a reference for those who have at
-least a vague idea of what they want to do and want to know what tools they have
-available to do it. We've tried to keep it as simple as feasible, but if you
-don't understand it, getting a clear book on programming in general will help
+This is not a place to teach you basic programming. This document will not teach 
+you basic programming by itself. It's more of a reference for those who have at 
+least a vague idea of what they want to do and want to know what tools they have 
+available to do it. We've tried to keep it as simple as feasible, but if you 
+don't understand it, getting a clear book on programming in general will help 
 better than yelling around the forum for help.
 
 A little learning never caused anyone's head to explode.
@@ -33,11 +33,11 @@ The commands and functions are listed in no particular order:
 
 Descriptive text
 
-    Small example if possible. Will usually be incomplete, it's there just to
+    Small example if possible. Will usually be incomplete, it's there just to 
     give you an idea of how it works in practice.
 
-To find a specific command, use Ctrl+F, (or whatever keys call up a search
-function in whatever you're reading this with) put an * followed by the command
+To find a specific command, use Ctrl+F, (or whatever keys call up a search 
+function in whatever you're reading this with) put an * followed by the command 
 name, and it should find the command description for you.
 
 If you find anything omitted, please respond. :)
@@ -45,67 +45,67 @@ If you find anything omitted, please respond. :)
 Syntax
 ------
 
-Throughout this document, wherever a command wants an argument, it is given in
-<angle brackets>. This doesn't mean you should type the angle brackets. :) If an
-argument of a command is optional, it is given in {curly brackets}. You've
-doubtlessly seen this convention somewhere, if you didn't, get used to it,
-that's how big boys do it. If a command can optionally take an unspecified
+Throughout this document, wherever a command wants an argument, it is given in 
+<angle brackets>. This doesn't mean you should type the angle brackets. :) If an 
+argument of a command is optional, it is given in {curly brackets}. You've 
+doubtlessly seen this convention somewhere, if you didn't, get used to it, 
+that's how big boys do it. If a command can optionally take an unspecified 
 number of arguments, you'll see a list like this:
 
 command <argument>{,<argument>...<argument>}
 
 This still means they will want to be separated by commas.
 
-Where a command wants a string, it will be given in "quotes", if it's a number,
-it will be given without them. Normally, you can put an expression, like a bunch
-of functions or operators returning a value, in (round brackets) instead of most
-numbers. Round brackets will not always be required, but they're often a good
+Where a command wants a string, it will be given in "quotes", if it's a number, 
+it will be given without them. Normally, you can put an expression, like a bunch 
+of functions or operators returning a value, in (round brackets) instead of most 
+numbers. Round brackets will not always be required, but they're often a good 
 idea.
 
 Wherever you refer to a map name, it's always 'mapname' or 'mapname.gat'
-(Please, don't use .gat suffix anymore. It's useless.)
+(Please, don't use .gat suffix anymore. It's useless.) 
 
 
 Script loading structure
 ------------------------
 
-Scripts are loaded by the map server as referenced in the 'conf/map_athena.conf'
-configuration file, but in the default configuration, it doesn't load any script
-files itself. Instead, it loads the file 'npc/scripts_main.conf' which itself
-contains references to other files. The actual scripts are loaded from txt
+Scripts are loaded by the map server as referenced in the 'conf/map_athena.conf' 
+configuration file, but in the default configuration, it doesn't load any script 
+files itself. Instead, it loads the file 'npc/scripts_main.conf' which itself 
+contains references to other files. The actual scripts are loaded from txt 
 files, which are linked up like this:
 
 npc: <path to a filename>
 
-Any line like this, invoked, ultimately, by 'map_athena.conf' will load up the
-script contained in this file, which will make the script available. No file
+Any line like this, invoked, ultimately, by 'map_athena.conf' will load up the 
+script contained in this file, which will make the script available. No file 
 will get loaded twice, to prevent possible errors.
 
 Another configuration file option of relevance is:
 
 delnpc: <path to a filename>
 
-This will unload a specified script filename from memory, which, while
+This will unload a specified script filename from memory, which, while 
 seemingly useless, may sometimes be required.
 
-Whenever '//' is encountered in a line upon reading, everything beyond this on
-that line is considered to be a comment and is ignored. This works wherever you
+Whenever '//' is encountered in a line upon reading, everything beyond this on 
+that line is considered to be a comment and is ignored. This works wherever you 
 place it.
 
-Upon loading all the files, the server will execute all the top-level commands
-in them. No variables exist yet at this point, no commands can be called other
-than those given in this section. These commands set up the basic server script
-structure - create NPC objects, spawn monster objects, set map flags, etc. No
-code is actually executed at this point except them. The top-level commands the
-scripting are pretty confusing, since they aren't structured like you would
+Upon loading all the files, the server will execute all the top-level commands 
+in them. No variables exist yet at this point, no commands can be called other 
+than those given in this section. These commands set up the basic server script 
+structure - create NPC objects, spawn monster objects, set map flags, etc. No 
+code is actually executed at this point except them. The top-level commands the 
+scripting are pretty confusing, since they aren't structured like you would 
 expect commands, command name first, but rather, normally start with a map name.
 
-What's more confusing about the top-level commands is that most of them use a
+What's more confusing about the top-level commands is that most of them use a 
 tab symbol to divide their arguments.
 
-To prevent problems and confusion, the tab symbols are written as '%TAB%'
-throughout this document, even though this makes the text a bit less readable.
-Using an invisible symbol to denote arguments is one of the bad things about
+To prevent problems and confusion, the tab symbols are written as '%TAB%' 
+throughout this document, even though this makes the text a bit less readable. 
+Using an invisible symbol to denote arguments is one of the bad things about 
 this language, but we're stuck with it for now. :)
 
 Here is a list of valid top-level commands:
@@ -114,10 +114,10 @@ Here is a list of valid top-level commands:
 
 <map name>%TAB%mapflag%TAB%<flag>
 
-This will, upon loading, set a specified map flag on a map you like. These are
-normally in files inside 'conf/mapflag' and are loaded first, so by the time the
-server's up, all the maps have the flags they should have. Map flags determine
-the behavior of the map regarding various common problems, for a better
+This will, upon loading, set a specified map flag on a map you like. These are 
+normally in files inside 'conf/mapflag' and are loaded first, so by the time the 
+server's up, all the maps have the flags they should have. Map flags determine 
+the behavior of the map regarding various common problems, for a better 
 explanation, see 'setmapflag'.
 
 ** Create a permanent monster spawn:
@@ -131,16 +131,16 @@ Putting zeros instead of these coordinates will spawn the monsters randomly.
 Note this is only the initial spawn zone, as mobs random-walk, they are free
 to move away from their specified spawn region.
 
-Monster name is the name the monsters will have on screen, and has no relation
-whatsoever to their names anywhere else. It's the mob id that counts, which
-identifies monster record in 'mob_db.txt' database of monsters. If the mob name
-is given as "--ja--", the 'japanese name' field from the monster database is
-used, (which, in eAthena, actually contains an english name) if it's "--en--",
-it's the 'english name' from the monster database (which contains an uppercase
+Monster name is the name the monsters will have on screen, and has no relation 
+whatsoever to their names anywhere else. It's the mob id that counts, which 
+identifies monster record in 'mob_db.txt' database of monsters. If the mob name 
+is given as "--ja--", the 'japanese name' field from the monster database is 
+used, (which, in eAthena, actually contains an english name) if it's "--en--", 
+it's the 'english name' from the monster database (which contains an uppercase 
 name used to summon the monster with a GM command).
 
-If you add 20000 to the monster ID, the monster will be spawned in a 'big
-version', (monster size class will increase) and if you add 10000, the 'tiny
+If you add 20000 to the monster ID, the monster will be spawned in a 'big 
+version', (monster size class will increase) and if you add 10000, the 'tiny 
 version' of the monster will be created. However, this method is deprecated
 and not recommended, as the values to add can change at a later time (20000
 and 10000 actually stand for 2*MAX_MOB_DB and MAX_MOB_DB respectively, which
@@ -8089,6 +8089,7 @@ The first letter is position 0.
 
 	Combines all substrings within the specified string array into a single string.
 	If the glue parameter is specified, it will be inserted inbetween each substring.
+
 	Also works with turning integer arrays into strings.
 
 	Example:
