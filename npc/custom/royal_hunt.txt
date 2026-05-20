@@ -1,0 +1,294 @@
+-	script	ROYAL_HUNT	-1,{
+	OnInit:
+		bindatcmd("checkhunt","ROYAL_HUNT::OnCheckRH");
+
+		setarray($@rh_m_names$[0],
+			"Hunt 50 Insect-type monsters Level 50+",
+			"Hunt 50 Brute-type monsters Level 50+",
+			"Hunt 50 Fish-type monsters Level 50+",
+			"Hunt 50 Dragon-type monsters Level 50+",
+			"Hunt 50 Insect-type monsters Level 100+",
+			"Hunt 50 Brute-type monsters Level 100+",
+			"Hunt 50 Fish-type monsters Level 100+",
+			"Hunt 50 Dragon-type monsters Level 100+",
+			"Hunt 1 Boss monster 50+",
+			"Hunt 1 Boss monster 100+"
+		);
+
+		setarray($@rh_m_races[0],
+			RC_Insect, RC_Brute, RC_Fish, RC_Dragon,
+			RC_Insect, RC_Brute, RC_Fish, RC_Dragon,
+			0, 0
+		);
+
+		setarray($@rh_m_min_level[0],
+			50, 50, 50, 50,
+			100, 100, 100, 100,
+			50, 50
+		);
+
+		setarray($@rh_m_kill_amt[0],
+	 		50, 50, 50, 50,
+			50, 50, 50, 50,
+			1, 1
+		);
+
+		setarray($@rh_m_mob_mode[0],
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			1, 1
+		);
+
+		setarray($@rh_m_reward_amt[0],
+			2, 2, 2, 2,
+			3, 3, 3, 3,
+			5, 5
+		);
+
+		setarray($@rh_p_min_level[0],
+			0, 0, 0, 0,
+			100, 100, 100, 100,
+			0, 100
+		);
+
+		setarray($@rh_p_max_level[0],
+			100, 100, 100, 100,
+			0, 0, 0, 0,
+			100, 0
+		);
+
+		setarray(.card_drops, 27200, 27201, 27202, 27203, 27330, 27332);
+		end;
+
+	OnNPCKillEvent:
+		if (rand(1, 10000) <= 100) {
+            getitem(.card_drops[rand(getarraysize(.card_drops))], 1);
+        }
+
+		if(#rh_state < 1) end;
+
+		.@race = getmonsterinfo(killedrid, MOB_RACE);
+		.@level = getmonsterinfo(killedrid, MOB_LV);
+		.@mode = getmonsterinfo(killedrid, MOB_MODE);
+
+		for(.@i = 0; .@i < getarraysize($@rh_m_names$); .@i++) {
+			.@mission_id = 1 << .@i;
+			if(!(#rh_active_missions & .@mission_id)) continue;
+
+			.@kills = getd("#rh_mission_" + .@mission_id + "_kills");
+			if(($@rh_m_races[.@i] && .@race != $@rh_m_races[.@i]) ||
+				($@rh_m_min_level[.@i] && .@level < $@rh_m_min_level[.@i]) ||
+				($@rh_m_mob_mode[.@i] && !(.@mode & $@rh_m_mob_mode[.@i])) ||
+				$@rh_m_kill_amt[.@i] == .@kills
+			) continue;
+
+			.@kills++;
+			setd("#rh_mission_" + .@mission_id + "_kills", .@kills);
+
+			if(.@kills == $@rh_m_kill_amt[.@i]) {
+				dispbottom("[Royal Hunt] The " + $@rh_m_names$[.@i] + " mission has been finished.");
+				continue;
+			}
+
+			dispbottom("[Royal Hunt] For the " + $@rh_m_names$[.@i] + " mission are " + .@kills + " / " + $@rh_m_kill_amt[.@i] + " monsters left.");
+		}
+	end;
+
+	OnCheckRH:
+        if (#rh_state < 2) {
+            dispbottom("[Royal Hunt] You are not participating in the Royal Hunt.");
+            end;
+        }
+
+        .@found = 0;
+        dispbottom("--- Current Royal Hunt Missions ---");
+        for(.@i = 0; .@i < getarraysize($@rh_m_names$); .@i++) {
+            .@mission_id = 1 << .@i;
+            if(#rh_active_missions & .@mission_id) {
+                dispbottom($@rh_m_names$[.@i] + ": " + getd("#rh_mission_" + .@mission_id + "_kills") + " / " + $@rh_m_kill_amt[.@i]);
+                .@found++;
+            }
+        }
+
+        if (!.@found) dispbottom("Du hast momentan keine aktiven Missionen.");
+}
+
+-	script	ROYAL_CARD_TRADE	-1,{
+	.@npc_name$ = strnpcinfo(NPC_NAME_VISIBLE);
+	explode(.@trade_items, strnpcinfo(NPC_NAME_HIDDEN), ":");
+
+	mes("[" + .@npc_name$ + "]");
+	mes("If you bring me 100");
+	mes("<ITEM>" + callfunc("F_GetPlural", getitemname(.@trade_items[0])) + "<INFO>" + .@trade_items[0] + "</INFO></ITEM>,");
+	mes("i will give you my personal");
+	mes("<ITEM>" + getitemname(.@trade_items[1]) + "<INFO>" + .@trade_items[1] + "</INFO></ITEM> as a reward for proving your loyalty to my family.");
+	next;
+	if(select("I brought the cards", "No, thank you.") == 2) {
+		mes("[" + .@npc_name$ + "]");
+		mes("That is alright. Come back if you should change your mind.");
+		close;
+	}
+
+	if(countitem(.@trade_items[0]) < .card_amt) {
+		mes("[" + .@npc_name$ + "]");
+		mes("You do not have enough");
+		mes("<ITEM>" + callfunc("F_GetPlural", getitemname(.@trade_items[0])) + "<INFO>" + .@trade_items[0] + "</INFO></ITEM>.");
+		close;
+	}
+
+	delitem(.@trade_items[0], .card_amt);
+	getitem(.@trade_items[1], 1);
+
+	mes("[" + .@npc_name$ + "]");
+	mes("Great work. I really hope you enjoy your reward for showing so much dedication.");
+	close;
+
+	OnInit:
+		.card_amt = 100;
+}
+
+yuno_fild09,94,245,4	duplicate(ROYAL_CARD_TRADE)	Agnes Lugenburg#27201:27197	10130
+yuno_fild09,88,241,4	duplicate(ROYAL_CARD_TRADE)	Jurgen Wigner#27202:27198	989
+yuno_fild09,102,241,4	duplicate(ROYAL_CARD_TRADE)	Nihil Miseria Heine#27200:27196	10114
+yuno_fild09,95,231,1	duplicate(ROYAL_CARD_TRADE)	Skia Nerius#27332:27333	10116
+yuno_fild09,98,230,1	duplicate(ROYAL_CARD_TRADE)	Spica Nerius#27203:27199	10115
+yuno_fild09,97,242,4	duplicate(ROYAL_CARD_TRADE)	Kronecker Granz Heine#27330:27331	10119
+
+yuno_fild09,91,236,4	script	Commander Nadezhda	459,{
+	switch(#rh_state) {
+		case 0:
+			mes("[Commander Nadezhda]");
+			mes("This is the Royal Hunt, hosted by the Seven Royal Families. It welcomes strong and brave Adventurers like yourself.");
+			next;
+			mes("[Commander Nadezhda]");
+			mes("It is a rare opportunity to protect the people of Rune Midgard by hunting the feral Monsters that crawled down the Mjolnir Mountains for winter and also to showcase your outstanding performance.");
+			next;
+			mes("[Commander Nadezhda]");
+			mes("Do you want to join the hunt?");
+			next;
+			if(select("Yes, i will join.", "No, thank you.") == 2) {
+				mes("[Commander Nadezhda]");
+				mes("We will stay for a while. So if you change your mind you know where you can find us.");
+				close;
+			}
+
+			#rh_state = 1;
+			#rh_active_missions = 8;
+
+			mes("[Commander Nadezhda]");
+			mes("First we must test if you are strong enough to be a member of the Royal Hunt. To test this, i give you the mission \"" + $@rh_m_names$[3] + "\" and if you succeed i will accept you as a hunter.");
+			close;
+		case 1:
+			if(getd("#rh_mission_8_kills") < $@rh_m_kill_amt[3]) {
+				mes("[Commander Nadezhda]");
+				mes("I see you are still on the hunt. Take your time, this task isn't easy.");
+				close;
+			}
+
+			#rh_state = 2;
+			#rh_active_missions = 0;
+			setd("#rh_mission_8_kills", 0);
+
+			getitem(23533, 10);
+			mes("[Commander Nadezhda]");
+			mes("Well done. Very Good. I will register you as an official member of the Royal Hunt. Here take these <ITEM>" + getitemname(23533) + "<INFO>23533</INFO></ITEM> for your work. You should talk to Deputy Officer Jan Ha-sung, she can brief you on the open missions.");
+			close;
+		case 2:
+			mes("[Commander Nadezhda]");
+			mes("I hope your hunting missions are going well. I look forward to hear the great stories of your achievements after the Royal Hunt is over.");
+			close;
+	}
+}
+
+yuno_fild09,92,243,4	script	Deputy Officer Jan Ha-sung	430,{
+	.@today = gettimestr("Ymd", 8);
+	if (#rh_reset_date != .@today) {
+		#rh_active_missions = 0;
+
+		for(.@i = 0; .@i < getarraysize($@rh_m_names$); .@i++) {
+			.@mission_id = 1 << .@i;
+			setd("#rh_mission_" + .@mission_id + "_kills", 0);
+		}
+
+	    #rh_reset_date = .@today;
+	}
+
+	if(#rh_state < 2) {
+		mes("[Deputy Officer Jan Ha-sung]");
+		mes("Welcome to the Royal Hunt, Adventurer. I am sorry, i can only assist official members of the Royal Hunt.");
+		close;
+	}
+
+	mes("[Deputy Officer Jan Ha-sung]");
+	mes("Welcome! How may i help you?");
+	next;
+	menu("Show me the missions!", Mission_List, "I finished a mission.", Mission_Finished, "Nothing.", Cancel);
+
+	Mission_List:
+		for(.@i = 0; .@i < getarraysize($@rh_m_names$); .@i++) {
+			.@mission_id = 1 << .@i;
+			if(#rh_active_missions & .@mission_id ||
+				$@rh_m_kill_amt[.@i] == getd("#rh_mission_" + .@mission_id + "_kills") ||
+				($@rh_p_min_level[.@i] && BaseLevel < $@rh_p_min_level[.@i]) ||
+				($@rh_p_max_level[.@i] && BaseLevel >= $@rh_p_max_level[.@i])
+				) {
+				.@menu$ += ":";
+				continue;
+			}
+
+			.@menu$ += $@rh_m_names$[.@i] + ":";
+			.@open_missions++;
+		}
+
+		if(.@open_missions == 0) {
+			mes("[Deputy Officer Jan Ha-sung]");
+			mes("Currently there aren't any missions i can give you. Come back tomorrow.");
+			close;
+		}
+
+		#rh_active_missions |= (1 << (select(.@menu$) - 1));
+
+		mes("[Deputy Officer Jan Ha-sung]");
+		mes("Come back once you are finished. I have some fine <ITEM>" + getitemname(23533) + "<INFO>23533</INFO></ITEM> for you. You can also always check your current mission progress via @checkhunt.");
+		close;
+
+	Mission_Finished:
+		for(.@i = 0; .@i < getarraysize($@rh_m_names$); .@i++) {
+			.@mission_id = 1 << .@i;
+			if(!(#rh_active_missions & .@mission_id) || $@rh_m_kill_amt[.@i] > getd("#rh_mission_" + .@mission_id + "_kills")) {
+				continue;
+			}
+
+			#rh_active_missions &= ~(.@mission_id);
+			.@finished_missions++;
+			.@total_rewards += $@rh_m_reward_amt[.@i];
+		}
+
+		if(.@finished_missions == 0) {
+			mes("[Deputy Officer Jan Ha-sung]");
+			mes("You didn't finish any missions. Come back once you have.");
+			close;
+		}
+
+		getitem(23533, .@total_rewards);
+		mes("[Deputy Officer Jan Ha-sung]");
+		mes("You did a great job, here are your <ITEM>" + getitemname(23533) + "<INFO>23533</INFO></ITEM>.");
+		close;
+
+	Cancel:
+		mes("[Deputy Officer Jan Ha-sung]");
+		mes("I see. Come back if you change your mind.");
+		close;
+}
+
+yuno_fild09,100,243,4	itemshop	Deputy Officer La Finch	500,23533:0,15390:40,20945:40,22206:40,15246:60,20902:60,22168:60,28562:20,28563:20
+
+-	script	Guard#RoyalHunt	-1,{
+	mes("The Guard is watching the area. I shouldn't distract him from his duties.");
+	close;
+}
+
+yuno_fild09,108,236,4	duplicate(Guard#RoyalHunt)	Guard#RoyalHunt01	417
+yuno_fild09,89,229,4	duplicate(Guard#RoyalHunt)	Guard#RoyalHunt02	417
+yuno_fild09,87,249,4	duplicate(Guard#RoyalHunt)	Guard#RoyalHunt03	417
+yuno_fild09,105,250,4	duplicate(Guard#RoyalHunt)	Guard#RoyalHunt04	417
