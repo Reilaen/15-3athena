@@ -188,7 +188,7 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 
 	EndChallenge:
 		sleep(5000);
-		instance_warpall($@pori_return_map$, $@pori_return_coords[0], $@pori_return_coords[1]);
+		mapwarp('map$, $@pori_return_map$, $@pori_return_coords[0], $@pori_return_coords[1]);
 		instance_destroy();
 		end;
 
