@@ -156,7 +156,7 @@ prontera,152,184,4	script	Card Collector	408,{
 
 	if(.@currency_amount == 0) {
 		mes("[Card Collector]");
-		mes("Sadly <ITEM>" + getitemname(.@chosen_card_id) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM>is not a card i am currently searching for, sorry. Maybe next time.");
+		mes("Sadly <ITEM>" + getitemname(.@chosen_card_id) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> is not a card i am currently searching for, sorry. Maybe next time.");
 		close;
 	}
 
