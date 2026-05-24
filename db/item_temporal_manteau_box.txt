@@ -1,0 +1,12 @@
+// Temporal Manteau Box Obtainable Items Database
+//
+// Structure of Database:
+// GroupID,ItemID,Rate
+
+// Temporal Manteau Box
+66,20963,1	// Temporal_M_Str
+66,20964,1	// Temporal_M_Agi
+66,20965,1	// Temporal_M_Vit
+66,20966,1	// Temporal_M_Int
+66,20967,1	// Temporal_M_Dex
+66,20968,1	// Temporal_M_Luk

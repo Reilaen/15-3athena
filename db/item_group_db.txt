@@ -8,3 +8,4 @@ import: db/item_scroll.txt
 import: db/item_misc.txt
 import: db/item_velcarde.txt
 import: db/item_sealed_card_album.txt
+import: db/item_temporal_manteau_box.txt

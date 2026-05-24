@@ -2201,8 +2201,67 @@
 28703,507,100	// Infinity_Dagger
 31140,507,100	// C_Cowboy_Hat_
 31141,507,100	// C_Rose_Corsage_
-1002433,507,100 // Card_Fragment_US
-105529,507,100  // Velcarde_Album_US
-105530,507,100  // Card_Recycle_US
-22829,507,100  // Sealed_Card
-23719,507,100  // Sealed_Card2
+22829,475,100  // Sealed_Card
+23719,475,100  // Sealed_Card2
+7849,475,100  // Soul_Crystal
+
+// Velcarde Recycler //
+1002433,475,100 // Card_Fragment_US
+105529,475,100  // Velcarde_Album_US
+105530,475,100  // Card_Recycle_US
+
+// Lotto //
+16814,475,100 // C_Enriched_Elunium_Box
+16816,475,100 // C_Enriched_Oridecon_Box
+16394,475,100 // HD_Ori_Box10
+16396,475,100 // HD_Elu_Box10
+16260,475,100 // HD_Bradium_10_Box
+16261,475,100 // HD_Carnium_10_Box
+6229,475,100 // Guarantee_Weapon_8Up
+6233,475,100 // Guarantee_Armor_8Up
+6993,475,100 // Guarantee_Weapon_10Up
+6994,475,100 // Guarantee_Armor_10Up
+6584,475,100 // Guarantee_Weapon_12Up
+6585,475,100 // Guarantee_Armor_12Up
+16682,475,100 // Boarding_Halter_Box
+12622,507,100 // Boarding_Halter
+
+100100,265,100 // Temporal_Manteau_Box
+20963,393,100 // Temporal_M_Str
+20964,393,100 // Temporal_M_Agi
+20965,393,100 // Temporal_M_Vit
+20966,393,100 // Temporal_M_Int
+20967,393,100 // Temporal_M_Dex
+20968,393,100 // Temporal_M_Luk
+
+// Royal Hunt //
+23533,257,100 // Vote_Rose
+15246,257,100 // True_Hunting_Mail
+20902,257,100 // True_Hunting_Manteau
+22168,257,100 // True_Hunting_Boots
+15390,257,100 // Regia_Hunting_Mail
+20945,257,100 // Regia_Hunting_Manteau
+22206,257,100 // Regia_Hunting_Boots
+28562,257,100 // True_Hunting_Physical_Ring
+28563,257,100 // True_Hunting_Magical_Ring
+31389,384,100 // C_White_Bird_Rose
+27200,384,100 // Nihil_Card
+27201,384,100 // Agnes_Card
+27202,384,100 // Jurgen_Card
+27203,384,100 // S_Spica_Card
+27330,384,100 // S_Kronecker_Card
+27332,384,100 // S_Skia_Card
+
+// Fishing //
+6897,467,100 // Blue_Whale
+6771,499,100 // Tuna
+6770,499,100 // Shark
+6772,499,100 // Octopus
+6901,499,100 // Sturgeon
+6902,499,100 // Jumbo Shrimp
+7768,499,100 // Squid
+6899,499,100 // Giant Octopus
+6774,499,100 // Piranha
+6773,499,100 // Snapper
+2764,467,100 // Small_Fishing_Rod
+5855,499,100 // Fish_Rod

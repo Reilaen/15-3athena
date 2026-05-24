@@ -112,7 +112,7 @@
 12708,Lucky_Cookie03,Lucky Cookie,11,0,,100,,,,,0xFFFFFFFF,63,2,,,,,,{ itemskill "PR_IMPOSITIO",3; },{},{}
 
 // Royal Hunt
-23533,Vote_Rose,Rose of Choice,0,10,,70,,,,,0xFFFFFFFF,7,2,,,,,,{ warp "yuno_fild09",91,233; },{},{}
+23533,Vote_Rose,Rose of Choice,2,,,0,,,,,0xFFFFFFFF,7,2,,,,,,{ warp "yuno_fild09",91,233; },{},{}
 
 // --- True Hunting Set ---
 15246,True_Hunting_Mail,True Hunting Mail,5,0,0,900,0,40,0,1,0xFFFFFFFF,63,2,16,0,100,1,0,{ .@r = getrefine(); bonus bMaxHP,1000; bonus bMaxSP,200; bonus2 bAddRace,RC_Insect,10; bonus2 bMagicAddRace,RC_Insect,10; bonus2 bAddRace,RC_Brute,10; bonus2 bMagicAddRace,RC_Brute,10; bonus bMaxHPrate,(.@r/3); bonus bMaxSPrate,(.@r/3); if(isequipped(20902) && isequipped(22168)){ bonus bDelayRate,-7; if(.@r>=9 && getequiprefinerycnt(EQI_GARMENT)>=9 && getequiprefinerycnt(EQI_SHOES)>=9){ bonus bDelayRate,-8; } } },{},{}
@@ -125,8 +125,8 @@
 22206,Regia_Hunting_Boots,Regia Hunting Boots,5,0,0,500,0,5,0,1,0xFFFFFFFF,63,2,64,0,50,1,0,{ .@r = getrefine(); bonus bAspdRate,5; bonus bHit,2*(.@r/3); if (isequipped(15390)) { bonus bLongAtkRate, 7; } .@ar = getequiprefinerycnt(EQI_ARMOR); .@sb = (.@r > 9) ? (.@r - 9) : 0; .@ab = (.@ar > 9) ? (.@ar - 9) : 0; if ((.@sb + .@ab) > 0) { bonus bCritAtkRate,(.@sb + .@ab) * 7; } },{},{}
 
 // --- True Hunting Accessory Set ---
-28562,True_Hunting_Physical_Ring,True Hunting Physical Ring,5,0,0,10,0,0,0,1,0xFFFFFFFF,63,2,136,0,100,0,0,{ bonus bAspdRate,7; },{},{}
-28563,True_Hunting_Magical_Ring,True Hunting Magical Ring,5,0,0,10,0,0,0,1,0xFFFFFFFF,63,2,136,0,100,0,0,{ bonus bVariableCastrate,-7; },{},{}
+28562,True_Hunting_Physical_Ring,True Hunting Physical Ring,5,0,0,100,0,0,0,1,0xFFFFFFFF,63,2,136,0,100,0,0,{ bonus bAspdRate,7; },{},{}
+28563,True_Hunting_Magical_Ring,True Hunting Magical Ring,5,0,0,100,0,0,0,1,0xFFFFFFFF,63,2,136,0,100,0,0,{ bonus bVariableCastrate,-7; },{},{}
 
 // --- Costume ---
 31389,C_White_Bird_Rose,Costume White Bird Rose,5,0,0,0,0,0,0,0,0xFFFFFFFF,63,2,1024,0,1,0,1688,{},{},{}
@@ -696,7 +696,7 @@
 6894,Champion_Badge,Champion Badge,3,10,,10,,,,,,,,,,,,,{},{},{}
 6895,Processed_Ancient_Rune,Processed Ancient Rune,3,10,,0,,,,,,,,,,,,,{},{},{}
 6896,Processed_Mystic_Rune,Processed Mystic Rune,3,10,,0,,,,,,,,,,,,,{},{},{}
-6897,Blue_Whale,Blue Whale,3,10,,0,,,,,,,,,,,,,{},{},{}
+6897,Blue_Whale,Blue Whale,3,10,,10,,,,,,,,,,,,,{},{},{}
 6898,Whale,Whale,3,10,,0,,,,,,,,,,,,,{},{},{}
 6899,Giant_Octopus,Giant Octopus,3,10,,0,,,,,,,,,,,,,{},{},{}
 6900,Giant_Squid,Giant Squid,3,10,,0,,,,,,,,,,,,,{},{},{}
@@ -3375,10 +3375,23 @@
 6549,Courtesy_Ticket,Courtesy Ticket,3,0,,0,,,,,,,,,,,,,{},{},{}
 6550,Brownie_Ticket,Brownie Ticket,3,20,,0,,,,,,,,,,,,,{},{},{}
 1002433,Card_Fragment_US,Card Fragment,3,,,,,,,,,,,,,,,,{},{},{}
-105529,Velcarde_Album_US,Velcarde MVP Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_VelcardeAlbum),1; },{},{}
+105529,Velcarde_Album_US,Velcarde MVP Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem(groupranditem(IG_VelcardeAlbum),1); },{},{}
 105530,Card_Recycle_US,Velcarde Card Recycler,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ if(countitem(1002433) < 20) { dispbottom("You do not have enough " + callfunc("F_GetPlural", getitemname(1002433)) + "."); getitem(105530, 1); end; } delitem(1002433, 20); getitem(groupranditem(IG_VelcardeRecycle),1); },{},{}
-22829,Sealed_Card,Sealed Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_SealedCardAlbum),1; },{},{}
-23719,Sealed_Card2,Sealed Card Album II,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem groupranditem(IG_SealedCardAlbum2),1; },{},{}
+22829,Sealed_Card,Sealed Card Album,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem(groupranditem(IG_SealedCardAlbum),1); },{},{}
+23719,Sealed_Card2,Sealed Card Album II,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem(groupranditem(IG_SealedCardAlbum2),1); },{},{}
+16814,C_Enriched_Elunium_Box,Enriched Elunium Box(10),2,10,,10,,,,0,0xFFFFFFFF,63,2,,,,,,{ getitem(7619,10); },{},{}
+16816,C_Enriched_Oridecon_Box,Enriched Oridecon Box(10),2,10,,10,,,,0,0xFFFFFFFF,63,2,,,,,,{ getitem(7620,10); },{},{}
+6993,Guarantee_Weapon_10Up,+10 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6994,Guarantee_Armor_10Up,+10 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6584,Guarantee_Weapon_12Up,+12 Weapon Certificate ,3,0,,0,,,,,,,,,,,,,{},{},{}
+6585,Guarantee_Armor_12Up,+12 Armor Certificate ,3,0,,0,,,,,,,,,,,,,{},{},{}
+100100,Temporal_Manteau_Box,Temporal Manteau Box,2,,,100,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem(groupranditem(IG_TEMPORAL_MANTEAU_BOX),1); },{},{}
+20963,Temporal_M_Str,Temporal Str Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bAtkRate,(.@r/2); bonus bBaseAtk,10*(.@r/2); bonus2 bAddSize,Size_All,5*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //
+20964,Temporal_M_Agi,Temporal Agi Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bCritAtkRate,3*(.@r/2); bonus bBaseAtk,10*(.@r/2); bonus2 bAddSize,Size_All,5*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //
+20965,Temporal_M_Vit,Temporal Vit Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bBaseAtk,10*(.@r/2); bonus bMaxHP,400*(.@r/2); bonus bMaxHPrate,3*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //
+20966,Temporal_M_Int,Temporal Int Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bMatkRate,(.@r/2); bonus bMatk,10*(.@r/2); bonus2 bMagicAtkEle,Ele_All,3*(.@r/4); if (.@r>=7) { bonus bMatkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //
+20967,Temporal_M_Dex,Temporal Dex Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bLongAtkRate,(.@r/2); bonus bBaseAtk,10*(.@r/2); bonus bCritAtkRate,3*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //
+20968,Temporal_M_Luk,Temporal Luk Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bCritAtkRate,3*(.@r/2); bonus bCritical,3*(.@r/2); bonus bAspdRate,5*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{}
 
 //Faceworm Nest (renewal)
 20717,FaceWorm_Skin,Gigant Snake Skin,5,10,,400,,8,,0,0xFFFFFFFF,63,2,4,,1,1,0,{ bonus bMdef,8; if(isequipped(22000) || isequipped(22001) || isequipped(22002) || isequipped(22003) || isequipped(22004) || isequipped(22005) || isequipped(22006) || isequipped(22007) || isequipped(22008) || isequipped(22009) || isequipped(22010) || isequipped(22011) || isequipped(22107) || isequipped(22108) || isequipped(22109) || isequipped(22110) || isequipped(22111) || isequipped(22112) || isequipped(22113) || isequipped(22114) || isequipped(22115) || isequipped(22116) || isequipped(22117) || isequipped(22118)){bonus bMaxHPRate,15; bonus bMaxSPRate,5;} },{},{}
@@ -4421,7 +4434,6 @@
 16679,Universal_Catalog_Gold_Box10_,Universal Catalog Gold 10 Box,2,0,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 12581,10; },{},{}
 16680,Universal_Catalog_Gold_Box50_,Universal Catalog Gold 50 Box,2,0,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 12581,50; },{},{}
 16681,BR_Independence_Scroll,BR Independence Scroll,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ /*getgroupitem(IG_BR_Independence_Scroll)*/; },{},{}
-16682,Boarding_Halter_Box,Boarding Halter Box,18,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ /*getgroupitem(IG_Boarding_Halter_Box)*/; /*rentitem 12622,604800;*/ },{},{}
 16683,B_Halter_Box_30Days,B Halter Box 30Days,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ rentitem 12622,2592000; },{},{}
 16684,Wing_Of_Fly_Box10,Wing Of Fly Box10,2,20,,0,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 601,10; },{},{}
 16687,RWC2010_SuitcaseA,RWC2010 SuitcaseA,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ /*getgroupitem(IG_RWC2010_SuitcaseA)*/; },{},{}
