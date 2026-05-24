@@ -233,20 +233,20 @@ prontera,156,184,4	script	Lotto Manager	604,{
 			}
 		}
 
-		// Gift Box, Berserk Potion
-		setarray(.consolation_prices, 644, 1, 657, 10);
+		// Soul Crystal
+		setarray(.consolation_prices, 7849, 20);
 
-		// Yggdrasil Berry, OBB, Enriched Elunium, Enriched Oridecon
-		setarray(.prices_tier_3, 607, 10, 603, 1, 6291, 1, 6292, 1, 14533, 1, 12210, 1);
+		// Enriched Elunium 10 Box, Enriched Oridecon 10 Box, Taming Gift Set, Boarding Halter Box 7
+		setarray(.prices_tier_3, 16814, 1, 16816, 1, 12105, 1, 16682, 1);
 
-		// Old Card Album, Old Purple Box, Convex Mirror, Safe to 5 Armor Certificate, Taming Gift Set
-		setarray(.prices_tier_4, 616, 1, 617, 1, 12214, 1, 6457, 1, 12105, 1);
+		// Gym Pass, Safe to 8 Armor Certificate, Safe to 8 Weapon Certificate, HD Oridecon Box 10, HD Elunium Box 10
+		setarray(.prices_tier_4, 7776, 1, 6233, 1, 6229, 1, 16394, 1, 16396, 1);
 
-		// Gym Pass, Blacksmith Blessing, HD Oridecon, HD Elunium, Safe to 7 Weapon Certificate
-		setarray(.prices_tier_5, 7776, 1, 6635, 1, 6240, 1, 6241, 1, 6230, 1);
+		// Safe to 10 Armor Certificate, Safe to 10 Weapon Certificate, HD Carnium 10 Box, HD Bradium 10 Box
+		setarray(.prices_tier_5, 6994, 1, 6993, 1, 16261, 1, 16260, 1);
 
-		// Velcarde MVP Card Album (105529, 1 dependant on Velcarde Implementation), Safe to 9 Armor Certificate
-		setarray(.prices_tier_6, 6232, 1);
+		// Velcarde MVP Card Album, Safe to 12 Armor Certificate, Safe to 12 Weapon Certificate, Temporal Manteau Box
+		setarray(.prices_tier_6, 105529, 1, 6585, 1, 6584, 1, 100100, 1);
 
 		.consolation_prices_size = getarraysize(.consolation_prices) / 2;
 		for (.@i = 3; .@i <= 6; .@i++) {
