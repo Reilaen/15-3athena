@@ -3381,10 +3381,10 @@
 23719,Sealed_Card2,Sealed Card Album II,2,,,,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem(groupranditem(IG_SealedCardAlbum2),1); },{},{}
 16814,C_Enriched_Elunium_Box,Enriched Elunium Box(10),2,10,,10,,,,0,0xFFFFFFFF,63,2,,,,,,{ getitem(7619,10); },{},{}
 16816,C_Enriched_Oridecon_Box,Enriched Oridecon Box(10),2,10,,10,,,,0,0xFFFFFFFF,63,2,,,,,,{ getitem(7620,10); },{},{}
-6993,Guarantee_Weapon_10Up,+10 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
-6994,Guarantee_Armor_10Up,+10 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
-6584,Guarantee_Weapon_12Up,+12 Weapon Certificate ,3,0,,0,,,,,,,,,,,,,{},{},{}
-6585,Guarantee_Armor_12Up,+12 Armor Certificate ,3,0,,0,,,,,,,,,,,,,{},{},{}
+6993,Guarantee_Weapon_10Up,Safe to 10 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6994,Guarantee_Armor_10Up,Safe to 10 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6584,Guarantee_Weapon_12Up,Safe to 12 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6585,Guarantee_Armor_12Up,Safe to 12 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
 100100,Temporal_Manteau_Box,Temporal Manteau Box,2,,,100,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem(groupranditem(IG_TEMPORAL_MANTEAU_BOX),1); },{},{}
 20963,Temporal_M_Str,Temporal Str Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bAtkRate,(.@r/2); bonus bBaseAtk,10*(.@r/2); bonus2 bAddSize,Size_All,5*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //
 20964,Temporal_M_Agi,Temporal Agi Manteau,5,0,0,400,0,8,0,1,0xFFFFFFFF,63,2,4,0,100,1,0,{ .@r = getrefine(); bonus bCritAtkRate,3*(.@r/2); bonus bBaseAtk,10*(.@r/2); bonus2 bAddSize,Size_All,5*(.@r/4); if (.@r>=7) { bonus bAtkRate,7; } if (.@r>=9) { bonus2 bIgnoreDefRaceRate,RC_Demon,20; bonus2 bIgnoreMdefRaceRate,RC_Demon,20; bonus2 bIgnoreDefRaceRate,RC_Brute,20; bonus2 bIgnoreMdefRaceRate,RC_Brute,20; } if (.@r>=11) { bonus2 bIgnoreDefRaceRate,RC_Demon,10; bonus2 bIgnoreMdefRaceRate,RC_Demon,10; bonus2 bIgnoreDefRaceRate,RC_Brute,10; bonus2 bIgnoreMdefRaceRate,RC_Brute,10; } },{},{} //

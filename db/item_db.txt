@@ -3670,14 +3670,14 @@
 6224,Bradium,Bradium,3,2000,,150,,,,,,,,,,,,,{},{},{}
 6225,HD_Carnium,HD Carnium,3,0,,10,,,,,,,,,,,,,{},{},{}
 6226,HD_Bradium,HD Bradium,3,0,,10,,,,,,,,,,,,,{},{},{}
-6228,Guarantee_Weapon_9Up,Guarantee Weapon 9Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6229,Guarantee_Weapon_8Up,Guarantee Weapon 8Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6230,Guarantee_Weapon_7Up,Guarantee Weapon 7Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6231,Guarantee_Weapon_6Up,Guarantee Weapon 6Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6232,Guarantee_Armor_9Up,Guarantee Armor 9Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6233,Guarantee_Armor_8Up,Guarantee Armor 8Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6234,Guarantee_Armor_7Up,Guarantee Armor 7Up,3,0,,0,,,,,,,,,,,,,{},{},{}
-6235,Guarantee_Armor_6Up,Guarantee Armor 6Up,3,0,,0,,,,,,,,,,,,,{},{},{}
+6228,Guarantee_Weapon_9Up,Safe to 9 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6229,Guarantee_Weapon_8Up,Safe to 8 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6230,Guarantee_Weapon_7Up,Safe to 7 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6231,Guarantee_Weapon_6Up,Safe to 6 Weapon Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6232,Guarantee_Armor_9Up,Safe to 9 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6233,Guarantee_Armor_8Up,Safe to 8 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6234,Guarantee_Armor_7Up,Safe to 7 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
+6235,Guarantee_Armor_6Up,Safe to 6 Armor Certificate,3,0,,0,,,,,,,,,,,,,{},{},{}
 6236,Blue_Card_7,Blue Card 7,3,0,,0,,,,,,,,,,,,,{},{},{}
 6237,Guarana_Fruit,Guarana Fruit,3,0,,0,,,,,,,,,,,,,{},{},{}
 6238,Guarantee_Weapon_11Up,Guarantee Weapon 11Up,3,0,,0,,,,,,,,,,,,,{},{},{}
@@ -4644,7 +4644,7 @@
 7801,Girl_Fan_Letter,Girl's Letter,3,0,,0,,,,,,,,,,,,,{},{},{}
 7802,Autograph_Book,Signature Notebook,3,0,,0,,,,,,,,,,,,,{},{},{}
 7803,Battle_Manual_TW,Beginner's Field Manual,3,0,,10,,,,,,,,,,,,,{},{},{}
-//7804,¼öÇà_Áõ¸í¼­,¼öÇà_Áõ¸í¼­,3,,,10,,,,,,,,,,,,,{},{},{}
+//7804,ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½,3,,,10,,,,,,,,,,,,,{},{},{}
 7805,Brown_Ring,Brown Jenoss's Family Ring,3,0,,10,,,,,,,,,,,,,{},{},{}
 7806,Black_Anvil,God Anvil,3,0,,10,,,,,,,,,,,,,{},{},{}
 7807,Ore,God Mineral,3,0,,10,,,,,,,,,,,,,{},{},{}
@@ -6460,13 +6460,13 @@
 13915,Love_Angel_Box,Love Angel Magic Powder Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ rentitem 12287,604800; },{},{}
 13916,Squirrel_Box,Squirrel Magic Powder Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ rentitem 12288,604800; },{},{}
 13917,Gogo_Box,Gogo Magic Powder Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ rentitem 12289,604800; },{},{}
-//13918, Drooping_W_Kitty_Box ,Koneko Hat Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5372,1; },{},{}
-//13919, L_Magestic_Goat_Box ,Baphomet Horns Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5374,1; },{},{}
-//13920, Satanic_Chain_P_Box ,Flying Evil Wing Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5376,1; },{},{}
-//13921, Antique_Pipe_Box ,Gentleman's Pipe Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5377,1; },{},{}
-//13922, Rabbit_Ear_Hat_Box ,Bunny Top Hat Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5378,1; },{},{}
-//13923, Darkness_Helm_Box ,Dark Randgris Helm Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5373,1; },{},{}
-//13924, L_Orc_Hero_Helm_Box ,Orc Hero Headdress Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5375,1; },{},{}
+//13918,ï¿½Drooping_W_Kitty_Boxï¿½,Koneko Hat Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5372,1; },{},{}
+//13919,ï¿½L_Magestic_Goat_Boxï¿½,Baphomet Horns Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5374,1; },{},{}
+//13920,ï¿½Satanic_Chain_P_Boxï¿½,Flying Evil Wing Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5376,1; },{},{}
+//13921,ï¿½Antique_Pipe_Boxï¿½,Gentleman's Pipe Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5377,1; },{},{}
+//13922,ï¿½Rabbit_Ear_Hat_Boxï¿½,Bunny Top Hat Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5378,1; },{},{}
+//13923,ï¿½Darkness_Helm_Boxï¿½,Dark Randgris Helm Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5373,1; },{},{}
+//13924,ï¿½L_Orc_Hero_Helm_Boxï¿½,Orc Hero Headdress Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 5375,1; },{},{}
 //13925,Year_Of_Mouse_Scroll,... GoodLuck Scroll,2,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{},{},{}
 13926,Crusader_Card_Box,Crusader Card Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 4371,1; getitem 4311,1; getitem 4319,1; getitem 4331,1; },{},{}
 13927,Alchemist_Card_Box,Alchemist Card Box,18,20,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ getitem 4281,1; getitem 4233,1; getitem 4343,1; getitem 4186,1; getitem 4036,1; },{},{}
