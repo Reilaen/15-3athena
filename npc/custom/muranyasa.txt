@@ -1,0 +1,100 @@
+prontera,152,178,5	script	Muranyasa	497,{
+	disable_items;
+
+	mes("[Muranyasa]");
+	mes("I am Muranyasa the Mastersmith. I offer my Services for ^0000FFSafe Refine Certificates^000000. Do you need my assistance?");
+	next;
+	if(select("Yes.", "No.") == 2) {
+		mes("[Muranyasa]");
+		mes("Very well. Come back anytime, if you need my assistance.");
+		close;
+	}
+
+	for(.@i = 0; .@i < 10; .@i++) {
+		if(!getequipisequiped(.indices[.@i])) {
+			.@menu$ += ":";
+			continue;
+		}
+
+		.@menu$ += getequipname(.indices[.@i]) + ":";
+		.@has_equipment = 1;
+	}
+
+	if(!.@has_equipment) {
+		mes("[Muranyasa]");
+		mes("You are not carrying any equipment i could work with.");
+		close;
+	}
+
+	mes("[Muranyasa]");
+	mes("Which equipment do you want to refine?");
+	next;
+	.@part = .indices[select(.@menu$) - 1];
+
+	if (!getequipisenableref(.@part)) {
+		mes "[Muranyasa]";
+		mes "Even i cannot refine this equipment. There's no way.";
+		close;
+	}
+
+	if (getequiprefinerycnt(.@part) == 20) {
+		mes "[Muranyasa]";
+		mes "This equipment is perfect, even for me it is impossible to make it better.";
+		close;
+	}
+
+	.@refine_item_id = getequipid(.@part);
+	.@refine_count = getequiprefinerycnt(.@part);
+	.@certificate_var$ = getiteminfo(.@refine_item_id, ITEMINFO_TYPE) == IT_WEAPON ? ".weapon_certificates" : ".armor_certificates";
+
+	.@menu$ = "";
+	for (.@i = 0; .@i < getarraysize(getd(.@certificate_var$ + "[0]")); .@i++) {
+		.@certificate_id = getd(.@certificate_var$ + "[" + .@i + "]");
+
+		if (countitem(.@certificate_id) == 0 || .@refine_count >= .refine_counts[.@i]) {
+			.@menu$ += ":";
+			continue;
+		}
+
+		.@menu$ += getitemname(.@certificate_id) + " (" + countitem(.@certificate_id) + "):";
+		.@has_certificates = 1;
+	}
+
+	if (!.@has_certificates) {
+		mes("[Muranyasa]");
+		mes("It seems like you do not have certificate that would benefit this equipment.");
+		close;
+	}
+
+	mes("[Muranyasa]");
+	mes("Which certificate do you want to use?");
+	.@selected_certificate = select(.@menu$) - 1;
+
+	setarray(.@cards[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3));
+
+	if (callfunc("F_IsEquipIDHack", .@part, .@refine_item_id) || callfunc("F_IsEquipCardHack", .@part, .@cards[0], .@cards[1], .@cards[2], .@cards[3]) ||
+		callfunc("F_IsEquipRefineHack", .@part, .@refine_count)) {
+		mes "[Muranyasa]";
+		emotion(e_an);
+		mes("Wait a second...");
+		mes("Do you think i'm stupid?!");
+		mes("You switched the item while i wasn't looking! Get out of here!");
+		close;
+	}
+
+	delitem(getd(.@certificate_var$ + "[" + .@selected_certificate + "]"), 1);
+
+	mes("Pow! Pow! Pow! Pow!");
+	successrefitem(.@part, .refine_counts[.@selected_certificate] - .@refine_count);
+	next;
+	emotion(e_no1);
+	mes "[Muranyasa]";
+	mes("Here is your masterpice from Muranyasa, enjoy it!");
+	close;
+
+	OnInit:
+		setarray(.indices[0], EQI_HEAD_TOP, EQI_HEAD_MID, EQI_HEAD_LOW, EQI_ARMOR, EQI_HAND_L, EQI_HAND_R, EQI_GARMENT, EQI_SHOES, EQI_ACC_L, EQI_ACC_R);
+		setarray(.armor_certificates[0], 6233, 6994, 6585);
+		setarray(.weapon_certificates[0], 6229, 6993, 6584);
+		setarray(.refine_counts[0], 8, 10, 12);
+}
