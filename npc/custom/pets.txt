@@ -1,0 +1,355 @@
+prontera,149,178,5	script	Nerd Skimander	832,{
+	mes("[Nerd Skimander]");
+	mes("Greetings, adventurer! I am searching for cards of pet monsters. If you bring me one i trade it for it's taming item and accessory if it has one. Does that sound like a deal?");
+	next;
+	if(select("Yes!", "No, i am not interested.") == 2) {
+		goto(OnCancel);
+	}
+
+	getinventorylist;
+	for (.@i = 0; .@i < @inventorylist_count; .@i++) {
+		if (getd(".card2mob_" + @inventorylist_id[.@i]) > 0) {
+			.@menu$ += getitemname( @inventorylist_id[.@i]) + " (" + @inventorylist_amount[.@i] + "):";
+			.@card_ids[.@card_count] = @inventorylist_id[.@i];
+			.@card_count++;
+		}
+	}
+
+	if (.@card_count == 0) {
+		mes("[Nerd Skimander]]");
+		mes("Hm.. it seems like you do not have any pet cards on you.");
+		close;
+	}
+
+	.@selected_pet_card = .@card_ids[select(implode(.@menu$, ":")) - 1];
+	.@accessory_item = getd(".card2acces_" + .@selected_pet_card);
+	.@choices = getd(".card2choices_" + .@selected_pet_card);
+	mes("[Nerd Skimander]]");
+	mes("Let's see.. Ah! A beautiful " + getmonsterinfo(getd(".card2mob_" + .@selected_pet_card), MOB_NAME) + "!");
+	mes("For your <ITEM>" + getitemname(.@selected_pet_card) + "<INFO>" + .@selected_pet_card + "</INFO></ITEM> i will give you:");
+	if(.@choices == 0) {
+		.@taming_item = getd(".card2taming_" + .@selected_pet_card);
+		mes("- <ITEM>" + getitemname(.@taming_item) + "<INFO>" + .@taming_item + "</INFO></ITEM>");
+	} else {
+		.@menu$ = "";
+		mes("- The choice for one of those:");
+		for(.@i = 1; .@i <= .@choices; .@i++) {
+			.@taming_item = getd(".card2taming_" + .@selected_pet_card + "_" + .@i);
+			.@menu$ += getitemname(.@taming_item) + ":";
+			mes(" * <ITEM>" + getitemname(.@taming_item) + "<INFO>" + .@taming_item + "</INFO></ITEM>");
+		}
+	}
+
+	if(.@accessory_item > 0) {
+		mes("- <ITEM>" + getitemname(.@accessory_item) + "<INFO>" + .@accessory_item + "</INFO></ITEM>");
+	}
+
+	mes("Does that sound fair?");
+	next;
+	if(select("Yes!", "No, i changed my mind.") == 2) {
+		goto(OnCancel);
+	}
+
+	if(.@choices > 0) {
+		mes("[Nerd Skimander]]");
+		mes("Which taming item do you want?");
+		next;
+		.@taming_item = getd(".card2taming_" + .@selected_pet_card + "_" + select(.@menu$));
+	}
+
+	delitem(.@selected_pet_card, 1);
+	getitem(.@taming_item, 1);
+	if(.@accessory_item > 0) {
+		getitem(.@accessory_item, 1);
+	}
+
+	mes("[Nerd Skimander]]");
+	mes("Wonderful! I hope you have a nice day!");
+	close;
+
+	OnCancel:
+		mes("[Nerd Skimander]");
+		mes("Ah.. well if you should change your mind, please come back.");
+		close;
+		end;
+
+	OnInit:
+		// Alice
+		.card2mob_4253 = 1275;
+		.card2taming_4253 = 661;
+
+		// Baby Desert Wolf
+		.card2mob_4023 = 1107;
+		.card2taming_4023 = 628;
+		.card2acces_4023 = 10003;
+
+		// Baphomet Jr.
+		.card2mob_4129 = 1101;
+		.card2taming_4129 = 642;
+		.card2acces_4129 = 10001;
+
+		// Bongun
+		.card2mob_4212 = 1188;
+		.card2taming_4212 = 659;
+		.card2acces_4212 = 10020;
+
+		// Chonchon
+		.card2mob_4009 = 1011;
+		.card2taming_4009 = 624;
+		.card2acces_4009 = 10002;
+
+		// Deleter
+		.card2mob_4279 = 1385;
+		.card2taming_4279 = 14572;
+
+		// Deviruchi
+		.card2mob_4122 = 1109;
+		.card2taming_4122 = 641;
+		.card2acces_4122 = 10004;
+
+		// Diabolic
+		.card2mob_4182 = 1382;
+		.card2taming_4182 = 14573;
+
+		// Dokebi
+		.card2mob_4098 = 1110;
+		.card2taming_4098 = 637;
+		.card2acces_4098 = 10005;
+
+		// Drops
+		.card2mob_4004 = 1113;
+		.card2taming_4004 = 620;
+		.card2acces_4004 = 10013;
+
+		// Dullahan
+		.card2mob_4176 = 1504;
+		.card2taming_4176 = 12367;
+		.card2acces_4176 = 10031;
+
+		// Evil Nymph
+		.card2mob_4258 = 1416;
+		.card2taming_4258 = 12365;
+		.card2acces_4258 = 10029;
+
+		// Goblin
+		.card2mob_4060 = 1122;
+		.card2taming_4060_1 = 14569;
+		.card2taming_4060_2 = 14570;
+		.card2taming_4060_3 = 14571;
+		.card2taming_4060_4 = 12225;
+		.card2choices_4060 = 4;
+
+		// Goblin Leader
+		.card2mob_4155 = 1299;
+		.card2taming_4155 = 12364;
+		.card2acces_4155 = 10028;
+
+		// Golem
+		.card2mob_4072 = 1040;
+		.card2taming_4072 = 12371;
+		.card2acces_4072 = 10035;
+
+		// Green Maiden
+		.card2mob_4373 = 1631;
+		.card2taming_4373 = 12395;
+
+		// Gremlin
+		.card2mob_4355 = 1632;
+		.card2taming_4355 = 23188;
+
+		// Hunter Fly
+		.card2mob_4115 = 1035;
+		.card2taming_4115 = 626;
+		.card2acces_4115 = 10002;
+
+		// Imp
+		.card2mob_4433 = 1837;
+		.card2taming_4433 = 12374;
+		.card2acces_4433 = 10038;
+
+		// Imp
+		.card2mob_4433 = 1837;
+		.card2taming_4433 = 12374;
+		.card2acces_4433 = 10038;
+
+		// Incubus
+		.card2mob_4269 = 1374;
+		.card2taming_4269 = 12370;
+		.card2acces_4269 = 10034;
+
+		// Isis
+		.card2mob_4116 = 1029;
+		.card2taming_4116 = 639;
+		.card2acces_4116 = 10006;
+
+		// Leaf Cat
+		.card2mob_4195 = 1586;
+		.card2taming_4195 = 12359;
+		.card2acces_4195 = 10023;
+
+		// Little Poring
+		.card2mob_4545 = 2398;
+		.card2taming_4545 = 12846;
+
+		// Loli Ruri
+		.card2mob_4191 = 1505;
+		.card2taming_4191 = 12360;
+		.card2acces_4191 = 10024;
+
+		// Lunatic
+		.card2mob_4006 = 1063;
+		.card2taming_4006 = 622;
+		.card2acces_4006 = 10007;
+
+		// Mao Guai
+		.card2mob_4202 = 1513;
+		.card2taming_4202 = 12358;
+		.card2acces_4202 = 10022;
+
+		// Marionette
+		.card2mob_4113 = 1143;
+		.card2taming_4113 = 12361;
+		.card2acces_4113 = 10025;
+
+		// Medusa
+		.card2mob_4124 = 1148;
+		.card2taming_4124 = 12368;
+		.card2acces_4124 = 10032;
+
+		// Miyabi Doll
+		.card2mob_4208 = 1404;
+		.card2taming_4208 = 12366;
+		.card2acces_4208 = 10030;
+
+		// Mummy
+		.card2mob_4106 = 1041;
+		.card2taming_4106 = 23256;
+
+		// Munak
+		.card2mob_4090 = 1026;
+		.card2taming_4090 = 636;
+		.card2acces_4090 = 10008;
+
+		// Nightmare Terror
+		.card2mob_4166 = 1379;
+		.card2taming_4166 = 12372;
+		.card2acces_4166 = 10036;
+
+		// Nine Tail
+		.card2mob_4159 = 1180;
+		.card2taming_4159 = 23187;
+
+		// Orc Warrior
+		.card2mob_4166 = 1023;
+		.card2taming_4166 = 635;
+		.card2acces_4166 = 10009;
+
+		// PecoPeco
+		.card2mob_4031 = 1019;
+		.card2taming_4031 = 632;
+		.card2acces_4031 = 10010;
+
+		// Petite
+		.card2mob_4118 = 1155;
+		.card2taming_4118 = 640;
+		.card2acces_4118 = 10011;
+
+		// Picky
+		.card2mob_4008 = 1049;
+		.card2taming_4008 = 623;
+		.card2acces_4008 = 10012;
+
+		// Poison Spore
+		.card2mob_4048 = 1077;
+		.card2taming_4048 = 631;
+		.card2acces_4048 = 10017;
+
+		// Poporing
+		.card2mob_4033 = 1077;
+		.card2taming_4033 = 621;
+		.card2acces_4033 = 10013;
+
+		// Poring
+		.card2mob_4001 = 1002;
+		.card2taming_4001 = 619;
+		.card2acces_4001 = 10013;
+
+		// Rocker
+		.card2mob_4021 = 1052;
+		.card2taming_4021 = 629;
+		.card2acces_4021 = 10014;
+
+		// Savage Babe
+		.card2mob_4017 = 1167;
+		.card2taming_4017 = 627;
+		.card2acces_4017 = 10015;
+
+		// Shinobi
+		.card2mob_4230 = 1401;
+		.card2taming_4230 = 12362;
+		.card2acces_4230 = 10026;
+
+		// Smokie
+		.card2mob_4044 = 1056;
+		.card2taming_4044 = 633;
+		.card2acces_4044 = 10019;
+
+		// Sohee
+		.card2mob_4100 = 1170;
+		.card2taming_4100 = 638;
+		.card2acces_4100 = 10016;
+
+		// Spore
+		.card2mob_4022 = 1014;
+		.card2taming_4022 = 630;
+		.card2acces_4022 = 10017;
+
+		// Steel Chonchon
+		.card2mob_4042 = 1042;
+		.card2taming_4042 = 625;
+		.card2acces_4042 = 10002;
+
+		// Stone Shooter
+		.card2mob_4225 = 1495;
+		.card2taming_4225 = 12369;
+		.card2acces_4225 = 10033;
+
+		// Succubus
+		.card2mob_4218 = 1370;
+		.card2taming_4218 = 12373;
+		.card2acces_4218 = 10037;
+
+		// Teddy Bear
+		.card2mob_4340 = 1622;
+		.card2taming_4340 = 23189;
+
+		// Tikbalang
+		.card2mob_4586 = 2313;
+		.card2taming_4586 = 12699;
+
+		// Wanderer
+		.card2mob_4210 = 1208;
+		.card2taming_4210 = 14574;
+
+		// Whisper
+		.card2mob_4102 = 1179;
+		.card2taming_4102 = 12363;
+		.card2acces_4102 = 10027;
+
+		// White Lady
+		.card2mob_4372 = 1630;
+		.card2taming_4372 = 12357;
+
+		// Yoyo
+		.card2mob_4051 = 1057;
+		.card2taming_4051 = 634;
+		.card2acces_4051 = 10018;
+
+		// Zealotus
+		.card2mob_4277 = 1200;
+		.card2taming_4277 = 660;
+
+		// Roween
+		.card2mob_4422 = 1782;
+		.card2taming_4422 = 23258;
+}
