@@ -172,7 +172,7 @@ prontera,152,184,4	script	Card Collector	408,{
 		mes("[Card Collector]");
 		mes "How many <ITEM>" + callfunc("F_GetPlural", getitemname(.@chosen_card_id)) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> do you want to trade?";
 		next;
-		if(input(.@selected_card_amount, 1, .@card_amount) != 0) {
+		if(input(.@card_amount, 1, .@card_amount) != 0) {
 			mes("[Card Collector]");
 			mes "What is this supposed to mean?";
 			mes("Come back if you are interested in doing a serious deal.");
@@ -180,8 +180,8 @@ prontera,152,184,4	script	Card Collector	408,{
 		}
 	}
 
-	delitem(.@chosen_card_id, .@selected_card_amount);
-	getitem(.currency_id, .@currency_amount * .@selected_card_amount);
+	delitem(.@chosen_card_id, .@card_amount);
+	getitem(.currency_id, .@currency_amount * .@card_amount);
 
 	mes("[Card Collector]");
 	mes("Here you go. It was a pleasure to do business with you. Please come back any time!");
