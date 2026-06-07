@@ -247,3 +247,46 @@ prontera,152,184,4	script	Card Collector	408,{
 	OnInit:
 		.currency_id = 1002433;
 }
+
+prontera,148,184,4	script	Card Fragment Collector	606,{
+	mes("[Card Fragment Collector]");
+	mes("Hey you!");
+	mes("Do you have some <ITEM>" + callfunc("F_GetPlural", getitemname(.search_id)) + "<INFO>" + .search_id + "</INFO></ITEM>?");
+	mes("For " + .search_amt + " of them i will give you a <ITEM>" + getitemname(.reward_id) + "<INFO>" + .reward_id + "</INFO></ITEM>. What do you say?");
+	next();
+	if(select("Sure! Let's trade.", "No, thank you.") == 2) {
+		mes("[Fragment Collector]");
+		mes("Thats fine. Come back if you change your mind.");
+		close;
+	}
+
+	.@item_amt = countitem(.search_id);
+	if(.@item_amt < .search_amt) {
+		mes("[Fragment Collector]");
+		mes("What weird joke is this? You do not have enough of what i asked for!");
+		close;
+	}
+
+	mes("[Card Fragment Collector]");
+	mes "How many do you want to trade?";
+	next;
+
+	for (.@i = 1; .@i <= .@item_amt / .search_amt; .@i++) {
+		.@menu$[.@i-1] = "" + .@i * .search_amt;
+	}
+
+	.amt = select(implode(.@menu$, ":"));
+
+	delitem(.search_id, .search_amt * .amt);
+	getitem(.reward_id, .amt);
+
+	mes("[Card Fragment Collector]");
+	mes("There you go. Please come back any time if you got more to trade.");
+	close;
+
+	OnInit:
+		.search_id = 1002433;
+		.search_amt = 25;
+
+		.reward_id = 512;
+}
