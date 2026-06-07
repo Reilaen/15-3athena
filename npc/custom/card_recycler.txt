@@ -93,7 +93,7 @@ prontera,150,184,4	script	Velcarde	528,{
 
         for(.@i = 0; .@i < .quest_item_amount; .@i++) {
         	.@current = countitem(.@temp_ids[.@i]);
-			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + .@current + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + getitemname(.@temp_ids[.@i]) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
+			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + .@current + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + callfunc("F_GetPlural", getitemname(.@temp_ids[.@i])) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
 		}
 
 		return .@missing;
