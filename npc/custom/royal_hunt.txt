@@ -201,7 +201,7 @@ yuno_fild09,91,236,4	script	Commander Nadezhda	459,{
 }
 
 yuno_fild09,92,243,4	script	Deputy Officer Jan Ha-sung	430,{
-	.@today = gettimestr("Ymd", 8);
+	.@today = gettimestr("%Y%m%d", 10);
 	if (#rh_reset_date != .@today) {
 		#rh_active_missions = 0;
 
