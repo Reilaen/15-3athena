@@ -2,7 +2,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 	mes("[Lotto Manager]");
 	mes("Welcome friend! Are you interested in playing some lotto? I offer everything you need! How can i help you?");
 	next;
-	menu("I want to register a ticket.", RegisterTicket, "Can you give me more information?", Information, "Can i have a Lotto Buff?", GetBuff,  "No, thank you.", Cancel);
+	menu("I want to register a ticket.", RegisterTicket, "Can you give me more information?", Information, "Can I have a Lotto Buff?", GetBuff,  "No, thank you.", Cancel);
 
 	RegisterTicket:
 		if (inarray($participants$, getcharid(0)) != -1) {
@@ -87,11 +87,11 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		mes("Those boxes give you a ball with a random number. Each box has a different range, one goes from 1 to 10, the next from 11 to 20.");
 		next;
 		mes("[Lotto Manager]");
-		mes("The final box goes from 41 to 45. So in total you can get numbers from 1 to 45. Everyday until 18:00 you can register a ticket for small fee of " + callfunc("F_InsertComma", .registration_fee) + " ^0000FFZeny^000000!");
+		mes("The final box goes from 41 to 45. So in total you can get numbers from 1 to 45. Every day until 18:00 you can register a ticket for small fee of " + callfunc("F_InsertComma", .registration_fee) + " ^0000FFZeny^000000!");
 		mes("Registering a ticket simply means, you give me 6 number balls you choose and will put them into my lotto machine.");
 		next;
 		mes("[Lotto Manager]");
-		mes("Everyday at 18:00 i will draw 6 random numbers and those lucky people that got atleast 3 numbers right get a price. You should not miss this opportunity!");
+		mes("Every day at 18:00 I will draw 6 random numbers and those lucky people that got at least 3 numbers right get a price. You should not miss this opportunity!");
 		close;
 
 	GetBuff:
@@ -102,9 +102,9 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		}
 
 		mes("[Lotto Manager]");
-		mes("Of course! They are very cheap. They come in variety of durations you can buy. Buying a Buff more than once will renew the duration. So are you interested?");
+		mes("Of course! They are very inexpensive. They come in variety of durations you can buy. Buying a Buff more than once will renew the duration. So are you interested?");
 		next;
-		if (select("Yes, i want one!", "Thank you, but i pass.") == 2) {
+		if (select("Yes, I want one!", "Thank you, but i pass.") == 2) {
 			goto(Cancel);
 		}
 
@@ -187,7 +187,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 
 		deletearray($participants$);
 
-		announce("[Lotto Manager] The latest numbers have been drawn! The numbers for draw #" + $lotto_latest_draw_id + " are " + implode($lotto_latest_draw, ", ") + "! The prices have been sendt to the winners. Check your mail! Good luck everyone!", bc_all|bc_blue);
+		announce("[Lotto Manager] The latest numbers have been drawn! The numbers for draw #" + $lotto_latest_draw_id + " are " + implode($lotto_latest_draw, ", ") + "! The prices have been sent to the winners. Check your mail! Good luck everyone!", bc_all|bc_blue);
 		end;
 
 	S_ActivateBuff:

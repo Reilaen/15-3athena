@@ -22,7 +22,7 @@ prontera,152,178,5	script	Muranyasa	497,{
 
 	if(!.@has_equipment) {
 		mes("[Muranyasa]");
-		mes("You are not carrying any equipment i could work with.");
+		mes("You are not carrying any equipment I could work with.");
 		close;
 	}
 
@@ -33,13 +33,13 @@ prontera,152,178,5	script	Muranyasa	497,{
 
 	if (!getequipisenableref(.@part)) {
 		mes "[Muranyasa]";
-		mes "Even i cannot refine this equipment. There's no way.";
+		mes "Even I cannot refine this equipment. There's no way.";
 		close;
 	}
 
 	if (getequiprefinerycnt(.@part) == 20) {
 		mes "[Muranyasa]";
-		mes "This equipment is perfect, even for me it is impossible to make it better.";
+		mes "This equipment is perfect, even for me, it is impossible to make it better.";
 		close;
 	}
 
@@ -62,7 +62,7 @@ prontera,152,178,5	script	Muranyasa	497,{
 
 	if (!.@has_certificates) {
 		mes("[Muranyasa]");
-		mes("It seems like you do not have certificate that would benefit this equipment.");
+		mes("It seems like you do not have a certificate that would benefit this equipment.");
 		close;
 	}
 
@@ -77,8 +77,8 @@ prontera,152,178,5	script	Muranyasa	497,{
 		mes "[Muranyasa]";
 		emotion(e_an);
 		mes("Wait a second...");
-		mes("Do you think i'm stupid?!");
-		mes("You switched the item while i wasn't looking! Get out of here!");
+		mes("Do you think I am stupid?!");
+		mes("You switched the item while I was not looking! Get out of here!");
 		close;
 	}
 

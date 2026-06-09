@@ -16,7 +16,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 		mes("[Pori Pori Nyu]");
 		mes("I will register your party. Please make sure that only people that want to participate are in it. Only they can enter the dimension.");
 		next;
-		if (select("Thats fine continue.", "Wait! We need to make some changes.") == 2) {
+		if (select("That's fine.", "Wait! We need to make some changes.") == 2) {
 			goto(Cancel);
 		}
 
@@ -28,7 +28,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			mes("[Pori Pori Nyu]");
 			mes("Your party is really small. Recommended are at least " + $@pori_min_group_size + " people. Do you want to try it anyway?");
 			next;
-			if (select("Yes, i'll try it anyway.", "No, you are right.") == 2) {
+			if (select("Yes, I'll try it anyway.", "No, you are right.") == 2) {
 				goto(Cancel);
 			}
 		}
@@ -69,7 +69,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 		Zeny -= .@fee;
 
 		mes("[Pori Pori Nyu]");
-		mes("Everything is ready. Please note that you have 5 minutes to start the Pori Pori Challenge or it will fail!");
+		mes("Everything is ready. Please note that you have 5 minutes to start the Pori Pori Challenge, or it will fail!");
 		next;
 
 		setinstancevar('participants$, implode(.@participants[0], ":"));
@@ -101,11 +101,11 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 	Explanation:
 		mes("[Pori Pori Nyu]");
-		mes("That is pretty simple! You gather your party, pay a small fee and i will create a dimension just for you.");
+		mes("That is pretty simple! You gather your party, pay a small fee and I will create a dimension just for you.");
 		mes("Once the dimension is created you and your party have 10 minutes to enter it. If you fail the Pori Pori Challenge has failed.");
 		next;
 		mes("[Pori Pori Nyu]");
-		mes("Inside the dimension you will meet my sister Nya, once you are ready you can talk to her and she will start the Pori Pori Challenge.");
+		mes("Inside the dimension you will meet my sister Nya, once you are ready you can talk to her, and she will start the Pori Pori Challenge.");
 		mes("You then have 30 minutes to beat " + getarraysize($pori_monsters) + " levels of monsters that get stronger with each level.");
 		next;
 		mes("[Pori Pori Nyu]");

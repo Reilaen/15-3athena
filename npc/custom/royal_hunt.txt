@@ -110,7 +110,7 @@
             }
         }
 
-        if (!.@found) dispbottom("Du hast momentan keine aktiven Missionen.");
+        if (!.@found) dispbottom("You do not have any active missions.");
 }
 
 -	script	ROYAL_CARD_TRADE	-1,{
@@ -120,7 +120,7 @@
 	mes("[" + .@npc_name$ + "]");
 	mes("If you bring me 100");
 	mes("<ITEM>" + callfunc("F_GetPlural", getitemname(.@trade_items[0])) + "<INFO>" + .@trade_items[0] + "</INFO></ITEM>,");
-	mes("i will give you my personal");
+	mes("I will give you my personal");
 	mes("<ITEM>" + getitemname(.@trade_items[1]) + "<INFO>" + .@trade_items[1] + "</INFO></ITEM> as a reward for proving your loyalty to my family.");
 	next;
 	if(select("I brought the cards", "No, thank you.") == 2) {
@@ -166,7 +166,7 @@ yuno_fild09,91,236,4	script	Commander Nadezhda	459,{
 			mes("[Commander Nadezhda]");
 			mes("Do you want to join the hunt?");
 			next;
-			if(select("Yes, i will join.", "No, thank you.") == 2) {
+			if(select("Yes, I will join.", "No, thank you.") == 2) {
 				mes("[Commander Nadezhda]");
 				mes("We will stay for a while. So if you change your mind you know where you can find us.");
 				close;
@@ -176,10 +176,10 @@ yuno_fild09,91,236,4	script	Commander Nadezhda	459,{
 			#rh_active_missions = 8;
 
 			mes("[Commander Nadezhda]");
-			mes("First we must test if you are strong enough to be a member of the Royal Hunt. To test this, i give you the mission \"" + $@rh_m_names$[3] + "\" and if you succeed i will accept you as a hunter.");
+			mes("First we must test if you are strong enough to be a member of the Royal Hunt. To test this, I give you the mission \"" + $@rh_m_names$[3] + "\" and if you succeed I will accept you as a hunter.");
 			close;
 		case 1:
-			if(getd("#rh_mission_8_kills") < $@rh_m_kill_amt[3]) {
+			if(#rh_mission_8_kills < $@rh_m_kill_amt[3]) {
 				mes("[Commander Nadezhda]");
 				mes("I see you are still on the hunt. Take your time, this task isn't easy.");
 				close;
@@ -187,7 +187,7 @@ yuno_fild09,91,236,4	script	Commander Nadezhda	459,{
 
 			#rh_state = 2;
 			#rh_active_missions = 0;
-			setd("#rh_mission_8_kills", 0);
+			#rh_mission_8_kills = 0;
 
 			getitem(23533, 10);
 			mes("[Commander Nadezhda]");
@@ -215,7 +215,7 @@ yuno_fild09,92,243,4	script	Deputy Officer Jan Ha-sung	430,{
 
 	if(#rh_state < 2) {
 		mes("[Deputy Officer Jan Ha-sung]");
-		mes("Welcome to the Royal Hunt, Adventurer. I am sorry, i can only assist official members of the Royal Hunt.");
+		mes("Welcome to the Royal Hunt, Adventurer. I am sorry, I can only assist official members of the Royal Hunt.");
 		close;
 	}
 
@@ -242,7 +242,7 @@ yuno_fild09,92,243,4	script	Deputy Officer Jan Ha-sung	430,{
 
 		if(.@open_missions == 0) {
 			mes("[Deputy Officer Jan Ha-sung]");
-			mes("Currently there aren't any missions i can give you. Come back tomorrow.");
+			mes("Currently there aren't any missions I can give you. Come back tomorrow.");
 			close;
 		}
 

@@ -9,7 +9,7 @@ prontera,150,184,4	script	Velcarde	528,{
 	switch(#vc_state) {
 		case 0:
 			mes("[Velcarde]");
-			mes("Hey you there! Currently i am in need of assistance, if you help me i will reward you greatly. If you bring me:");
+			mes("Hey you there! Currently, I am in need of assistance, if you help me I will reward you greatly. If you bring me:");
 			callsub(S_ListQuestItems);
 			mes("I will reward you with a batch of my latest invention:");
 			mes(.reward_item_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(105530)) + "<INFO>105530</INFO></ITEM>! What do you say?");
@@ -18,7 +18,8 @@ prontera,150,184,4	script	Velcarde	528,{
 				case 1:
 					mes("[Velcarde]");
 					mes("I am Velcarde the creator of glorious inventions like the <ITEM>" + getitemname(105530) + "<INFO>105530</INFO></ITEM> and");
-					mes("<ITEM>" + getitemname(105529) + "<INFO>105529</INFO></ITEM>! Right now i am working on my next great invention and i need some help.");					close;
+					mes("<ITEM>" + getitemname(105529) + "<INFO>105529</INFO></ITEM>! Right now I am working on my next great invention and I need some help.");
+					close;
 				case 2:
 					#vc_state = 1;
 					mes("[Velcarde]");
@@ -45,20 +46,20 @@ prontera,150,184,4	script	Velcarde	528,{
 					getitem(105530, .reward_item_amount);
 					#vc_state = 2;
 
-					mes("Great you got everything i need! Asking you for help was a great idea. Have fun with your <ITEM>" + callfunc("F_GetPlural", getitemname(105530)) + "<INFO>105530</INFO></ITEM>!");
+					mes("Great you got everything I need! Asking you for help was a great idea. Have fun with your <ITEM>" + callfunc("F_GetPlural", getitemname(105530)) + "<INFO>105530</INFO></ITEM>!");
 					close;
 				case 2:
 					mes("[Velcarde]");
 					mes("I need the following:");
 					callsub(S_ListQuestItems);
-					mes("And remember as reward i will give you " + .reward_item_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(105530)) + "<INFO>105530</INFO></ITEM>!");
+					mes("And remember as reward I will give you " + .reward_item_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(105530)) + "<INFO>105530</INFO></ITEM>!");
 					close;
 				default:
 					goto(OnCancel);
 			}
 		case 2:
 			mes("[Velcarde]");
-			mes("Thank you for your help. I might have need for more help later, for which i will reward you properly again of course. But now i have to return to my work. My new invention will be even better than my last ones!");
+			mes("Thank you for your help. I might have need for more help later, for which I will reward you properly again of course. But now I have to return to my work. My new invention will be even better than my last ones!");
 			close;
 	}
 
@@ -126,7 +127,7 @@ prontera,150,184,4	script	Velcarde	528,{
 
 prontera,152,184,4	script	Card Collector	408,{
 	mes("[Card Collector]");
-	mes("Welcome, adventurer! I trade cards for <ITEM>" + callfunc("F_GetPlural", getitemname(.currency_id)) + "<INFO>" + .currency_id + "</INFO></ITEM>. How may i help you today?");
+	mes("Welcome, adventurer! I trade cards for <ITEM>" + callfunc("F_GetPlural", getitemname(.currency_id)) + "<INFO>" + .currency_id + "</INFO></ITEM>. How may I help you today?");
 	next;
 	if(select("I want to trade in a card, please.", "No, thank you.") == 2) {
 		goto(OnCancel);
@@ -156,14 +157,14 @@ prontera,152,184,4	script	Card Collector	408,{
 
 	if(.@currency_amount == 0) {
 		mes("[Card Collector]");
-		mes("Sadly <ITEM>" + getitemname(.@chosen_card_id) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> is not a card i am currently searching for, sorry. Maybe next time.");
+		mes("Sadly <ITEM>" + getitemname(.@chosen_card_id) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> is not a card I am currently searching for, sorry. Maybe next time.");
 		close;
 	}
 
 	mes("[Card Collector]");
-	mes("For your <ITEM>" + getitemname(.@chosen_card_id) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> i can offer you " + .@currency_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(.currency_id)) + "<INFO>" + .currency_id + "</INFO></ITEM>. Do you want to trade?");
+	mes("For your <ITEM>" + getitemname(.@chosen_card_id) + "<INFO>" + .@chosen_card_id + "</INFO></ITEM> I can offer you " + .@currency_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(.currency_id)) + "<INFO>" + .currency_id + "</INFO></ITEM>. Do you want to trade?");
 	next;
-	if(select("Yes,  please.", "No, thank you.") == 2) {
+	if(select("Yes, please.", "No, thank you.") == 2) {
 		goto(OnCancel);
 	}
 
@@ -252,7 +253,7 @@ prontera,148,184,4	script	Card Fragment Collector	606,{
 	mes("[Card Fragment Collector]");
 	mes("Hey you!");
 	mes("Do you have some <ITEM>" + callfunc("F_GetPlural", getitemname(.search_id)) + "<INFO>" + .search_id + "</INFO></ITEM>?");
-	mes("For " + .search_amt + " of them i will give you a <ITEM>" + getitemname(.reward_id) + "<INFO>" + .reward_id + "</INFO></ITEM>. What do you say?");
+	mes("For " + .search_amt + " of them I will give you a <ITEM>" + getitemname(.reward_id) + "<INFO>" + .reward_id + "</INFO></ITEM>. What do you say?");
 	next();
 	if(select("Sure! Let's trade.", "No, thank you.") == 2) {
 		mes("[Fragment Collector]");
@@ -263,7 +264,7 @@ prontera,148,184,4	script	Card Fragment Collector	606,{
 	.@item_amt = countitem(.search_id);
 	if(.@item_amt < .search_amt) {
 		mes("[Fragment Collector]");
-		mes("What weird joke is this? You do not have enough of what i asked for!");
+		mes("What weird joke is this? You do not have enough of what I asked for!");
 		close;
 	}
 

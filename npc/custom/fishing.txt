@@ -145,7 +145,7 @@
 	cutin("", 255);
 	mes("Waiting for something to bite...");
 
-	.@cast_time =  rand($@fi_min_cast_time, $@fi_max_cast_time) + $@fi_rod_cast_mod[.@rod_idx];
+	.@cast_time = rand($@fi_min_cast_time, $@fi_max_cast_time) + $@fi_rod_cast_mod[.@rod_idx];
 	progressbar("ffffff", .@cast_time);
 
 	clear;
@@ -298,7 +298,7 @@ prontera,159,178,4	script	Mew the Sailor	544,{
 
 	callsub(S_TakeQuestRequirements);
 	getitem(.reward, 1);
-	mes("You brought everything i asked for. Here is your <ITEM>" + getitemname(.reward) + "<INFO>" + .reward + "</INFO></ITEM>!");
+	mes("You brought everything I asked for. Here is your <ITEM>" + getitemname(.reward) + "<INFO>" + .reward + "</INFO></ITEM>!");
 	close;
 
 	S_ListQuestItems:
@@ -352,7 +352,7 @@ prontera,159,178,4	script	Mew the Sailor	544,{
 
 prontera,157,178,4	script	Mauz the Fish Collector	496,{
 	mes("[Mauz the Fish Collector]");
-	mes("Hello, i am the greatest Fish Collector of all time. Bring me rare fish and i will reward you greatly! Do you have any?");
+	mes("Hello, I am the greatest Fish Collector of all time. Bring me rare fish and I will reward you greatly! Do you have any?");
 	next;
 	if(select("Yes, take a look.", "No, sorry.") == 2) {
 		goto(OnCancel);
@@ -382,9 +382,9 @@ prontera,157,178,4	script	Mauz the Fish Collector	496,{
 	.@currency_amount = callsub(S_GetPrice, .@chosen_fish);
 
 	mes("[Mauz the Fish Collector]");
-	mes("For <ITEM>" + getitemname(.@chosen_fish) + "<INFO>" + .@chosen_fish + "</INFO></ITEM> i can offer you " + .@currency_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(.currency)) + "<INFO>" + .currency + "</INFO></ITEM>. Do you want to trade?");
+	mes("For <ITEM>" + getitemname(.@chosen_fish) + "<INFO>" + .@chosen_fish + "</INFO></ITEM> I can offer you " + .@currency_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(.currency)) + "<INFO>" + .currency + "</INFO></ITEM>. Do you want to trade?");
 	next;
-	if(select("Yes,  please.", "No, thank you.") == 2) {
+	if(select("Yes, please.", "No, thank you.") == 2) {
 		goto(OnCancel);
 	}
 

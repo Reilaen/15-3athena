@@ -1,8 +1,8 @@
 prontera,149,178,5	script	Nerd Skimander	832,{
 	mes("[Nerd Skimander]");
-	mes("Greetings, adventurer! I am searching for cards of pet monsters. If you bring me one i trade it for it's taming item and accessory if it has one. Does that sound like a deal?");
+	mes("Greetings, adventurer! I am searching for cards of pet monsters. If you bring me one I trade it for it's taming item and accessory if it has one. Does that sound like a deal?");
 	next;
-	if(select("Yes!", "No, i am not interested.") == 2) {
+	if(select("Yes!", "No, I am not interested.") == 2) {
 		goto(OnCancel);
 	}
 
@@ -24,9 +24,10 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 	.@selected_pet_card = .@card_ids[select(implode(.@menu$, ":")) - 1];
 	.@accessory_item = getd(".card2acces_" + .@selected_pet_card);
 	.@choices = getd(".card2choices_" + .@selected_pet_card);
+
 	mes("[Nerd Skimander]]");
 	mes("Let's see.. Ah! A beautiful " + getmonsterinfo(getd(".card2mob_" + .@selected_pet_card), MOB_NAME) + "!");
-	mes("For your <ITEM>" + getitemname(.@selected_pet_card) + "<INFO>" + .@selected_pet_card + "</INFO></ITEM> i will give you:");
+	mes("For your <ITEM>" + getitemname(.@selected_pet_card) + "<INFO>" + .@selected_pet_card + "</INFO></ITEM> I will give you:");
 	if(.@choices == 0) {
 		.@taming_item = getd(".card2taming_" + .@selected_pet_card);
 		mes("- <ITEM>" + getitemname(.@taming_item) + "<INFO>" + .@taming_item + "</INFO></ITEM>");
@@ -46,7 +47,7 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 
 	mes("Does that sound fair?");
 	next;
-	if(select("Yes!", "No, i changed my mind.") == 2) {
+	if(select("Yes!", "I changed my mind.") == 2) {
 		goto(OnCancel);
 	}
 
@@ -69,9 +70,8 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 
 	OnCancel:
 		mes("[Nerd Skimander]");
-		mes("Ah.. well if you should change your mind, please come back.");
+		mes("Ah.. well, if you should change your mind, please come back.");
 		close;
-		end;
 
 	OnInit:
 		// Alice
