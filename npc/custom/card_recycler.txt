@@ -121,7 +121,7 @@ prontera,150,184,4	script	Velcarde	528,{
 		.min_item_price = 25;
 		.max_item_price = 50;
 
-		setarray(.itemlist, 970, 971, 972, 719, 720, 721, 722, 723, 725, 726, 727, 728, 729, 7097, 953, 7189, 1003, 7200, 7094, 6244, 950);
+		setarray(.itemlist, 970, 971, 972, 719, 720, 721, 722, 723, 725, 726, 727, 728, 729, 7097, 953, 7189, 1003, 7200, 7326, 7094, 6244, 950);
 		.itemlist_size = getarraysize(.itemlist);
 }
 
