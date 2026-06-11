@@ -1,10 +1,8 @@
 prontera,159,184,4	script	Pori Pori Nyu	10242,{
-	.@instance_id = instance_id(IM_PARTY);
-
 	mes("[Pori Pori Nyu]");
 	mes("Heya! Welcome to the Pori Pori Challenge! I am here to help you to either host or participate in a Pori Pori Challenge. How can i help you?");
 	next;
-	menu((.@instance_id < 0 ? "Start a Pori Pori Challenge" : ""), StartChallenge, (.@instance_id >= 0 ? "Join a Pori Pori Challenge" : ""), JoinChallenge, "What is a Pori Pori Challenge?", Explanation, "Who are the Top Ten?", TopTen, "Cancel", Cancel);
+	menu("Start a Pori Pori Challenge", StartChallenge, "Join a Pori Pori Challenge", JoinChallenge, "What is a Pori Pori Challenge?", Explanation, "Who are the Top Ten?", TopTen, "Cancel", Cancel);
 
 	StartChallenge:
 		if (!is_party_leader()) {
@@ -56,8 +54,17 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		if (instance_create("Pori Pori Challenge") < 0) {
-			goto(OnError);
+		switch (instance_create("Pori Pori Challenge") < 0) {
+			case -3:
+				mes("[Pori Pori Nyu]");
+				mes("You already own a instance.");
+				close;
+			case -1:
+			case -2:
+			case -4:
+				goto(OnError);
+			default:
+				break;
 		}
 
 		if (instance_attachmap("quiz_01", 1) == "") {
@@ -92,10 +99,15 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		if(instance_enter("quiz_01", 30, 285) == IE_OTHER) {
-			mes("[Pori Pori Nyu]");
-			mes("Something unexpected happened..");
-			close;
+		switch(instance_enter("quiz_01", 30, 285)) {
+			case IE_OK:
+				break;
+			case IE_NOINSTANCE:
+				mes("[Pori Pori Nyu]");
+				mes("Your party leader did not create the dimension yet.");
+				close;
+			default:
+				goto(OnError);
 		}
 		end;
 
@@ -133,9 +145,8 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 		close;
 
 	OnError:
-		mes("Party Name: " + getpartyname(.@party_id));
-		mes("Party Leader: " + strcharinfo(0));
-		mes("Message: Reservation failed!");
+		mes("[Pori Pori Nyu]");
+		mes("Something is wrong you can not enter this dimension right now..");
 		close;
 
 	OnInit:
