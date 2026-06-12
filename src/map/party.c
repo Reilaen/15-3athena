@@ -558,7 +558,7 @@ int party_member_added(int party_id,uint32 account_id,uint32 char_id, int flag)
 	clif_party_xy(sd);
 	clif_name_area(&sd->bl); //Update char name's display [Skotlex]
 
-	if (p->instance_id >= 0 && instances[p->instance_id].idle_timer != INVALID_TIMER || instances[p->instance_id].progress_timer != INVALID_TIMER) {
+	if (p->instance_id >= 0 && (instances[p->instance_id].idle_timer != INVALID_TIMER || instances[p->instance_id].progress_timer != INVALID_TIMER)) {
 		clif_instance_join(sd->fd, p->instance_id);
 	}
 
