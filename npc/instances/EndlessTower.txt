@@ -214,6 +214,12 @@ e_tower,81,105,0	script	Tower Protection Stone	406,{
 		mes "Make or join a party with more than 1 member and try again.";
 		close;
 	}
+
+	.@eclipse_is_active = callfunc("ne_eclipse_is_active");
+	if (!instance_check_party(.@party_id,2)) {
+		mes "Make or join a party with more than 1 member and try again.";
+		close;
+	}
 	if (.@etower_timer == -1) {
 		if (getcharid(0) == getpartyleader(.@party_id,2)) {
 			mes "Confirmed the party has been made. Would you like to reserve entrance to the Endless Tower?";
@@ -238,6 +244,9 @@ e_tower,81,105,0	script	Tower Protection Stone	406,{
 
 				instance_set_timeout(14400, 300);
 				instance_init();
+				if(.@eclipse_is_active) {
+					setinstancevar('eclipse_is_active, 1);
+				}
 				close;
 			case 2:
 				callsub L_Enter,0,1;
@@ -277,6 +286,24 @@ e_tower,81,105,0	script	Tower Protection Stone	406,{
 		}
 		close;
 	} else if ((.@etower_timer >= 0) && (.@etower_timer < 2) && (.@etower_timer2 == 2)) {
+		.@today$ = gettimestr("%Y%m%d", 10);
+		if(.@eclipse_is_active && et_ne_last_reset$ != .@today$) {
+			et_ne_last_reset$ = .@today$;
+			etower_timer = 0;
+			erasequest 60200;
+			erasequest 60201;
+
+			mes "^0000ffA dense, crimson mist suddenly envelops the Protection Stone. The runes on its surface pulse in an unnatural rhythm.^000000";
+			next;
+			mes "[Whispering Voice in the Wind]";
+			mes "The magical barriers of the tower recede... The Dream Collector has opened his bazaar.";
+			next;
+			mes "[Whispering Voice in the Wind]";
+			mes "He yearns for the ancient dread trapped at the pinnacle of this tower. For tonight only, the veil is lifted so you may bring him what he thirsts for...";
+			next;
+			mes "^0000ffThe magical overload from your previous visit has been absorbed by the eerie mist. You may enter the tower once again.^000000";
+			close;
+		}
 
 		set .@dun_lim_time,etower_timer+604800; // 1 week
 		set .@dun_lim_time2,etower_timer+14400; // 4 hours
@@ -319,6 +346,10 @@ switch(instance_enter("1@tower", 52, 354)) {
 			set etower_partyid, getcharid(1);
 			setquest 60200;
 			setquest 60201;
+
+			if (.@eclipse_is_active) {
+				et_ne_last_reset$ = gettimestr("%Y%m%d", 10);
+			}
 		}
 		if (getarg(0) == 0) close;
 		else end;
@@ -1750,6 +1781,22 @@ OnTouch_:
 // Level 100
 //============================================================
 5@tower,106,109,2	script	Lucid Crystal#102	844,{
+	if ('eclipse_is_active) {
+		mes "^0000ffThe crystal pulses with a haunting, deep crimson light. A voice speaks directly into your mind, sounding far more present than before.^000000";
+		next;
+		mes "[Dream Collector]";
+		mes "Exquisite... The energy you've spilled within these halls is a feast for my collection.";
+		next;
+		mes "[Dream Collector]";
+		mes "Since the veil is thin tonight, I shall not send you back to the mundane reality just yet.";
+		next;
+		mes "[Dream Collector]";
+		mes "Step forward into the sanctum of Nacht Sieger the Hegemon-King of the Darkness. Show me if your resolve is stronger than your fear of being forgotten!";
+		close2;
+		warp instance_mapname("6@tower"),32,12;
+		end;
+	}
+
 	if (in_102tower < 10) {
 		mes "^0000ffA mysterious voice echoes through the room as you touch the lucid crystal radiating a strong light.^000000";
 		next;
@@ -1971,8 +2018,6 @@ OnTimer2000:
 	end;
 }
 
-6@tower,32,100,0	warp	102FGate102tower	2,2,6@tower,155,64
-
 6@tower,156,151,2	script	Tyrant's Throne#	844,{
 	end;
 
@@ -2125,6 +2170,10 @@ OnTimer10500:
 	end;
 
 OnMyMobDead:
+	if('eclipse_is_active) {
+		callfunc("ne_give_rewards");
+	}
+
 	donpcevent instance_npcname("Lost Soul#102")+"::OnEnable";
 	end;
 }
@@ -2244,3 +2293,5 @@ OnTimer1000:
 	donpcevent instance_npcname("#Effect30")+"::OnEnable";
 	end;
 }
+
+6@tower,32,100,0	warp	#102FGate102tower	2,2,6@tower,155,64

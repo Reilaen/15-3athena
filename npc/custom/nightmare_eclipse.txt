@@ -1,0 +1,98 @@
+-	script	NIGHTMARE_ECLIPSE_MANAGER	-1,{
+	OnInit:
+		$@ne_cucrrency_id = 7102;
+		disablenpc("Somnia");
+	end;
+
+	OnFri2000:
+		enablenpc("Somnia");
+		announce("The sky turns bruised and dark. A Nightmare Eclipse descends upon the Endless Tower. The Dream Collector walks among mortals once again...", 0x00ff99, bc_all);
+		$@ne_eclipse_active = 1;
+	end;
+
+	OnSat0000:
+		announce("The peak of the Eclipse has passed. The shadows within the Endless Tower harden, yet the Dream Collector remains for a final few hours.", 0x00ff99, bc_all);
+		$@ne_eclipse_active = 0;
+	end;
+
+	OnSat0600:
+	if ($@ne_eclipse_active)
+		disablenpc("Somnia");
+		announce("The first light of day breaks, shattering the darkness. The Nightmare Eclipse has faded, and the Dream Collector has vanished into the dawn.", 0x00ff99, bc_all);
+	end;
+}
+
+function	script	ne_eclipse_is_active	{
+	return $@ne_eclipse_active;
+}
+
+function	script	ne_give_rewards	{
+	.@party_id = getcharid(1);
+	if (!.@party_id) return;
+
+	.@current_map$ = strcharinfo(3);
+
+	getpartymember(.@party_id, 0);
+	copyarray(.@names$[0], $@partymembername$[0], $@partymembercount);
+
+	getpartymember(.@party_id, 2);
+	copyarray(.@aids[0], $@partymemberaid[0], $@partymembercount);
+
+	.@count = $@partymembercount;
+	for (.@i = 0; .@i < .@count; .@i++) {
+		if (getmapxy(.@p_map$, .@x, .@y, UNITTYPE_PC, .@names$[.@i]) == 0) {
+			if (.@p_map$ == .@current_map$) {
+				getitem($@ne_cucrrency_id, 1, .@aids[.@i]);
+				dispbottom2("0x00ff99", "A dark energy condenses in your hands... You received a Condensed Nightmare!", .@names$[.@i]);
+			}
+		}
+	}
+	return;
+}
+
+prontera,162,174,4	script	Somnia	650,{
+	mes("[Somnia]");
+	if ($@ne_eclipse_active) {
+		mes("The Eclipse is at its zenith. The walls of the Endless Tower are thin, and the screams of the defeated echo louder than ever. The harvest is ripe.");
+	} else {
+		mes("The Eclipse lingers, but the tower is quiet for now. I am merely watching the shadows grow, waiting for the resonance to peak once more.");
+	}
+	mes("What is it, that you seek from me?");
+	next;
+
+	switch(select("Show me your wares, please.:Who are you?:Nothing, just passing through.")) {
+		case 1:
+		mes("[Somnia]");
+			mes("Take your pick. My wares are forged from the lingering fears of those who didn't survive the climb.");
+			close2;
+			callshop(gettimestr("ECLIPSE_MARKET_%m",18));
+			end;
+
+		case 2:
+			mes("[Somnia]");
+			mes("I am the curator of the things you leave behind when you wake up. Every death in the tower, every drop of sweat, every desperate prayer...");
+			mes("I collect them. I refine them. And for those with the right currency, I offer the remnants of those dreams.");
+			next;
+			mes("[Somnia]");
+			mes("Do you feel the tower trembling? That is the Eclipse feeding my power.");
+			close;
+
+		case 3:
+			mes("[Somnia]");
+			mes("A pity. The most interesting stories are often the ones left untold in the dark.");
+			close;
+	}
+}
+
+-	itemshop	ECLIPSE_MARKET_01	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_02	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_03	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_04	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_05	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_06	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_07	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_08	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_09	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_10	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_11	-1,7102:0,512:5,513:10,514:15,515:5,516:20
+-	itemshop	ECLIPSE_MARKET_12	-1,7102:0,512:5,513:10,514:15,515:5,516:20
