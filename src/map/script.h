@@ -451,6 +451,12 @@ enum random_option_attribute {
 	ROA_PARAM,
 };
 
+enum e_instance_live_info_type : uint8 {
+	ILI_NAME,
+	ILI_MODE,
+	ILI_OWNER
+};
+
 enum e_hat_effects {
 	HAT_EF_MIN = 0,
 	HAT_EF_BLOSSOM_FLUTTERING,

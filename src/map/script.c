@@ -2522,6 +2522,11 @@ void script_hardcoded_constants(void)
 	export_constant(IM_GUILD);
 	export_constant(IM_CLAN);
 
+	/* instance live info */
+	export_constant(ILI_NAME);
+	export_constant(ILI_MODE);
+	export_constant(ILI_OWNER);
+
 	/* instance enter */
 	export_constant(IE_OK);
 	export_constant(IE_NOMEMBER);
@@ -20205,7 +20210,55 @@ BUILDIN_FUNC(instance_check_party) {
 		script_pushint(st, 0); // Not enough Members in the Party to join Instance.
 	}else
 		script_pushint(st, 1);
-	
+
+	return 0;
+}
+
+/*------------------------------------------
+*instance_live_info( <info type>{, <instance id>} );
+- ILI_NAME : Instance Name
+- ILI_MODE : Instance Mode
+- ILI_OWNER : owner id
+*------------------------------------------*/
+BUILDIN_FUNC(instance_live_info)
+{
+	int32 type = script_getnum(st, 2);
+	int32 instance_id = -1;
+
+	if (type < ILI_NAME || type > ILI_OWNER) {
+		ShowError("buildin_instance_live_info: Unknown instance information type \"%d\".\n", type);
+		script_pushint(st, -1);
+		return 1;
+	}
+
+	if (!script_hasdata(st, 3))
+		instance_id = script_instancegetid(st, IM_NONE);
+	else
+		instance_id = script_getnum(st, 3);
+
+	if (instance_id < 0 || instance_id >= instance_count) {
+		if (type == ILI_NAME)
+			script_pushconststr(st, "");
+		else
+			script_pushint(st, -1);
+
+		return 0;
+	}
+
+	struct instance_data* idata = &instances[instance_id];
+
+	switch(type) {
+		case ILI_NAME:
+			script_pushstrcopy(st, idata->name);
+			break;
+		case ILI_MODE:
+			script_pushint(st, idata->mode);
+			break;
+		case ILI_OWNER:
+			script_pushint(st, idata->owner_id);
+			break;
+	}
+
 	return 0;
 }
 
@@ -22838,6 +22891,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(instance_set_timeout,"ii?"),
 	BUILDIN_DEF(instance_init,"?"),
 	BUILDIN_DEF(instance_announce,"isi?????"),
+	BUILDIN_DEF(instance_live_info,"i?"),
 	BUILDIN_DEF(instance_npcname,"s?"),
 	BUILDIN_DEF(instance_warpall,"sii?"),
 	BUILDIN_DEF(instance_check_party,"i???"),
