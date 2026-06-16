@@ -1,4 +1,7 @@
 prontera,159,184,4	script	Pori Pori Nyu	10242,{
+	.@instance_id = instance_id(IM_PARTY);
+	.@has_pori_instance = instance_live_info(ILI_NAME, .@instance_id) == .instance_name$;
+
 	mes("[Pori Pori Nyu]");
 	mes("Heya! Welcome to the Pori Pori Challenge! I am here to help you to either host or participate in a Pori Pori Challenge. How can i help you?");
 	next;
@@ -6,8 +9,20 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 	StartChallenge:
 		if (!is_party_leader()) {
-			mes "[Pori Pori Nyu]";
-			mes "You need to lead a party to start a Pori Pori Challenge.";
+			mes("[Pori Pori Nyu]");
+			mes("You need to lead a party to start a Pori Pori Challenge.");
+			close;
+		}
+
+		if (.@has_pori_instance) {
+			mes("[Pori Pori Nyu]");
+			mes("You already have a running Pori Pori Challenge.");
+			close;
+		}
+
+		if (.@instance_id > -1) {
+			mes("[Pori Pori Nyu]");
+			mes("You already own another party instance.");
 			close;
 		}
 
@@ -54,22 +69,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		switch (instance_create("Pori Pori Challenge") < 0) {
-			case -3:
-				mes("[Pori Pori Nyu]");
-				mes("You already own a instance.");
-				close;
-			case -1:
-			case -2:
-			case -4:
-				goto(OnError);
-			default:
-				break;
-		}
-
-		if (instance_attachmap("quiz_01", 1) == "") {
-			goto(OnError);
-		}
+		if (instance_create(.instance_name$) < 0 || instance_attachmap("quiz_01", 1) == "") goto(OnError);
 
 		instance_set_timeout(300, 300);
 		instance_init();
@@ -81,12 +81,12 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 		setinstancevar('participants$, implode(.@participants[0], ":"));
 		setinstancevar('participants_amount, .@participants_amount);
+		.@has_pori_instance = 1;
 		goto(JoinChallenge);
 		end;
 
 	JoinChallenge:
-		.@instance_id = instance_id(IM_PARTY);
-		if (.@instance_id == -1) {
+		if (!.@has_pori_instance) {
 			mes("[Pori Pori Nyu]");
 			mes("There is no Pori Pori Challenge you can join.");
 			close;
@@ -99,16 +99,8 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 			close;
 		}
 
-		switch(instance_enter("quiz_01", 30, 285)) {
-			case IE_OK:
-				break;
-			case IE_NOINSTANCE:
-				mes("[Pori Pori Nyu]");
-				mes("Your party leader did not create the dimension yet.");
-				close;
-			default:
-				goto(OnError);
-		}
+		if(instance_enter("quiz_01", 30, 285) != IE_OK)
+			goto(OnError);
 		end;
 
 	Explanation:
@@ -163,6 +155,8 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 
 		.base_fee = 100000;
 		.participant_fee = 10000;
+
+		.instance_name$ = "Pori Pori Challenge";
 }
 
 quiz_01,30,288,4	script	Pori Pori Nya	10242,{
