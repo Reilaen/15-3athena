@@ -94,7 +94,6 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 		.card2mob_4129 = 1101;
 		.card2taming_4129 = 642;
 
-
 		// Bongun
 		.card2mob_4212 = 1188;
 		.card2taming_4212 = 659;
