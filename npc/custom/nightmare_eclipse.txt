@@ -62,10 +62,10 @@ prontera,162,174,4	script	Somnia	650,{
 
 	switch(select("Show me your wares, please.:Who are you?:Nothing, just passing through.")) {
 		case 1:
-		mes("[Somnia]");
+			mes("[Somnia]");
 			mes("Take your pick. My wares are forged from the lingering fears of those who didn't survive the climb.");
 			close2;
-			callshop(gettimestr("ECLIPSE_MARKET_%m",18));
+			callshop(gettimestr("ECLIPSE_MARKET_%m",18), 1);
 			end;
 
 		case 2:
