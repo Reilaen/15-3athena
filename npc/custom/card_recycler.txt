@@ -1,9 +1,9 @@
 prontera,150,184,4	script	Velcarde	528,{
-	.@today = gettimestr("%Y%m%d", 10);
-	if (#vc_reset_date != .@today) {
+	.@today$ = gettimestr("%Y%m%d", 10);
+	if (#vc_reset_date$ != .@today$) {
 	    #vc_seed = rand(1, 1000000);
 		#vc_state = 0;
-	    #vc_reset_date = .@today;
+	    #vc_reset_date$ = .@today$;
 	}
 
 	switch(#vc_state) {
