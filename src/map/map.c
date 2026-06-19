@@ -1641,13 +1641,13 @@ int map_foreachininstance(int(*func)(struct block_list*, va_list), const int16 i
 		const int16 m = instances[instance_id].map[j];
 		const int bsize = map[m].bxs * map[m].bys;
 
-		if (type&~BL_MOB)
+		if (type & ~BL_MOB)
 			for (b = 0; b < bsize; b++)
 				for (bl = map[m].block[b]; bl != NULL; bl = bl->next)
-					if (bl->type&type && bl_list_count < BL_LIST_MAX)
+					if (bl->type & type && bl_list_count < BL_LIST_MAX)
 						bl_list[bl_list_count++] = bl;
 
-		if (type&BL_MOB)
+		if (type & BL_MOB)
 			for (b = 0; b < bsize; b++)
 				for (bl = map[m].block_mob[b]; bl != NULL; bl = bl->next)
 					if (bl_list_count < BL_LIST_MAX)
@@ -1658,6 +1658,7 @@ int map_foreachininstance(int(*func)(struct block_list*, va_list), const int16 i
 		ShowWarning("map_foreachininstance: block count too many!\n");
 
 	map_freeblock_lock();
+
 	for (int i = blockcount; i < bl_list_count; i++) {
 		if (bl_list[i]->prev) { //func() may delete this bl_list[] slot, checking for prev ensures it wasnt queued for deletion.
 			va_start(ap, type);
@@ -1665,6 +1666,7 @@ int map_foreachininstance(int(*func)(struct block_list*, va_list), const int16 i
 			va_end(ap);
 		}
 	}
+
 	map_freeblock_unlock();
 
 	bl_list_count = blockcount;

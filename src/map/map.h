@@ -865,15 +865,15 @@ enum save_settings_type {
 
 void map_cellfromcache(struct map_data *m);
 
-
+// �I�S�̏��
 void map_setusers(int);
 int map_getusers(void);
 int map_usercount(void);
-
+// block�폜�֘A
 int map_freeblock(struct block_list *bl);
 int map_freeblock_lock(void);
 int map_freeblock_unlock(void);
-
+// block�֘A
 int map_addblock(struct block_list* bl);
 int map_delblock(struct block_list* bl);
 int map_moveblock(struct block_list *, int, int, int64);
@@ -889,11 +889,11 @@ int map_foreachincell(int(*func)(struct block_list*, va_list), int m, int x, int
 int map_foreachinpath(int(*func)(struct block_list*, va_list), int m, int x0, int y0, int x1, int y1, int range, int length, int type, ...);
 int map_foreachindir(int(*func)(struct block_list*, va_list), int16 m, int16 x0, int16 y0, int16 x1, int16 y1, int16 range, int length, int offset, int type, ...);
 int map_foreachinmap(int(*func)(struct block_list*, va_list), int m, int type, ...);
-int map_foreachininstance(int(*func)(struct block_list*, va_list), int16 instance_id, int type, ...);
-
+int map_foreachininstance(int(*func)(struct block_list*, va_list), const int16 instance_id, const int type, ...);
+//block�֘A�ɒǉ�
 int map_count_oncell(int m, int x, int y, int type, int flag);
 struct skill_unit *map_find_skill_unit_oncell(struct block_list *, int x, int y, int skill_id, struct skill_unit *, int flag);
-
+// �ꎞ�Iobject�֘A
 int map_get_new_object_id(void);
 int map_search_freecell(struct block_list *src, int m, short *x, short *y, int rx, int ry, int flag);
 bool map_closest_freecell(int16 m, int16 *x, int16 *y, int type, int flag);
@@ -902,11 +902,13 @@ int map_quit(struct map_session_data *);
 // npc
 bool map_addnpc(int, struct npc_data *);
 
+// ���A�C�e���֘A
 int map_clearflooritem_timer(int tid, int64 tick, int id, intptr_t data);
 int map_removemobs_timer(int tid, int64 tick, int id, intptr_t data);
 void map_clearflooritem(struct block_list* bl);
 int map_addflooritem(struct item *item_data, int amount, int m, int x, int y, int first_charid, int second_charid, int third_charid, int flags, unsigned short mob_id, bool canShowEffect);
 
+// �L����id�����L������ �ϊ��֘A
 void map_addnickdb(int charid, const char* nick);
 void map_delnickdb(int charid, const char* nick);
 void map_reqnickdb(struct map_session_data* sd, int charid);
