@@ -110,10 +110,10 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 		next;
 		mes("[Pori Pori Nyu]");
 		mes("Inside the dimension you will meet my sister Nya, once you are ready you can talk to her, and she will start the Pori Pori Challenge.");
-		mes("You then have 30 minutes to beat " + getarraysize($pori_monsters) + " levels of monsters that get stronger with each level.");
+		mes("You then have 30 minutes to beat " + getarraysize($@pori_monsters) - 1 + " levels of monsters until you meet the final Boss, Pori Pori.");
 		next;
 		mes("[Pori Pori Nyu]");
-		mes("The quicker you beat all the levels, the better your reward will be.");
+		mes("The quicker you beat the Challenge, the better your reward will be.");
 		close;
 
 	TopTen:
@@ -148,10 +148,13 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 		$@pori_return_map$ = "prontera";
 		setarray($@pori_return_coords[0], 159, 182);
 
-		setarray($pori_monsters[0], 1002, 1002, 1002, 1002, 1002, 1002);
+		setarray($@pori_monsters[0], 1766, 1767, 1904, 1502);
+		setarray($@pori_monster_amount[0], 1, 1, 10, 1);
 
 		$@pori_price_id = 512;
 		setarray($@pori_price_amounts[0], 300000, 30, 600000, 25, 900000, 20, 120000, 15, 150000, 10, 18000, 5);
+
+		$@pori_id = 1502;
 
 		.base_fee = 100000;
 		.participant_fee = 10000;
@@ -160,7 +163,7 @@ prontera,159,184,4	script	Pori Pori Nyu	10242,{
 }
 
 quiz_01,30,288,4	script	Pori Pori Nya	10242,{
-	mes("[Pori Pori Nyu]");
+	mes("[Pori Pori Nya]");
 	mes("Hey! How can i help you?");
 	next;
 	if(select((is_party_leader() ? "Please start the challenge!" : ""), "I want to leave") == 2) {
@@ -169,11 +172,11 @@ quiz_01,30,288,4	script	Pori Pori Nya	10242,{
 	}
 
 	if ('participants_amount < getmapusers('map$)) {
-		mes("[Pori Pori Nyu]");
+		mes("[Pori Pori Nya]");
 		mes("Not all registered participants are here, do you want to start anyway?");
 		next;
 		if (select("Yes.", "No.") == 2) {
-			mes("[Pori Pori Nyu]");
+			mes("[Pori Pori Nya]");
 			mes("Alright then. I'll be waiting until you are ready.");
 			close;
 		}
@@ -187,7 +190,7 @@ quiz_01,30,288,4	script	Pori Pori Nya	10242,{
 quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 	OnStartChallenge:
 		instance_set_timeout(1860, 300);
-		mapannounce('map$, "The Pori Pori Challenge has started! You have 1 Minute to get ready!", bc_map, "0x00ff99");
+		mapannounce('map$, "[Pori Pori Nya] The Pori Pori Challenge has started! You have 1 Minute to get ready!", bc_map, "0x00ff99");
 		initnpctimer;
 		end;
 
@@ -199,11 +202,12 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 
 	OnTimer30000:
 	OnNextLevel:
-		if('level > getarraysize($pori_monsters)) {
+		if(mobcount('map$, 'manager_npc$ + "::OnNextLevel") > 0) end;
+
+		if('level > getarraysize($@pori_monsters)) {
 			stopnpctimer;
 			.@finish_time = getnpctimer(0);
-			.@party_id = getcharid(1);
-	        .@party_name$ = getpartyname(.@party_id);
+	        .@party_name$ = getpartyname(getcharid(1));
 
 	        for (.@i = 0; .@i < 20; .@i += 2) {
 	            if ($pori_top_ten$[.@i] == "" || .@finish_time < atoi($pori_top_ten$[.@i + 1])) {
@@ -215,7 +219,7 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 			        $pori_top_ten$[.@i] = .@party_name$;
 			        $pori_top_ten$[.@i + 1] = "" + .@finish_time;
 
-	                announce("New record! The party [" + .@party_name$ + "] took place " + ((.@i/2)+1) + "!", bc_map, "0xFFFF00");
+	                announce("[Pori Pori Nya] New record! The party [" + .@party_name$ + "] took place " + ((.@i/2)+1) + "!", bc_map, "0xFFFF00");
 	                break;
 	            }
 	        }
@@ -240,19 +244,40 @@ quiz_01,0,0,0	script	PORI_PORI_CHALLENGE_MANAGER	-1,{
 				mail(.@participants[.@i], "Pori Pori Nyu", "Congratulations!", .@body$, 0, .@mailitem, .@mailamount);
 			}
 
-			mapannounce('map$, "Congratulations you beat the final level! You finished in " + .@finish_time_str$ + "! You will now be teleported back.", bc_map, "0x00ff99");
+			mapannounce('map$, "[Pori Pori Nya] Congratulations you beat the final level! You finished in " + .@finish_time_str$ + "! You will now be teleported back.", bc_map, "0x00ff99");
 			goto(EndChallenge);
 			end;
 		}
 
-		mapannounce('map$, "The opponent for level " + 'level + " has appeared!", bc_map, "0x00ff99");
+		.@mob_id = $@pori_monsters['level - 1];
+		mapannounce('map$, .@mob_id == $@pori_id ? "[Pori Pori Nya] The final Boss Pori Pori has appeared!" : "[Pori Pori Nya] The opponent for level " + 'level + " has appeared!", bc_map, "0x00ff99");
+
+		if(.@mob_id == 1904) {
+			getpartymember(instance_live_info(ILI_OWNER), 0);
+			copyarray(.@names$[0], $@partymembername$[0], $@partymembercount);
+
+			.@count = $@partymembercount;
+			for (.@i = 0; .@i < .@count; .@i++) {
+				if (getmapxy(.@p_map$, .@x, .@y, UNITTYPE_PC, .@names$[.@i]) == 0) {
+					if (.@p_map$ == 'map$) {
+						for(.@z = 0; .@z < $@pori_monster_amount['level - 1]; .@z++) {
+							monster('map$, .@x + rand(-5,5), .@y + rand(-5,5), "", $@pori_monsters['level - 1], 1, 'manager_npc$ + "::OnNextLevel");
+						}
+					}
+				}
+			}
+			'level++;
+			end;
+		}
+
 		.@area = rand(0, 1) * 4;
-		areamonster('map$, 'spawn_area[.@area], 'spawn_area[.@area + 1], 'spawn_area[.@area + 2], 'spawn_area[.@area + 3], "", $pori_monsters['level - 1], 1, 'manager_npc$ + "::OnNextLevel");
+		areamonster('map$, 'spawn_area[.@area], 'spawn_area[.@area + 1], 'spawn_area[.@area + 2], 'spawn_area[.@area + 3], .@mob_id == $@pori_id ? "Pori Pori" : "", $@pori_monsters['level - 1], $@pori_monster_amount['level - 1], 'manager_npc$ + "::OnNextLevel");
+
 		'level++;
 		end;
 
 	OnTimer1800000:
-		mapannounce('map$, "You failed to beat the Pori Pori Challenge on time! You will now be teleported back.", bc_map, "0x00ff99");
+		mapannounce('map$, "[Pori Pori Nya] You failed to beat the Pori Pori Challenge on time! You will now be teleported back.", bc_map, "0x00ff99");
 		goto(EndChallenge);
 		end;
 
