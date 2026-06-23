@@ -6,6 +6,8 @@
 		$@fi_min_cast_time = 5;
 		$@fi_max_cast_time = 10;
 
+		$@fi_fish_amout = 5;
+
 		setarray($@fi_baits, 567, 957, 966, 962, 960, 623, 1055, 928, 955, 909, 1024, 579, 517);
 
 		// DROP TIERS //
@@ -53,7 +55,6 @@
 		setarray($@fi_ra_dp_glast_01_wgts, 10000);
 
 		// BAITS //
-
 		// Shrimp: Octopus, Snapper, Squid
 		setarray($@fi_bait_567, 6772, 6773, 7768);
 		setarray($@fi_bait_567_wgts, 500, 1500, 1000);
@@ -108,12 +109,30 @@
 }
 
 -	script	FISHING_SPOT	10065,{
+	.@spot_id$ = strnpcinfo(2);
+
+	.@last_reset$ = getd("fi_last_reset_" + .@spot_id$ + "$");
+	.@today$ = gettimestr("%Y%m%d", 10);
+	if (.@last_reset$ != .@today$) {
+		setd("fi_fish_count_" + .@spot_id$, $@fi_fish_amout);
+		setd("fi_last_reset_" + .@spot_id$ + "$", .@today$);
+	}
+
+	.@fish_count = getd("fi_fish_count_" + .@spot_id$);
+	if(.@fish_count == 0) {
+		mes("There are no fish left. You should try again tomorrow.");
+		close;
+	}
+
+	mes("You can see " + .@fish_count + " fish swiming around.");
+	next;
+
 	.@acc_left_idx = inarray($@fi_rods[0], getequipid(EQI_ACC_L));
 	.@acc_right_idx = inarray($@fi_rods[0], getequipid(EQI_ACC_R));
 
 	if(.@acc_left_idx == -1) {
 		if(.@acc_right_idx == -1) {
-			mes("You need a fishing rod to fish.");
+			mes("You need to have a fishing rod equipped to be able fish.");
 			close;
 		}
 
@@ -150,7 +169,7 @@
 
 	clear;
 
-	callsub(S_Fishing_Minigame);
+	callsub(S_Fishing_Minigame, .@spot_id$, .@fish_count);
 
 	.@rare_pool$ = "$@fi_ra_dp_" + strcharinfo(3);
 
@@ -260,6 +279,7 @@
 			.@player_move = select("^880099Pull the Line!^000000", "^0000FFHold firmly^000000", "^007700Let the fish pull the line^000000");
 
 			clear;
+			setd("fi_fish_count_" + getarg(0), getarg(1) - 1);
 
 			if(gettimetick(2) - .@start_time > 3) {
 				cutin("2013_summer_fish_6", 3);
