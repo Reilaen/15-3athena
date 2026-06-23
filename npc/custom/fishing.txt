@@ -460,7 +460,7 @@ prontera,157,178,4	script	Mauz the Fish Collector	496,{
 		.currency = 6897;
 }
 
-prontera,155,178,4	itemshop	Whale Shop	559,6897:0,512:5,513:10,514:15,515:5,516:20
+prontera,155,178,4	itemshop	Whale Shop	559,6897:0,31055:1000,31090:1000,31054:1000,20349:1000,20279:1000,20298:1000,20301:1000,20294:750,20281:750,20312:750,12210:50,12260:25,7621:25
 
 izlude,93,245,4	duplicate(FISHING_SPOT)	Fishing Spot#Izlude_01	10065
 izlude,73,157,4	duplicate(FISHING_SPOT)	Fishing Spot#Izlude_02	10065
