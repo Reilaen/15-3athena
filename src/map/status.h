@@ -2713,7 +2713,8 @@ int64 status_get_sc_def(struct block_list *src, struct block_list *bl, enum sc_t
 #define sc_start2(bl, type, rate, val1, val2, tick) status_change_start(bl,bl,type,100*(rate),val1,val2,0,0,tick,0)
 #define sc_start4(bl, type, rate, val1, val2, val3, val4, tick) status_change_start(bl,bl,type,100*(rate),val1,val2,val3,val4,tick,0)
 
-int status_change_start(struct block_list* src, struct block_list* bl,enum sc_type type,int rate,int val1,int val2,int val3,int val4,int64 duration,int flag);
+int status_change_start(struct block_list *src, struct block_list *bl, sc_type type, int rate, int val1, int val2, int val3, int val4, int tick, int flag);
+int status_change_start_sub(struct block_list *src, struct block_list *bl, sc_type type, int rate, int val1, int val2, int val3, int val4, int tick, int total_tick, int flag);
 int status_change_end_(struct block_list* bl, enum sc_type type, int tid);
 #define status_change_end(bl,type,tid) status_change_end_(bl,type,tid)
 int status_change_timer(int tid, int64 tick, int id, intptr_t data);
