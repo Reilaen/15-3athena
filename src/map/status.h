@@ -2515,7 +2515,7 @@ struct sc_display_entry {
 
 struct status_change_entry {
 	int timer;
-	int val1,val2,val3,val4;
+	int val1,val2,val3,val4,total_tick;
 };
 
 struct status_change {
