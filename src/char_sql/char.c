@@ -4144,14 +4144,14 @@ int parse_frommap(int fd)
 				int i;
 
 				StringBuf_Init(&buf);
-				StringBuf_Printf(&buf, "INSERT INTO `%s` (`account_id`, `char_id`, `type`, `tick`, `val1`, `val2`, `val3`, `val4`) VALUES ", scdata_db);
+				StringBuf_Printf(&buf, "INSERT INTO `%s` (`account_id`, `char_id`, `type`, `tick`, `total_tick`, `val1`, `val2`, `val3`, `val4`) VALUES ", scdata_db);
 				for( i = 0; i < count; ++i )
 				{
 					memcpy (&data, RFIFOP(fd, 14+i*sizeof(struct status_change_data)), sizeof(struct status_change_data));
 					if( i > 0 )
 						StringBuf_AppendStr(&buf, ", ");
-					StringBuf_Printf(&buf, "('%d','%d','%hu','%d','%d','%d','%d','%d')", aid, cid,
-						data.type, data.tick, data.val1, data.val2, data.val3, data.val4);
+					StringBuf_Printf(&buf, "('%d','%d','%hu','%d','%d','%d','%d','%d','%d')", aid, cid,
+						data.type, data.tick, data.total_tick, data.val1, data.val2, data.val3, data.val4);
 				}
 				if( SQL_ERROR == Sql_QueryStr(sql_handle, StringBuf_Value(&buf)) )
 					Sql_ShowDebug(sql_handle);
