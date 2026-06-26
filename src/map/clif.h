@@ -1175,8 +1175,8 @@ void clif_monster_hp_bar( struct mob_data* md, int fd );
 void clif_fast_movement(struct block_list *bl, short x, short y);
 void clif_showscript(struct block_list* bl, const char* message);
 void clif_equip_damaged(struct map_session_data *sd, int equip_index);
-void clif_status_change(struct block_list *bl, int type, int flag, int64 tick, int val1, int val2, int val3);
-void clif_status_change_sub(struct block_list *bl, int id, int type, int flag, int64 tick, int val1, int val2, int val3, enum send_target target_type);
+void clif_status_change(struct block_list *bl, int type, int flag, int total_tick, int val1, int val2, int val3);
+void clif_status_change_sub(struct block_list *bl, int id, int type, int flag, int tick, int total_tick, int val1, int val2, int val3, send_target target_type);
 void clif_efst_status_change(struct block_list *bl, int tid, enum send_target target, int type, int64 tick, int val1, int val2, int val3);
 void clif_efst_status_change_sub(struct block_list *tbl, struct block_list *bl, enum send_target target);
 

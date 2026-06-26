@@ -288,7 +288,7 @@ int map_fd;
 static int clif_parse (int fd);
 
 /*==========================================
- * mapI‚Ìipİ’è
+ * mapï¿½Iï¿½ï¿½ipï¿½İ’ï¿½
  *------------------------------------------*/
 int clif_setip(const char* ip)
 {
@@ -317,7 +317,7 @@ void clif_setbindip(const char* ip)
 }
 
 /*==========================================
- * mapI‚Ìportİ’è
+ * mapï¿½Iï¿½ï¿½portï¿½İ’ï¿½
  *------------------------------------------*/
 void clif_setport(uint16 port)
 {
@@ -325,7 +325,7 @@ void clif_setport(uint16 port)
 }
 
 /*==========================================
- * mapI‚Ìip“Ç‚İo‚µ
+ * mapï¿½Iï¿½ï¿½ipï¿½Ç‚İoï¿½ï¿½
  *------------------------------------------*/
 uint32 clif_getip(void)
 {
@@ -347,7 +347,7 @@ uint32 clif_refresh_ip(void)
 }
 
 /*==========================================
- * mapI‚Ìport“Ç‚İo‚µ
+ * mapï¿½Iï¿½ï¿½portï¿½Ç‚İoï¿½ï¿½
  *------------------------------------------*/
 uint16 clif_getport(void) {
 	return map_port;
@@ -376,7 +376,7 @@ static bool clif_session_isValid(struct map_session_data *sd) {
 }
 
 /*==========================================
- * clif_send‚ÅAREA*w’è—p
+ * clif_sendï¿½ï¿½AREA*ï¿½wï¿½èï¿½p
  *------------------------------------------*/
 static int clif_send_sub(struct block_list *bl, va_list ap)
 {
@@ -3299,14 +3299,14 @@ int clif_updatestatus(struct map_session_data *sd,int type)
 		len=5;
 		break;
 
-		// 013a I—¹
+		// 013a ï¿½Iï¿½ï¿½
 	case SP_ATTACKRANGE:
 		WFIFOW(fd,0)=0x13a;
 		WFIFOW(fd,2)=sd->battle_status.rhw.range;
 		len=4;
 		break;
 
-		// 0141 I—¹
+		// 0141 ï¿½Iï¿½ï¿½
 	case SP_STR:
 		WFIFOW(fd,0)=0x141;
 		WFIFOL(fd,2)=type;
@@ -4933,7 +4933,7 @@ void clif_storageclose(struct map_session_data* sd)
 }
 
 /*==========================================
- * PC•\¦
+ * PCï¿½\ï¿½ï¿½
  *------------------------------------------*/
 static void clif_getareachar_pc(struct map_session_data* sd,struct map_session_data* dstsd)
 {
@@ -5525,7 +5525,7 @@ void clif_getareachar_skillunit(struct block_list *bl, struct skill_unit *unit, 
 }
 
 /*==========================================
- * êŠƒXƒLƒ‹ƒGƒtƒFƒNƒg‚ª‹ŠE‚©‚çÁ‚¦‚é
+ * ï¿½êŠï¿½Xï¿½Lï¿½ï¿½ï¿½Gï¿½tï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 static void clif_clearchar_skillunit(struct skill_unit *unit, int fd)
 {
@@ -6486,31 +6486,31 @@ void clif_cooking_list(struct map_session_data *sd, int trigger, uint16 skill_id
  * @param bl Object that has the effect
  * @param type Status icon see enum si_type
  * @param flag 1:Active, 0:Deactive
- * @param tick Duration in ms
+ * @param total_tick Duration in ms
  * @param val1
  * @param val2
  * @param val3
  */
-void clif_status_change(struct block_list *bl, int type, int flag, int64 tick, int val1, int val2, int val3) {
+void clif_status_change(struct block_list *bl, int type, int flag, int total_tick, int val1, int val2, int val3) {
 	struct map_session_data *sd = NULL;
+
+	nullpo_retv(bl);
 
 	if (type == SI_BLANK)  //It shows nothing on the client...
 		return;
 
-	if (type == SI_ACTIONDELAY && tick == 0)
+	if (type == SI_ACTIONDELAY && total_tick == 0)
 		return;
 
 	if (type == SI_HALLUCINATION && !battle_config.display_hallucination) // Disable Hallucination.
 		return;
-
-	nullpo_retv(bl);
 
 	sd = BL_CAST(BL_PC, bl);
 
 	if (!(status_type2relevant_bl_types(type)&bl->type)) // only send status changes that actually matter to the client
 		return;
 
-	clif_status_change_sub(bl, bl->id, type, flag, tick, val1, val2, val3, ((sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS)));
+	clif_status_change_sub(bl, bl->id, type, flag, total_tick, total_tick, val1, val2, val3, ((sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS)));
 }
 
 /// Notifies clients of a status change.
@@ -6525,7 +6525,7 @@ void clif_status_change(struct block_list *bl, int type, int flag, int64 tick, i
 /// @param val1
 /// @param val2
 /// @param val3
-void clif_status_change_sub(struct block_list *bl, int id, int type, int flag, int64 tick, int val1, int val2, int val3, enum send_target target_type)
+void clif_status_change_sub(struct block_list *bl, int id, int type, int flag, int tick, int total_tick, int val1, int val2, int val3, send_target target_type)
 {
 	unsigned char buf[32];
 
@@ -6546,17 +6546,14 @@ void clif_status_change_sub(struct block_list *bl, int id, int type, int flag, i
 		WBUFW(buf, 0) = 0x43f;
 	else
 #endif
-		WBUFW(buf, 0) = 0x196;
+	WBUFW(buf, 0) = 0x196;
 	WBUFW(buf, 2) = type;
 	WBUFL(buf, 4) = id;
 	WBUFB(buf, 8) = flag;
 #if PACKETVER >= 20120618
 	if (flag && battle_config.display_status_timers) {
-		if (tick <= 0)
-			tick = 9999; // this is indeed what official servers do
-
-		WBUFL(buf, 9) = (unsigned int)tick;/* at this stage remain and total are the same value I believe */
-		WBUFL(buf, 13) = (unsigned int)tick;
+		WBUFL(buf, 9) = total_tick;
+		WBUFL(buf, 13) = tick;
 		WBUFL(buf, 17) = val1;
 		WBUFL(buf, 21) = val2;
 		WBUFL(buf, 25) = val3;
@@ -8457,7 +8454,7 @@ int clif_hpmeter_sub(struct block_list *bl, va_list ap)
 }
 
 /*==========================================
- * GM‚ÖêŠ‚ÆHP’Ê’m
+ * GMï¿½ÖêŠï¿½ï¿½HPï¿½Ê’m
  *------------------------------------------*/
 int clif_hpmeter(struct map_session_data *sd)
 {
@@ -11049,7 +11046,7 @@ static int clif_guess_PacketVer(int fd, int get_previous, int *error)
 // ------------
 // clif_parse_*
 // ------------
-// ƒpƒPƒbƒg“Ç‚İæ‚Á‚ÄFX‘€ì
+// ï¿½pï¿½Pï¿½bï¿½gï¿½Ç‚İï¿½ï¿½ï¿½ÄFï¿½Xï¿½ï¿½ï¿½ï¿½
 
 /// Refuse login.
 /// 006a <error code>.B <block date>.20B (ZC_REFUSE_LOGIN)
@@ -14509,22 +14506,22 @@ void clif_parse_GuildRequestInfo(int fd, struct map_session_data *sd)
 
 	switch( RFIFOL(fd,2) )
 	{
-	case 0:	// ƒMƒ‹ƒhŠî–{î•ñA“¯–¿“G‘Îî•ñ
+	case 0:	// ï¿½Mï¿½ï¿½ï¿½hï¿½ï¿½{ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½Îï¿½ï¿½
 		clif_guild_basicinfo(sd);
 		clif_guild_allianceinfo(sd);
 		break;
-	case 1:	// ƒƒ“ƒo[ƒŠƒXƒgA–ğE–¼ƒŠƒXƒg
+	case 1:	// ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½[ï¿½ï¿½ï¿½Xï¿½gï¿½Aï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½g
 		clif_guild_positionnamelist(sd);
 		clif_guild_memberlist(sd);
 		break;
-	case 2:	// –ğE–¼ƒŠƒXƒgA–ğEî•ñƒŠƒXƒg
+	case 2:	// ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½Aï¿½ï¿½Eï¿½ï¿½ñƒŠƒXï¿½g
 		clif_guild_positionnamelist(sd);
 		clif_guild_positioninfolist(sd);
 		break;
-	case 3:	// ƒXƒLƒ‹ƒŠƒXƒg
+	case 3:	// ï¿½Xï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½g
 		clif_guild_skillinfo(sd);
 		break;
-	case 4:	// ’Ç•úƒŠƒXƒg
+	case 4:	// ï¿½Ç•ï¿½ï¿½ï¿½ï¿½Xï¿½g
 		clif_guild_expulsionlist(sd);
 		break;
 	default:
