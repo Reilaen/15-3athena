@@ -1261,46 +1261,53 @@ int chrif_updatefamelist_ack(int fd)
 	return 1;
 }
 
-int chrif_save_scdata(struct map_session_data *sd)
-{	//parses the sc_data of the player and sends it to the char-server for saving. [Skotlex]
+int chrif_save_scdata(struct map_session_data *sd) {	//parses the sc_data of the player and sends it to the char-server for saving. [Skotlex]
 #ifdef ENABLE_SC_SAVING
-	int i, count=0;
-	int64 tick;
+	int count=0;
 	struct status_change_data data = { 0 };
-	struct status_change *sc = &sd->sc;
-	const struct TimerData *timer;
 
+	nullpo_ret(sd);
+	const struct status_change *sc = &sd->sc;
 	chrif_check(-1);
-	tick = gettick();
+	const int64 tick = gettick();
 	
 	WFIFOHEAD(char_fd, 14 + SC_MAX*sizeof(struct status_change_data));
 	WFIFOW(char_fd,0) = 0x2b1c;
 	WFIFOL(char_fd,4) = sd->status.account_id;
 	WFIFOL(char_fd,8) = sd->status.char_id;
-	for (i = 0; i < SC_MAX; i++)
-	{
+
+	for (int i = 0; i < SC_MAX; i++) {
 		if (!sc->data[i])
 			continue;
-		if (sc->data[i]->timer != INVALID_TIMER)
-		{
-			timer = get_timer(sc->data[i]->timer);
+
+		if (sc->data[i]->timer != INVALID_TIMER) {
+			const struct TimerData *timer = get_timer(sc->data[i]->timer);
+
 			if (timer == NULL || timer->func != status_change_timer)
 				continue;
-			if (DIFF_TICK(timer->tick, tick) > 0)
+
+			if (DIFF_TICK32(timer->tick, tick) > 0) {
 				data.tick = DIFF_TICK32(timer->tick, tick); //Duration that is left before ending.
-			else
+			} else {
 				data.tick = 0; //Negative tick does not necessarily mean that sc has expired
-		} else
+			}
+		} else {
 			data.tick = -1; //Infinite duration
+		}
+
+		data.total_tick = sc->data[i]->total_tick;
 		data.type = i;
 		data.val1 = sc->data[i]->val1;
 		data.val2 = sc->data[i]->val2;
 		data.val3 = sc->data[i]->val3;
 		data.val4 = sc->data[i]->val4;
-		memcpy(WFIFOP(char_fd,14 +count*sizeof(struct status_change_data)),
-			&data, sizeof(struct status_change_data));
+		memcpy(WFIFOP(char_fd,14 +count*sizeof(struct status_change_data)), &data, sizeof(struct status_change_data));
+
 		count++;
 	}
+
+	if (count == 0)
+		return 0;
 
 	WFIFOW(char_fd,12) = count;
 	WFIFOW(char_fd,2) = 14 +count*sizeof(struct status_change_data); //Total packet size
@@ -1824,8 +1831,8 @@ int send_users_tochar(void)
 }
 
 /*==========================================
- * timerŠÖ”
- * charI‚Æ‚ÌÚ‘±‚ğŠm”F‚µA‚à‚µØ‚ê‚Ä‚¢‚½‚çÄ“xÚ‘±‚·‚é
+ * timerï¿½Öï¿½
+ * charï¿½Iï¿½Æ‚ÌÚ‘ï¿½ï¿½ï¿½ï¿½mï¿½Fï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½Ä“xï¿½Ú‘ï¿½ï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 static int check_connect_char_server(int tid, int64 tick, int id, intptr_t data)
 {
@@ -1893,7 +1900,7 @@ int auth_db_final(DBKey key, DBData *data, va_list ap)
 }
 
 /*==========================================
- * I—¹
+ * ï¿½Iï¿½ï¿½
  *------------------------------------------*/
 void do_final_chrif(void)
 {
