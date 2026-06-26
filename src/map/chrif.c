@@ -1361,13 +1361,10 @@ int chrif_skillcooldown_save(struct map_session_data *sd)
 int chrif_load_scdata(int fd)
 {	
 #ifdef ENABLE_SC_SAVING
-	struct map_session_data *sd;
-	int aid, cid, i, count;
-
-	aid = RFIFOL(fd,4); //Player Account ID
-	cid = RFIFOL(fd,8); //Player Char ID
+	const int aid = RFIFOL(fd, 4); //Player Account ID
+	const int cid = RFIFOL(fd, 8); //Player Char ID
 	
-	sd = map_id2sd(aid);
+	struct map_session_data *sd = map_id2sd(aid);
 	if (!sd)
 	{
 		ShowError("chrif_load_scdata: Player of AID %d not found!\n", aid);
@@ -1378,11 +1375,12 @@ int chrif_load_scdata(int fd)
 		ShowError("chrif_load_scdata: Receiving data for account %d, char id does not matches (%d != %d)!\n", aid, sd->status.char_id, cid);
 		return -1;
 	}
-	count = RFIFOW(fd,12); //sc_count
-	for (i = 0; i < count; i++)
+
+	const int count = RFIFOW(fd, 12); //sc_count
+	for (int i = 0; i < count; i++)
 	{
-		struct status_change_data *data = (struct status_change_data*)RFIFOP(fd,14 + i*sizeof(struct status_change_data));
-		status_change_start(NULL, &sd->bl, (sc_type)data->type, 10000, data->val1, data->val2, data->val3, data->val4, data->tick, 1 | 2 | 4 | 8);
+		const struct status_change_data *data = (struct status_change_data*)RFIFOP(fd,14 + i*sizeof(struct status_change_data));
+		status_change_start_sub(NULL, &sd->bl, (sc_type)data->type, 10000, data->val1, data->val2, data->val3, data->val4, data->tick, data->total_tick, 1 | 2 | 4 | 8);
 	}
 #endif
 
