@@ -7560,7 +7560,7 @@ static int status_get_sc_interval(enum sc_type type)
 //Applies SC defense to a given status change.
 //Returns the adjusted duration based on flag values.
 //the flag values are the same as in status_change_start.
-int64 status_get_sc_def(struct block_list *src, struct block_list *bl, enum sc_type type, int rate, int64 tick, int flag)
+int status_get_sc_def(struct block_list *src, struct block_list *bl, enum sc_type type, int rate, int tick, int flag)
 {
 	bool natural_def = true;
 	//Percentual resistance: 10000 = 100% Resist
@@ -13725,24 +13725,22 @@ int status_change_clear_buffs (struct block_list* bl, uint8 type)
  * @param bl: Object to change
  * @return 1: Success 0: Fail
  */
-int status_change_spread(struct block_list *src, struct block_list *bl)
-{
-	int i, flag = 0;
+int status_change_spread(struct block_list *src, struct block_list *bl) {
+	int flag = 0;
 	struct status_change *sc = status_get_sc(src);
 	const struct TimerData *timer = NULL;
-	int64 tick;
 	struct status_change_data data;
 
 	if (!sc || !sc->count)
 		return 0;
 
-	tick = gettick();
+	int64 tick = gettick();
 
 	// Status Immunity resistance
 	if (status_bl_has_mode(src, MD_STATUS_IMMUNE) || status_bl_has_mode(bl, MD_STATUS_IMMUNE))
 		return 0;
 
-	for (i = SC_COMMON_MIN; i < SC_MAX; i++) {
+	for (int i = SC_COMMON_MIN; i < SC_MAX; i++) {
 		if (!sc->data[i] || i == SC_COMMON_MAX)
 			continue;
 		if (sc->data[i]->timer != INVALID_TIMER) {
@@ -13774,7 +13772,6 @@ int status_change_spread(struct block_list *src, struct block_list *bl)
 			//case SC_STRIPHELM:
 			//case SC__STRIPACCESSORY:
 			//case SC_BITE:
-		case SC_FEAR:
 		case SC_FREEZE:
 		case SC_VENOMBLEED:
 			if (sc->data[i]->timer != INVALID_TIMER)
@@ -13783,18 +13780,27 @@ int status_change_spread(struct block_list *src, struct block_list *bl)
 				data.tick = INVALID_TIMER;
 			break;
 			// Special cases
-		case SC_TOXIN:
 		case SC_MAGICMUSHROOM:
+			data.tick = sc->data[i]->val4 * 4000;
+			break;
 		case SC_PYREXIA:
-		case SC_LEECHESEND:
+		case SC_OBLIVIONCURSE:
+			data.tick = sc->data[i]->val4 * 3000;
+			break;
 		case SC_POISON:
 		case SC_DPOISON:
-		case SC_BLEEDING:
+			data.tick = sc->data[i]->val3 * 1000;
+			break;
+		case SC_FEAR:
+		case SC_LEECHESEND:
+			data.tick = sc->data[i]->val4 * 1000;
+			break;
 		case SC_BURNING:
-			if (sc->data[i]->timer != INVALID_TIMER)
-				data.tick = DIFF_TICK32(timer->tick, tick) + sc->data[i]->val4;
-			else
-				data.tick = INVALID_TIMER;
+			data.tick = sc->data[i]->val4 * 2000;
+			break;
+		case SC_TOXIN:
+		case SC_BLEEDING:
+			data.tick = sc->data[i]->val4 * 10000;
 			break;
 		default:
 			continue;
