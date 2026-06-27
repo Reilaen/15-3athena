@@ -6510,7 +6510,7 @@ void clif_status_change(struct block_list *bl, int type, int flag, int total_tic
 	if (!(status_type2relevant_bl_types(type)&bl->type)) // only send status changes that actually matter to the client
 		return;
 
-	clif_status_change_sub(bl, bl->id, type, flag, total_tick, total_tick, val1, val2, val3, ((sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS)));
+	clif_status_change_sub(bl, bl->id, type, flag, total_tick, total_tick, val1, val2, val3, sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS);
 }
 
 /// Notifies clients of a status change.
