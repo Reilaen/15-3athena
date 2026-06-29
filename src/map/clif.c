@@ -6522,6 +6522,7 @@ void clif_status_change(struct block_list *bl, int type, int flag, int total_tic
 /// @param type Status icon see enum si_type
 /// @param flag 1:Active, 0:Deactive
 /// @param tick Duration in ms
+/// @param total_tick Total Duration in ms
 /// @param val1
 /// @param val2
 /// @param val3
