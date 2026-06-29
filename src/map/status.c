@@ -7972,19 +7972,24 @@ int status_change_start(struct block_list *src, struct block_list *bl, sc_type t
 	return status_change_start_sub(src, bl, type, rate, val1, val2, val3, val4, 0, tick, flag);
 }
 
-/*==========================================
- * Starts a status change.
- * 'type' = type, 'val1~4' depend on the type.
- * 'rate' = base success rate. 10000 = 100%
- * 'tick' is base duration
- * 'total_tick' is total duration
- * 'flag':
- *  &1: Cannot be avoided (it has to start)
- *  &2: Tick should not be reduced (by vit, luk, lv, etc)
- *  &4: sc_data loaded, no value has to be altered.
- *  &8: rate should not be reduced
- * &16: don't send SI
- *------------------------------------------*/
+/**
+ * Starts a status change with a set remaining time.
+ *
+ * @param src  Status change source bl.
+ * @param bl   Status change target bl.
+ * @param type Status change type.
+ * @param rate Base success rate. 1 means 0.01%, 10000 means 100%.
+ * @param val1 Additional value (meaning depends on type).
+ * @param val2 Additional value (meaning depends on type).
+ * @param val3 Additional value (meaning depends on type).
+ * @param val4 Additional value (meaning depends on type).
+ * @param tick Remaining duration (miliseconds). (if flag doesn't contain SCFLAG_LOADED, it will become the final total_tick)
+ * @param total_tick Base duration (milliseconds).
+ * @param flag Special flags.
+ *
+ * @retval 0 if no status change happened.
+ * @retval 1 if the status change was successfully applied.
+ */
 int status_change_start_sub(struct block_list *src, struct block_list *bl, enum sc_type type, int rate, int val1, int val2, int val3, int val4, int tick, int total_tick, int flag) {
 	struct map_session_data *sd = NULL;
 	struct homun_data *hd;
@@ -8051,7 +8056,7 @@ int status_change_start_sub(struct block_list *src, struct block_list *bl, enum 
 	if( !(flag&(1|4)) )
 	{
 		total_tick = status_get_sc_def(src, bl, type, rate, total_tick, flag);
-		if( !total_tick) return 0;
+		if(!total_tick) return 0;
 	}
 
 	sd = BL_CAST(BL_PC, bl);
