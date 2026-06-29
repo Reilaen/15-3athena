@@ -11109,8 +11109,107 @@ int status_change_start_sub(struct block_list *src, struct block_list *bl, enum 
 
 		if (flag & 4 && sc && tick > 0) {
 			switch (type) {
+				case SC_OVERHEAT_LIMITPOINT:
+					adjusted_tick = tick + val1 * 30000;
+					break;
+				case SC_SIGHT:
+				case SC_RUWACH:
+				case SC_SIGHTBLASTER:
+					adjusted_tick = tick + val2 * 20;
+					break;
+				case SC_ANGRIFFS_MODUS:
+				case SC_FULL_THROTTLE:
+				case SC_KINGS_GRACE:
+				case SC_HIDING:
+					adjusted_tick = tick + val2 * 1000;
+					break;
+				case SC_REBOUND:
+					adjusted_tick = tick + val2 * 2000;
+					break;
+				case SC_GOSPEL:
+					adjusted_tick = tick + val2 * 10000;
+					break;
+				case SC_SV_ROOTTWIST:
+				case SC_FRIGG_SONG:
+				case SC_DANCING:
+				case SC_MAGNETICFIELD:
+					adjusted_tick = tick + val3 * 1000;
+					break;
+				case SC_SATURDAY_NIGHT_FEVER:
+					adjusted_tick = tick + val3 * 3000;
+					break;
+				case SC_RAISINGDRAGON:
+				case SC_BANDING:
+					adjusted_tick = tick + val3 * 5000;
+					break;
+				case SC_FRESHSHRIMP:
+					adjusted_tick = tick + val3 * val2;
+					break;
+				case SC_TENSIONRELAX:
+				case SC_BERSERK:
+					adjusted_tick = tick + val3 * val4;
+					break;
+				case SC_CREATINGSTAR:
+				case SC_SPLASHER:
+					adjusted_tick = tick + val4 * 500;
+					break;
+				case SC_CBC:
+				case SC_HELPANGEL:
+				case SC_KAGEMUSYA:
+				case SC_BLOOD_SUCKER:
+				case SC_CURSEDCIRCLE_TARGET:
+				case SC_GIANTGROWTH:
+				case SC_CRYSTALIZE:
+				case SC_WEAPONBLOCKING:
+				case SC_MEIKYOUSISUI:
+				case SC_SPHERE_1:
+				case SC_SPHERE_2:
+				case SC_SPHERE_3:
+				case SC_SPHERE_4:
+				case SC_SPHERE_5:
+				case SC_ELECTRICSHOCKER:
+				case SC__REPRODUCE:
+				case SC__SHADOWFORM:
+				case SC__INVISIBILITY:
+				case SC_STRIKING:
+				case SC_SIRCLEOFNATURE:
+				case SC_MELODYOFSINK:
+					adjusted_tick = tick + val4 * 1000;
+					break;
+				case SC_DEEPSLEEP:
+				case SC_SIREN:
+					adjusted_tick = tick + val4 * 2000;
+					break;
+				case SC_SOULUNITY:
+				case SC_OBLIVIONCURSE:
+					adjusted_tick = tick + val4 * 3000;
+					break;
+				case SC_MAGICMUSHROOM:
+					adjusted_tick = tick + val4 * 4000;
+					break;
+				case SC_EARTH_INSIGNIA:
+				case SC_WIND_INSIGNIA:
+				case SC_WATER_INSIGNIA:
+				case SC_FIRE_INSIGNIA:
+				case SC_BOSSMAPINFO:
+				case SC_RENOVATIO:
+				case SC_SONG_OF_MANA:
 				case SC_INSPIRATION:
 					adjusted_tick = tick + val4 * 5000;
+					break;
+				case SC_DORAM_BUF_01:
+				case SC_DORAM_BUF_02:
+				case SC_STOMACHACHE:
+				case SC_ABUNDANCE:
+				case SC_LG_REFLECTDAMAGE:
+					adjusted_tick = tick + val4 * 10000;
+					break;
+				case SC_STEALTHFIELD_MASTER:
+					adjusted_tick = tick + val4 * (2000 + 1000 * val1);
+					break;
+				case SC_S_LIFEPOTION:
+				case SC_L_LIFEPOTION:
+					adjusted_tick = tick + val4 * (1000 * val2);
 					break;
 			}
 		}
