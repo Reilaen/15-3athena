@@ -11103,8 +11103,20 @@ int status_change_start_sub(struct block_list *src, struct block_list *bl, enum 
 
 	if (!(flag & 4))
 		tick = total_tick; // When starting a new SC (not loading), its remaining duration is the same as the total
-	if (!(flag & 16) && !(flag & 4 && StatusDisplayType[type]))
-		clif_status_change_sub(bl, bl->id, StatusIconChangeTable[type], 1, tick, total_tick, (val_flag & 1) ? val1 : 1, (val_flag & 2) ? val2 : 0, (val_flag & 4) ? val3 : 0, sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS);
+
+	if (!(flag & 16) && !(flag & 4 && StatusDisplayType[type])) {
+		int adjusted_tick = tick;
+
+		if (flag & 4 && sc && tick > 0) {
+			switch (type) {
+				case SC_INSPIRATION:
+					adjusted_tick = tick + val4 * 5000;
+					break;
+			}
+		}
+
+		clif_status_change_sub(bl, bl->id, StatusIconChangeTable[type], 1, adjusted_tick, total_tick, (val_flag & 1) ? val1 : 1, (val_flag & 2) ? val2 : 0, (val_flag & 4) ? val3 : 0, sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS);
+	}
 
 	/**
 	 * used as temporary storage for scs with interval ticks, so that the actual duration is sent to the client first.
