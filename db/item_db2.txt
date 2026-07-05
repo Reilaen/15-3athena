@@ -4422,6 +4422,7 @@
 16679,Universal_Catalog_Gold_Box10_,Universal Catalog Gold 10 Box,2,0,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 12581,10; },{},{}
 16680,Universal_Catalog_Gold_Box50_,Universal Catalog Gold 50 Box,2,0,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 12581,50; },{},{}
 16681,BR_Independence_Scroll,BR Independence Scroll,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ /*getgroupitem(IG_BR_Independence_Scroll)*/; },{},{}
+16682,Boarding_Halter_Box,Boarding Halter Box,18,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ /*getgroupitem(IG_Boarding_Halter_Box)*/; /*rentitem 12622,604800;*/ },{},{}
 16683,B_Halter_Box_30Days,B Halter Box 30Days,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ rentitem 12622,2592000; },{},{}
 16684,Wing_Of_Fly_Box10,Wing Of Fly Box10,2,20,,0,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 601,10; },{},{}
 16687,RWC2010_SuitcaseA,RWC2010 SuitcaseA,2,20,,10,,,,,0xFFFFFFFF,63,2,,,,,,{ /*getgroupitem(IG_RWC2010_SuitcaseA)*/; },{},{}
@@ -5771,6 +5772,24 @@
 6727,Arranged_Photo_Album,Arranged Photo Album,3,10,,0,,,,,,,,,,,,,{},{},{}
 15100,Frozen_Breastplate,Frozen Breastplate,5,20,,1500,,20,,1,0xFFFFFFFF,63,2,16,,130,1,0,{ bonus bDefEle,Ele_Water; },{},{}
 15101,Harden_Breastplate,Hardened Breastplate,5,20,,1500,,20,,1,0xFFFFFFFF,63,2,16,,130,1,0,{ bonus bDefEle,Ele_Earth; },{},{}
+20279,C_Cheering_Whistle,Costume Cheering Whistle,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,1,0,952,{},{},{}
+20280,C_Well-Chewed_Pencil,Costume Well-Chewed Pencil,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,1,0,555,{},{},{}
+20281,C_Kindergarten_Hat,Costume Kindergarten Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,977,{},{},{}
+20282,C_White_Student_Cap,Costume White Student Cap,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,877,{},{},{}
+20283,C_Over_Protector,Costume Over Protector,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1329,{},{},{}
+20284,C_Cherry_Blossom_Hat,Costume Sakura Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1330,{},{},{}
+20294,C_Savage_Babe_Hat,Costume Savage Babe Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,553,{},{},{}
+20295,C_Poring_Sunglasses,Costume Poring Sunglasses,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,1,0,954,{},{},{}
+20296,C_Yoyo_Hat,Costume Yoyo Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,391,{},{},{}
+20297,C_Cactus_Hat,Costume Cactus Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,615,{},{},{}
+20298,C_Happy_Lunatic_Ear,Costume Happy Lunatic Hanging Ear,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,1,0,1340,{},{},{}
+20299,C_Face_Crusher,Costume Face Crusher,5,0,,0,,,,0,0xFFFFFFFF,63,2,6144,,1,0,1341,{},{},{}
+20300,C_Hill_Wind_Mask,Costume Hill Wind Mask,5,0,,0,,,,0,0xFFFFFFFF,63,2,7168,,1,0,1342,{},{},{}
+20301,C_Golden_Savage_Hat,Costume Golden Savage Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,648,{},{},{}
+20302,C_Beelzebub_Crown,Costume Beelzebub Crown,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,1343,{},{},{}
+20303,C_Mandragora_Cap,Costume Mandragora Cap,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,402,{},{},{}
+20304,C_Raccoon_Hat,Costume Raccoon Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,118,{},{},{}
+20305,C_NettyHeart_BalloonGum,Costume Nettie Heart Bubble Gum,5,20,,0,,0,,0,0xFFFFFFFF,63,2,4096,,0,0,720,{},{},{}
 22515,Twisted_Key_of_Time,Twisted Key of Time,3,10,,300,,,,,,,,,,,,,{},{},{}
 22516,Dark_Red_Clot,Black As Night Piece,3,10,,0,,,,,,,,,,,,,{},{},{}
 22517,Loki_Summon_Scroll,Rocker Summoning Scroll,3,10,,0,,,,,,,,,,,,,{},{},{}
@@ -5796,5 +5815,11 @@
 27222,SLD_Pyuriel_Card,Sealed Fallen Pyuriel Card,6,20,,10,,,,,,,,2,,,,,{ if (getrefine()<15) { bonus bCritAtkRate,20; bonus2 bSubRace,RC_All,-20; } else { bonus bCritAtkRate,25; bonus2 bSubRace,RC_All,-15; } },{},{}
 27224,SLD_Kades_Card,Sealed Guardian Kades Card,6,20,,10,,,,,,,,4,,,,,{ bonus2 bSubEle,Ele_Holy,-100; bonus2 bSubEle,Ele_Ghost,-100; if (getrefine()<15) { bonus2 bSubEle,Ele_Water,20; bonus2 bSubEle,Ele_Earth,20; bonus2 bSubEle,Ele_Fire,20; bonus2 bSubEle,Ele_Wind,20; bonus2 bSubEle,Ele_Dark,20; bonus2 bSubEle,Ele_Undead,20; } else { bonus2 bSubEle,Ele_Water,20; bonus2 bSubEle,Ele_Earth,20; bonus2 bSubEle,Ele_Fire,20; bonus2 bSubEle,Ele_Wind,20; bonus2 bSubEle,Ele_Dark,20; bonus2 bSubEle,Ele_Undead,20; } },{},{}
 27225,SLD_Timeholder_Card,Sealed Time Holder Card,6,20,,10,,,,,,,,2,,,,,{ if (getrefine()<15) { bonus bMatkRate,10; bonus bUseSPrate,20; } else { bonus bMatkRate,15; bonus bUseSPrate,15; } },{},{}
+//===================================================================
+// More Costumes
+//===================================================================
+31054,C_Sting_Hat,Costume Sting Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,504,{},{},{}
+31055,C_Poring_Soap_Pipe,Costume Poring Soap Pipe,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,1,0,1499,{},{},{}
+31090,C_Angelring_Hat,Costume Angelring Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,1,0,348,{},{},{}
 470084,Rune_Greave_JP,Rune Greaves,5,0,,400,,12,,0,0xFFFFFFFF,56,2,64,1,100,1,,{ .@r = getrefine(); bonus bMdef,10; bonus bMaxHPrate,3; bonus bMaxSPrate,3; bonus bSpeedRate,25; bonus bAllStats,3*(getskilllv("RK_DRAGONBREATH")+getskilllv("RK_DRAGONBREATH_WATER")/2); bonus2 bSkillAtk,"RK_HUNDREDSPEAR",getskilllv("RK_DRAGONHOWLING")*40; bonus2 bSkillAtk,"LK_SPIRALPIERCE",getskilllv("RK_DRAGONHOWLING")*40; if (getskilllv("RK_DRAGONTRAINING") == 5) bonus2 bSkillCooldown,"RK_HUNDREDSPEAR",-1000; if (getskilllv("RK_PHANTOMTHRUST") == 5) bonus bFixedCastrate,-50; if (.@r>=5) { bonus bMaxHPrate,7; bonus bMaxSPrate,7; bonus bDelayrate,-10; } if (.@r>=7) { bonus bMaxHPrate,10; bonus bMaxSPrate,10; bonus bDelayrate,-10; } },{},{}
 470085,Rune_Greave_JP_,Rune Greaves,5,0,,400,,12,,1,0xFFFFFFFF,56,2,64,1,100,1,,{ .@r = getrefine(); bonus bMdef,10; bonus bMaxHPrate,3; bonus bMaxSPrate,3; bonus bSpeedRate,25; bonus bAllStats,3*(getskilllv("RK_DRAGONBREATH")+getskilllv("RK_DRAGONBREATH_WATER")/2); bonus2 bSkillAtk,"RK_HUNDREDSPEAR",getskilllv("RK_DRAGONHOWLING")*40; bonus2 bSkillAtk,"LK_SPIRALPIERCE",getskilllv("RK_DRAGONHOWLING")*40; if (getskilllv("RK_DRAGONTRAINING") == 5) bonus2 bSkillCooldown,"RK_HUNDREDSPEAR",-1000; if (getskilllv("RK_PHANTOMTHRUST") == 5) bonus bFixedCastrate,-50; if (.@r>=5) { bonus bMaxHPrate,7; bonus bMaxSPrate,7; bonus bDelayrate,-10; } if (.@r>=7) { bonus bMaxHPrate,10; bonus bMaxSPrate,10; bonus bDelayrate,-10; } },{},{}
