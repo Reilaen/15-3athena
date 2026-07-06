@@ -257,15 +257,15 @@
 			switch(.@fish_move) {
 				case 1:
 					cutin("2013_summer_fish_3", 3);
-					mes("^880099The fish is pulling the line tightly.^000000");
+					mes("^1C86EEThe fish is pulling the line tightly.^000000");
 					break;
 				case 2:
 					cutin("2013_summer_fish_3", 3);
-					mes("^0000FFThe fish appears to be trying to escape.^000000");
+					mes("^32CD32The fish appears to be trying to escape.^000000");
 					break;
 				case 3:
 					cutin("2013_summer_fish_3", 3);
-					mes("^007700The fish is getting closer and closer!^000000");
+					mes("^D15FEEThe fish is getting closer and closer!^000000");
 					break;
 			}
 			mes(" ");
@@ -273,7 +273,7 @@
 
 			.@start_time = gettimetick(2);
 
-			.@player_move = select("^880099Pull the Line!^000000", "^0000FFHold firmly^000000", "^007700Let the fish pull the line^000000");
+			.@player_move = select("^1C86EEPull the Line!^000000", "^32CD32Hold firmly^000000", "^D15FEELet the fish pull the line^000000");
 
 			clear;
 			setd("fi_fish_count_" + getarg(0), getarg(1) - 1);
