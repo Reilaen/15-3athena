@@ -57,9 +57,9 @@
 		setarray($@fi_bait_567, 6772, 6773, 7768);
 		setarray($@fi_bait_567_wgts, 500, 1500, 1000);
 
-		// Decayed Nail: Jumbo Shrimp
-		setarray($@fi_bait_957, 6902);
-		setarray($@fi_bait_957_wgts, 500);
+		// Decayed Nail: Squid, Jumbo Shrimp
+		setarray($@fi_bait_957, 7768, 6902);
+		setarray($@fi_bait_957_wgts, 500, 1000);
 
 		// Clam Flesh: Shark, Octopus,  Snapper, Piranha
 		setarray($@fi_bait_966, 6770, 6772, 6773, 6774);
