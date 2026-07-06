@@ -269,7 +269,7 @@
 					break;
 			}
 			mes(" ");
-			mes("^FF0000You have 3 seconds to react!^000000");
+			mes("^FF0000You have 4 seconds to react!^000000");
 
 			.@start_time = gettimetick(2);
 
@@ -278,7 +278,7 @@
 			clear;
 			setd("fi_fish_count_" + getarg(0), getarg(1) - 1);
 
-			if(gettimetick(2) - .@start_time > 3) {
+			if(gettimetick(2) - .@start_time > 4) {
 				cutin("2013_summer_fish_6", 3);
 				mes("You took too long and the fish got away.");
 				close3;
