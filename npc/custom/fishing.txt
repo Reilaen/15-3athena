@@ -250,7 +250,7 @@
 	close3;
 
 	S_Fishing_Minigame:
-		.@fish_move_count = rand(3,10);
+		.@fish_move_count = rand(2,4);
 
 		for(.@i = 0; .@i < .@fish_move_count; .@i++) {
 			.@fish_move = rand(1,3);
