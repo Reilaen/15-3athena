@@ -432,7 +432,6 @@ prontera,157,178,4	script	Mauz the Fish Collector	496,{
 	S_GetPrice:
 		switch(getarg(0)) {
 			case 6899:
-			case 6900:
 				return 30;
 			case 6774:
 				return 15;
