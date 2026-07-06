@@ -3,9 +3,7 @@
 		setarray($@fi_rods[0], 2764, 5855);
 		setarray($@fi_rod_cast_mod[0], -3, 0);
 
-		$@fi_min_cast_time = 5;
-		$@fi_max_cast_time = 10;
-
+		$@fi_cast_time = 5;
 		$@fi_fish_amout = 5;
 
 		setarray($@fi_baits, 567, 957, 966, 962, 960, 623, 1055, 928, 955, 909, 1024, 579, 517);
@@ -164,8 +162,7 @@
 	cutin("", 255);
 	mes("Waiting for something to bite...");
 
-	.@cast_time = rand($@fi_min_cast_time, $@fi_max_cast_time) + $@fi_rod_cast_mod[.@rod_idx];
-	progressbar("ffffff", .@cast_time);
+	progressbar("ffffff", $@fi_cast_time + $@fi_rod_cast_mod[.@rod_idx]);
 
 	clear;
 
