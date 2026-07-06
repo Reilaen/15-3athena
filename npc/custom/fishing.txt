@@ -10,7 +10,7 @@
 
 		// DROP TIERS //
 		setarray($@fi_dp_tiers$, "normal", "rare", "junk");
-		setarray($@fi_dp_wgts, 8900, 100, 1000);
+		setarray($@fi_dp_wgts, 8000, 1000, 1000);
 
 		// DROPTABLES //
 		setarray($@fi_dp_normal, 579, 6049, 6096);
