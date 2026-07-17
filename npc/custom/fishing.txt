@@ -399,7 +399,9 @@ prontera,157,178,4	script	Mauz the Fish Collector	496,{
 	.@currency_amount = callsub(S_GetPrice, .@chosen_fish);
 
 	mes("[Mauz the Fish Collector]");
-	mes("For <ITEM>" + getitemname(.@chosen_fish) + "<INFO>" + .@chosen_fish + "</INFO></ITEM> I can offer you " + .@currency_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(.currency)) + "<INFO>" + .currency + "</INFO></ITEM>. Do you want to trade?");
+	mes("For <ITEM>" + getitemname(.@chosen_fish) + "<INFO>" + .@chosen_fish + "</INFO></ITEM> can make you the following offer:");
+	mes(.@currency_amount + " <ITEM>" + callfunc("F_GetPlural", getitemname(.currency)) + "<INFO>" + .currency + "</INFO></ITEM>.");
+	mes("Do you want to trade?");
 	next;
 	if(select("Yes, please.", "No, thank you.") == 2) {
 		goto(OnCancel);
