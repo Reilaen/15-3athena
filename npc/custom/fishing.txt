@@ -406,6 +406,8 @@ prontera,157,178,4	script	Mauz the Fish Collector	496,{
 	}
 
 	.@fish_amount = countitem(.@chosen_fish);
+	.@selected_fish_amount = 1;
+
 	if(.@fish_amount > 1) {
 		mes("[Mauz the Fish Collector]");
 		mes "How many <ITEM>" + callfunc("F_GetPlural", getitemname(.@chosen_fish)) + "<INFO>" + .@chosen_fish + "</INFO></ITEM> do you want to trade?";
