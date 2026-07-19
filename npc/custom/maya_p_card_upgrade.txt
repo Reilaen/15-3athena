@@ -1,0 +1,62 @@
+prontera,149,175,4	script	Mia	750,{
+	mes("[Mia]");
+	mes("Hey do you want a <ITEM>" + getitemname(.reward) + "<INFO>" + .reward + "</INFO></ITEM>?");
+	mes("If you bring me:");
+	callsub(S_ListQuestItems);
+	mes("I can make you one. What do you say?");
+	next;
+	if(select("I have the items!", "No, maybe later.") == 2) {
+		mes("[Mia]");
+		mes("Good. Come back if you change your mind!");
+		close;
+	}
+
+	mes("[Mia]");
+	mes("Let's see..");
+	if (callsub(S_CheckQuestItems) > 0) {
+		mes "It seems like you are still missing some things. Come back if you got them!";
+		close;
+	}
+
+	callsub(S_TakeQuestRequirements);
+	getitem(.reward, 1);
+	mes("You brought everything I asked for. Here is your <ITEM>" + getitemname(.reward) + "<INFO>" + .reward + "</INFO></ITEM>!");
+	close;
+
+	S_ListQuestItems:
+		for(.@i = 0; .@i < getarraysize(.price_items); .@i += 2) {
+		    mes("- " + .price_items[.@i + 1] + " <ITEM>" + getitemname(.price_items[.@i]) + "<INFO>" + .price_items[.@i] + "</INFO></ITEM>");
+		}
+		return;
+
+	S_CheckQuestItems:
+		for(.@i = 0; .@i < getarraysize(.price_items); .@i += 2) {
+		    .@temp_ids[.@i] = .price_items[.@i];
+		    .@temp_needed[.@i] = .price_items[.@i + 1];
+
+		    if (countitem(.@temp_ids[.@i]) < .@temp_needed[.@i]) {
+		        .@missing++;
+		    }
+		}
+
+	    if(.@missing == 0) {
+			return 0;
+		}
+
+	    for(.@i = 0; .@i < getarraysize(.price_items); .@i += 2) {
+			.@current = countitem(.@temp_ids[.@i]);
+			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + .@current + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + getitemname(.@temp_ids[.@i]) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
+		}
+
+		return .@missing;
+
+	S_TakeQuestRequirements:
+		for(.@i = 0; .@i < getarraysize(.price_items); .@i += 2) {
+			delitem(.price_items[.@i], .price_items[.@i + 1]);
+		}
+		return;
+
+	OnInit:
+		setarray(.price_items, 5171, 1, 4198, 1, 4103, 1);
+		.reward = 4549;
+}
