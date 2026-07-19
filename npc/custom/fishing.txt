@@ -330,10 +330,7 @@ prontera,159,178,4	script	Mew the Sailor	544,{
 		if(Zeny < .zeny_price) .@missing++;
 
 	    for(.@i = 0; .@i < getarraysize(.itemlist); .@i += 2) {
-	        .@temp_ids[.@i] = .itemlist[.@i];
-	        .@temp_needed[.@i] = .itemlist[.@i + 1];
-
-	        if (countitem(.@temp_ids[.@i]) < .@temp_needed[.@i]) {
+	        if (countitem(.itemlist[.@i]) < .itemlist[.@i + 1]) {
 	            .@missing++;
 	        }
 	    }
@@ -347,8 +344,11 @@ prontera,159,178,4	script	Mew the Sailor	544,{
         }
 
 	    for(.@i = 0; .@i < getarraysize(.itemlist); .@i += 2) {
-			.@current = countitem(.@temp_ids[.@i]);
-			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + .@current + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + getitemname(.@temp_ids[.@i]) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
+			.@id = .itemlist[.@i];
+			.@needed = .itemlist[.@i + 1];
+			.@current = countitem(.@id);
+
+			mes("- " + ((.@current >= .@needed) ? "^00FF00" : "^FF0000") + .@current + "/" + .@needed + "^000000 <ITEM>" + getitemname(.@id) + "<INFO>" + .@id + "</INFO></ITEM>");
 		}
 
 		return .@missing;

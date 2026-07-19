@@ -30,11 +30,8 @@ prontera,149,175,4	script	Mia	750,{
 		return;
 
 	S_CheckQuestItems:
-		for(.@i = 0; .@i < getarraysize(.price_items); .@i += 2) {
-		    .@temp_ids[.@i] = .price_items[.@i];
-		    .@temp_needed[.@i] = .price_items[.@i + 1];
-
-		    if (countitem(.@temp_ids[.@i]) < .@temp_needed[.@i]) {
+		for(.@i = 0; .@i < getarraysize(.itemlist); .@i += 2) {
+		    if (countitem(.itemlist[.@i]) < .itemlist[.@i + 1]) {
 		        .@missing++;
 		    }
 		}
@@ -43,9 +40,12 @@ prontera,149,175,4	script	Mia	750,{
 			return 0;
 		}
 
-	    for(.@i = 0; .@i < getarraysize(.price_items); .@i += 2) {
-			.@current = countitem(.@temp_ids[.@i]);
-			mes("- " + ((.@current >= .@temp_needed[.@i]) ? "^00FF00" : "^FF0000") + .@current + "/" + .@temp_needed[.@i] + "^000000 <ITEM>" + getitemname(.@temp_ids[.@i]) + "<INFO>" + .@temp_ids[.@i] + "</INFO></ITEM>");
+		for(.@i = 0; .@i < getarraysize(.itemlist); .@i += 2) {
+			.@id = .itemlist[.@i];
+			.@needed = .itemlist[.@i + 1];
+			.@current = countitem(.@id);
+
+			mes("- " + ((.@current >= .@needed) ? "^00FF00" : "^FF0000") + .@current + "/" + .@needed + "^000000 <ITEM>" + getitemname(.@id) + "<INFO>" + .@id + "</INFO></ITEM>");
 		}
 
 		return .@missing;
