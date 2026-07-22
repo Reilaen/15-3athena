@@ -1,0 +1,416 @@
+//===== rAthena Script =======================================
+//= tr0n's Questboard
+//===== By: ==================================================
+//= tr0n
+//===== Current Version: =====================================
+//= 1.7.1 [Nyx]
+//===== Compatible With: =====================================
+//= rAthena SVN / 3ceam
+//===== Description: =========================================
+//= Easily add collection and hunting quests.
+//===== Additional Comments: =================================
+// 1.0.0 Release
+// 1.1.0 Added zeny reward
+// 1.2.0 Rewrote checkmob and killcounter
+// 1.3.1 Added level restriction
+// 1.3.4 Added Reward Item Amount
+// 1.4.4 Added Quest delay
+// 1.5.4 Added repeatable Quests
+// 1.6.4 Added party support
+// 1.6.5 Bug fixes for party support
+// 1.6.5.1 Some changes to make it compatible to 3ceam [15peaces]
+// 1.6.5.2 Added NyanPoint & EventPoint rewards [15peaces]
+// 1.6.5.3 Fix Exp Output, add Rewards, Fix Bloody Branch Problem [GM Sakura]
+// 1.6.5.4 FIXED POINT-BUG! [15peaces]
+// 1.6.5.5 Added CardCollection Support. [15peaces]
+// 1.7 Rewrite of the questboard [Nyx]
+// 1.7.1 Addition of the option to hand out random prices from a list [Nyx]
+//============================================================
+brasilis,233,183,5	script	Questboard	857,{
+	function AddQuest;
+	function ShowQuestInfo;
+	function IncreaseKillCount;
+	function AddNyanPoints;
+	function AddEventPoints;
+
+	if(qb_current_quest_id > 0) {
+		mes("[Questboard]");
+		ShowQuestInfo(qb_current_quest_id);
+		next;
+		if(select("Finish:Abort") == 2){
+			mes("[Questboard]");
+			mes("Quest aborted.");
+
+			if(getd(".qb_" + qb_current_quest_id + "_type") == 2) {
+				for(.@i = 0; .@i < getarraysize(getd(".qb_" + qb_current_quest_id + "_collection_requirements")); .@i += 2){
+					setd("qb_" + qb_current_quest_id + "_" + getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]") + "_kill_count", 0);
+					setd("qb_mob_requirements_" + getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]"), 0);
+				}
+			}
+
+			qb_current_quest_id = 0;
+			close;
+		}
+
+		.@quest_type = getd(".qb_" + qb_current_quest_id + "_type");
+		for(.@i = 0; .@i < getarraysize(getd(".qb_" + qb_current_quest_id + "_collection_requirements")); .@i += 2) {
+			.@requirement_id = getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]");
+
+			if(.@quest_type == 2) {
+				.@collected_amount = getd("qb_" + qb_current_quest_id + "_" + .@requirement_id + "_kill_count");
+			} else {
+				.@collected_amount = countitem(.@requirement_id);
+			}
+
+			if(.@collected_amount >= getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + (.@i + 1) + "]")) {
+				.@completed_collections += 2;
+			}
+		}
+
+		if(.@completed_collections < getarraysize(getd(".qb_" + qb_current_quest_id + "_collection_requirements"))) {
+			mes "[Questboard]";
+			mes "You didn't complete all tasks.";
+			close;
+		}
+
+		if(.@quest_type != 2) {
+			for(.@i = 0; .@i < getarraysize(getd(".qb_" + qb_current_quest_id + "_collection_requirements")); .@i += 2) {
+				delitem(getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]"), getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + (.@i + 1) + "]"));
+			}
+		} else {
+		    for(.@i = 0; .@i < getarraysize(getd(".qb_" + qb_current_quest_id + "_collection_requirements")); .@i += 2) {
+				setd("qb_" + qb_current_quest_id + "_" + getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]") + "_kill_count", 0);
+				setd("qb_mob_requirements_" + getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]"), 0);
+			}
+		}
+
+		mes "[Questboard]";
+		mes "Congratulation! Here is your Reward.";
+		.@reward_count = getarraysize(getd(".qb_" + qb_current_quest_id + "_reward_items"));
+		if(.@reward_count > 0) {
+			if(!getd(".qb_" + qb_current_quest_id + "_random_item")) {
+				for(.@i = 0; .@i < .@reward_count; .@i += 2) {
+					getitem(getd(".qb_" + qb_current_quest_id + "_reward_items[" + .@i + "]"), getd(".qb_" + qb_current_quest_id + "_reward_items[" + (.@i + 1) + "]"));
+				}
+			} else {
+				.@rand_item = rand(0, (.@reward_count >> 1) - 1) * 2;
+				getitem(getd(".qb_" + qb_current_quest_id + "_reward_items[" + .@rand_item + "]"), getd(".qb_" + qb_current_quest_id + "_reward_items[" + (.@rand_item + 1) + "]"));
+			}
+		}
+
+		Zeny += getd(".qb_" +qb_current_quest_id + "_reward_zeny");
+
+		.@nyan_points = getd(".qb_" + qb_current_quest_id + "_reward_nyan_points");
+		if(.@nyan_points > 0)
+			AddNyanPoints(.@nyan_points);
+
+		.@event_points = getd(".qb_" + qb_current_quest_id + "_reward_event_points");
+		if(.@event_points > 0)
+			AddEventPoints(.@event_points);
+
+		getexp(getd(".qb_" + qb_current_quest_id + "_reward_base_exp"), getd(".qb_" + qb_current_quest_id + "_reward_job_exp"));
+
+		setd("qb_" + qb_current_quest_id + "_quest_cooldown", gettimetick(2) + .quest_cooldown);
+
+		qb_current_quest_id = 0;
+		close;
+	}
+
+	QuestMenuLoop:
+		mes("[Questboard]");
+		mes("^00a800Green Quests = Exp-Rewards^000000");
+		mes("^ff0000Red Quests = Item-Rewards^000000");
+		mes("^ff7f27Orange Quests = Item- + Exp-Rewards^000000");
+		mes("^0C38EDBlue Quests = Event Point Rewards^000000");
+		mes("^7509D7Purple Quests = Nyan Point Rewards^000000");
+		mes(" ");
+		mes("After selecting your category, you will get a list for quests fitting for your current level.");
+		next;
+
+		.@type = select((.collection) ? "Collection Quests" : "", (.hunting) ? "Hunting Quests" : "", (.cards) ? "Card Collection Quests" : "");
+
+		.@quest_menu$ = "";
+		for(.@i = 1; .@i <= .quest_count; .@i++) {
+			if(getd(".qb_"+ .@i + "_type") == .@type && BaseLevel>=getd(".qb_" + .@i + "_min_level") && BaseLevel <=getd(".qb_" + .@i + "_max_level")) {
+				.@quest_menu$ += getd(".qb_" + .@i + "_name$") + " " + (gettimetick(2) < getd("qb_" + .@i + "_quest_cooldown") ? "(On cooldown)" : "");
+			}
+
+			.@quest_menu$ += ":";
+		}
+
+		.@selected_quest = select(.@quest_menu$);
+		if(gettimetick(2) < getd("qb_" + .@selected_quest + "_quest_cooldown")) {
+			mes("[Questboard]");
+			mes("You have to wait ^0000FF" + callfunc("Time2Str", getd("qb_" + .@selected_quest + "_quest_cooldown")) + "^000000 to do this quest again.");
+			next;
+			goto(QuestMenuLoop);
+		}
+
+		mes("[Questboard]");
+		ShowQuestInfo(.@selected_quest);
+		next;
+
+		select("Accept");
+
+		mes("[Questboard]");
+		mes("Quest accepted.");
+		qb_current_quest_id = .@selected_quest;
+
+		if(getd(".qb_"+ qb_current_quest_id + "_type") == 2) {
+			for(.@i = 0; .@i < getarraysize(getd(".qb_" + qb_current_quest_id + "_collection_requirements")); .@i += 2) {
+				setd("qb_mob_requirements_" + getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + .@i + "]"), getd(".qb_" + qb_current_quest_id + "_collection_requirements[" + (.@i + 1) + "]"));
+			}
+		}
+		close;
+
+	OnNPCKillEvent:
+		if(inarray(.qb_mob_requirements, killedrid) == -1)  end;
+
+		if(qb_current_quest_id > 0 && getd(".qb_"+ qb_current_quest_id + "_type") == 2) {
+			IncreaseKillCount(killedrid);
+		}
+
+		.@party_id = getcharid(1);
+		if(.@party_id == 0) end;
+
+		.@origin_id = getcharid(3);
+		getmapxy(.@origin_map$, .@origin_x,.@origin_y, BL_PC);
+		.@origin_killedrid = killedrid;
+
+		getpartymember(.@party_id, 2);
+		for(.@i = 0; .@i < $@partymembercount; .@i++) {
+			if(!attachrid($@partymemberaid[.@i]) || getcharid(3) == .@origin_id || HP <= 0 || qb_current_quest_id == 0 || getd(".qb_"+ qb_current_quest_id + "_type") != 2) continue;
+
+			getmapxy(.@map$, .@x, .@y, BL_PC);
+			if(.@origin_map$ != .@map$ || distance(.@origin_x, .@origin_y, .@x, .@y) > .party_range) continue;
+
+			IncreaseKillCount(.@origin_killedrid);
+		}
+		end;
+
+	OnInit:
+		// Activate/Deactivate quest categories (1 - activated, 0 - deactivated)
+		.collection = 1;
+		.hunting = 1;
+		.cards = 0;
+
+		// Quest Cooldown (seconds)
+		// 24 hours = 86400 seconds
+		.quest_cooldown = 86400;
+
+		// Max range for party support (+- x & y coordinations)
+		.party_range = 25;
+
+		//Add Quests here
+		//AddQuest("<Quest Name>","<Quest Type>",<Min Lvl>,<Max Lvl>,<Reward Items>,<Give Random Item>,<Zeny Reward>,<NyanPoints Reward>,<EventPoints Reward>,<Base EXP>,<Job EXP>,<Requirements>,...);
+		AddQuest("^3f888fMonthly Quest Special ^000000 In the Christmas bakery",1,50,200,"12299:10",0,0,2,2,0,0,"538:100");
+		AddQuest("^3f888fMonthly Quest Special ^000000 Just Hot Air?",1,50,200,"18844:1",0,0,2,2,0,0,"4235:15");
+		AddQuest("^3f888fMonthly Quest Special ^000000 2026 is coming",1,50,200,"14545:1",0,0,2,2,0,0,"12405:20");
+		AddQuest("^00a800Monsters Crystallization^000000",1,1,60,"",0,0,0,0,4820,4820,"909:100");
+		AddQuest("^00a800Wild Boars Hair^000000",1,10,60,"",0,0,0,0,4820,4820,"1028:200");
+		AddQuest("^00a800Gold Sweety^000000",1,10,60,"",0,0,0,0,4820,4820,"518:50");
+		AddQuest("^00a800Cattails^000000",1,40,80,"",0,0,0,0,44350,4820,"1022:50");
+		AddQuest("^00a800Find the Rainbow^000000",1,40,80,"",0,0,0,0,246330,5000,"1013:50");
+		AddQuest("^00a800Get rid of the Bees^000000",1,40,80,"",0,0,0,0,880250,5052,"939:200");
+		AddQuest("^00a800Deadly Flower^000000",1,40,100,"",0,0,0,0,880250,5052,"1032:150");
+		AddQuest("^00a800Colorful leaves^000000",1,50,115,"",0,0,0,0,995500,51840,"7100:1000");
+		AddQuest("^00a800Bring me a Heart^000000",1,70,120,"",0,0,0,0,1259960,69980,"7561:50");
+		AddQuest("^00a800Reins of Abyss^000000",1,70,120,"",0,0,0,0,1259960,69980,"1064:100");
+		AddQuest("^00a800Sound of Metal^000000",1,70,120,"",0,0,0,0,1259960,69980,"7317:150");
+		AddQuest("^ff0000Refine Help 1^000000",1,100,140,"7619:2",0,0,0,0,0,0,"6224:25");
+		AddQuest("^ff0000Refine Help 2^000000",1,100,140,"7620:2",0,0,0,0,0,0,"6223:25");
+		AddQuest("^ff7f27Magical Ring 1^000000",1,100,140,"12106:1",0,0,0,0,1479960,1479960,"2680:1");
+		AddQuest("^ff7f27Magical Ring 2^000000",1,100,140,"12281:1",0,0,0,0,1479960,1479960,"2616:1");
+		AddQuest("^ff0000Holy Branches^000000",1,100,140,"14596:1",0,0,0,0,0,0,"7939:30");
+		AddQuest("^ff0000Real leather belt^000000",1,100,175,"2959:1",0,0,0,0,0,0,"6403:30");
+		AddQuest("^00a800Bring me a burning Heart^000000",1,120,150,"",0,0,0,0,2954533,2954533,"7097:30");
+		AddQuest("^00a800Peaked Hat under snow^000000",1,120,150,"",0,0,0,0,2954533,2954533,"6021:30");
+		AddQuest("^00a800Spider Legs^000000",1,130,155,"",0,0,0,0,2994533,2994533,"6325:30");
+		AddQuest("^ff7f27Flower of God^000000",1,130,160,"7849:5",0,0,0,0,2994533,2994533,"7510:5");
+		AddQuest("^0C38EDDo not break the nut again^000000",1,145,175,"",0,0,0,5,2994533,3851808,"12346:100");
+		AddQuest("^00a800Toothless Wolf^000000",1,145,175,"",0,0,0,0,2994533,2994533,"7030:200");
+		AddQuest("^ff7f27Soul's of Biolabs^000000",1,160,175,"7849:5",0,0,0,0,4250000,2994533,"6469:20:7345:50");
+		AddQuest("^ff7f27Golden Feather of Life^000000",1,160,175,"7621:2",0,0,0,0,4250000,2994533,"6394:50");
+		AddQuest("^00a800Bug Splashing^000000",1,160,175,"",0,0,0,0,4250000,2994533,"6322:50:6321:50");
+		AddQuest("^ff0000Bloody Breakfast^000000",1,160,200,"12103:5",0,0,0,0,0,0,"604:250:12738:50:6252:400:7449:100");
+		AddQuest("^0C38EDIce Climbing^000000",1,170,185,"",0,0,0,5,0,0,"7066:100");
+		AddQuest("^0C38EDBreaking^000000",1,170,200,"",0,0,0,2,0,0,"603:20");
+		AddQuest("^0C38EDMirror of Wish^000000",1,170,200,"",0,0,0,5,0,0,"747:50");
+		AddQuest("^ff0000Black is Gold^000000",1,170,200,"12281:2",0,0,0,0,0,0,"1003:101");
+		AddQuest("^00a800Leaf of Legend^000000",1,170,200,"",0,0,0,0,4250000,3250000,"7100:2500");
+		AddQuest("^00a800EXP on the Rocks^000000",1,170,200,"",0,0,0,0,4250000,3250000,"7300:2");
+		AddQuest("^ff0000Voices from Biolabs^000000",1,175,200,"12623:2",0,0,0,0,0,0,"6471:25:6470:25:6469:25");
+		AddQuest("^ff7f27Balls of Darkness^000000",1,190,200,"7828:1",0,0,0,0,4250000,3250000,"7511:1000");
+		AddQuest("^ff7f27Curse of Ra^000000",1,190,200,"",0,0,0,0,4250000,3250000,"7211:5");
+		AddQuest("^ff7f27Badge Mummy^000000",1,190,200,"7829:2",0,0,0,0,4250000,3250000,"751:2");
+
+		AddQuest("^3f888fMonthly Quest^000000 For new Year",2,50,200,"554:200",0,0,2,2,0,0,"1246:150");
+		AddQuest("^00a800Poring Hunter^000000",2,1,50,"",0,0,0,0,4820,4820,"1002:20");
+		AddQuest("^00a800Ant Killer^000000",2,10,50,"",0,0,0,0,3500,3500,"1097:25");
+		AddQuest("^00a800Zombie Hunter^000000",2,20,60,"",0,0,0,0,4820,4820,"1015:20");
+		AddQuest("^00a800Poring Hunter 2^000000",2,20,60,"",0,0,0,0,4820,4820,"1031:30");
+		AddQuest("^00a800Get the Raccoon^000000",2,20,60,"",0,0,0,0,5450,4820,"1056:50");
+		AddQuest("^00a800Tree Hunter^000000",2,20,60,"",0,0,0,0,5450,4820,"1033:70");
+		AddQuest("^00a800Mushroom Smasher^000000",2,30,70,"",0,0,0,0,6800,5450,"1077:50");
+		AddQuest("^00a800Hunt the Miners^000000",2,30,70,"",0,0,0,0,26958,16245,"1616:25");
+		AddQuest("^00a800Ghost Buster^000000",2,40,70,"",0,0,0,0,26958,16245,"1151:25");
+		AddQuest("^00a800Plant Killer^000000",2,40,70,"",0,0,0,0,30725,20000,"1368:25");
+		AddQuest("^00a800Amatsu Roulette 1^000000",2,40,70,"",0,0,0,0,30725,20000,"1403:20");
+		AddQuest("^00a800Amatsu Roulette 2^000000",2,40,70,"",0,0,0,0,30725,20000,"1401:20");
+		AddQuest("^00a800Find the Housekeepers^000000",2,60,80,"",0,0,0,0,51500,30000,"1275:20");
+		AddQuest("^00a800Penguin Hunter^000000",2,60,80,"",0,0,0,0,51500,30000,"1391:30");
+		AddQuest("^00a800Heal for Skeleton^000000",2,70,100,"",0,0,0,0,56000,35000,"1028:50");
+		AddQuest("^00a800Bone Bow^000000",2,70,100,"",0,0,0,0,56000,35000,"1016:50");
+		AddQuest("^00a800Snowball^000000",2,70,120,"",0,0,0,0,2554533,65000,"1775:30");
+		AddQuest("^00a800Kick the Cat^000000",2,70,120,"",0,0,0,0,2554533,65000,"1180:50");
+		AddQuest("^00a800Raydric Army^000000",2,70,120,"",0,0,0,0,2554533,65000,"1163:50");
+		AddQuest("^ff0000Bug Eggs^000000",2,100,150,"12281:1",0,0,0,0,0,0,"2088:20:2089:20");
+		AddQuest("^ff0000Bug Killer^000000",2,100,150,"14596:1",0,0,0,0,0,0,"2083:20");
+		AddQuest("^00a800Khalitzburg tickle^000000",2,100,150,"",0,0,0,0,2954533,2954533,"1132:50");
+		AddQuest("^00a800Yeti Hunter^000000",2,100,150,"",0,0,0,0,2954533,2954533,"1986:30");
+		AddQuest("^ff0000Find the Unicorn^000000",2,100,150,"12292:5",0,0,0,0,0,0,"1992:30");
+		AddQuest("^00a800Burning Bird^000000",2,100,160,"",0,0,0,0,2954533,2954533,"1833:30");
+		AddQuest("^ff0000Dog Training^000000",2,100,175,"18756:1",0,0,0,0,0,0,"1092:2");
+		AddQuest("^ff7f27Burning Lizard^000000",2,120,160,"12210:1",0,0,0,0,3551808,3551808,"1831:50");
+		AddQuest("^ff0000Crystal Spider^000000",2,120,160,"12214:2",0,0,0,0,0,0,"2092:100");
+		AddQuest("^ff7f27Kobold Killer^000000",2,120,160,"7849:5",0,0,0,0,3851808,3851808,"2136:50");
+		AddQuest("^ff7f27Trip to Bifrost^000000",2,120,160,"7621:5",0,0,0,0,4250000,1851808,"2137:35");
+		AddQuest("^00a800Undead is not a problem^000000",2,120,160,"",0,0,0,0,4250000,1851808,"1098:100");
+		AddQuest("^00a800Wolf Hunting^000000",2,160,175,"",0,0,0,0,3551808,3551808,"1106:100");
+		AddQuest("^ff0000Fun with Yeti^000000",2,160,175,"12214:1",0,0,0,0,4250000,3851808,"2637:50");
+		AddQuest("^ff7f27Gargoyle Sniping^000000",2,160,175,"7849:5",0,0,0,0,4250000,3551808,"2827:10");
+		AddQuest("^ff7f27The golden Bug^000000",2,160,175,"7621:5",0,0,0,0,4250000,5000000,"1086:2");
+		AddQuest("^0C38EDBurning Bird 2.0^000000",2,170,175,"",0,0,0,3,0,0,"1833:15");
+		AddQuest("^ff0000The Comeback of Hydra^000000",2,170,175,"7849:5",0,0,0,0,0,0,"1068:50");
+		AddQuest("^0C38EDHug a Bug^000000",2,170,175,"",0,0,0,5,0,0,"2083:30");
+		AddQuest("^ff0000Bee for me^000000",2,170,175,"12281:1",0,0,0,0,0,0,"1004:150");
+		AddQuest("^ff0000Big Weapons^000000",2,170,175,"12623:1",0,0,0,0,0,0,"1635:1:1634:1:1639:1");
+		AddQuest("^ff0000Weapons for all^000000",2,170,200,"12623:3",0,0,0,0,0,0,"2223:1:2224:1:2222:1");
+		AddQuest("^0C38EDBurning Bird 3.0^000000",2,170,200,"",0,0,0,3,4250000,5000000,"1833:250");
+		AddQuest("^ff0000The Comeback of Hydra 2.0^000000",2,170,200,"7849:5",0,0,0,0,0,0,"1068:200");
+		AddQuest("^ff0000Bigger Weapons^000000",2,170,200,"12623:1",0,0,0,0,4250000,5000000,"1635:3:1634:3:1639:3");
+		AddQuest("^ff7f27Bouncing Darkness^000000",2,170,200,"7621:5",0,0,0,0,4250000,5000000,"1755:500");
+		AddQuest("^ff7f27Crawling Fear^000000",2,180,200,"",0,0,0,3,4250000,5000000,"1289:6");
+		AddQuest("^7509D7deBUGer^000000",2,180,200,"",0,0,3,0,4250000,5000000,"2896:10");
+		AddQuest("^ff0000Brave Guardians^000000",2,170,200,"7828:3",0,0,0,0,0,0,"1636:1:1637:1:1638:1");
+		AddQuest("^ff0000Valor Queens^000000",2,170,200,"7829:3",0,0,0,0,0,0,"1639:1:1638:1:1637:1");
+		end;
+
+	function	AddQuest	{
+		.quest_count++;
+
+		setd(".qb_" + .quest_count + "_name$", getarg(0));
+
+		.@quest_type = getarg(1);
+		setd(".qb_" + .quest_count + "_type", .@quest_type);
+
+		setd(".qb_" + .quest_count + "_min_level", getarg(2));
+		setd(".qb_" + .quest_count + "_max_level", getarg(3));
+		explode(getd(".qb_" + .quest_count + "_reward_items"), getarg(4), ":");
+		setd(".qb_" + .quest_count + "_random_item", getarg(5));
+		setd(".qb_" + .quest_count + "_reward_zeny", getarg(6));
+		setd(".qb_" + .quest_count + "_reward_nyan_points", getarg(7));
+		setd(".qb_" + .quest_count + "_reward_event_points", getarg(8));
+		setd(".qb_" + .quest_count + "_reward_base_exp", getarg(9));
+		setd(".qb_" + .quest_count + "_reward_job_exp", getarg(10));
+		explode(getd(".qb_" + .quest_count + "_collection_requirements"), getarg(11), ":");
+
+		if(.@quest_type == 2) {
+			for(.@i = 0; .@i < getarraysize(getd(".qb_" + .quest_count + "_collection_requirements")); .@i += 2) {
+				.@mob_id = getd(".qb_" + .quest_count + "_collection_requirements[" + .@i + "]");
+
+				if(inarray(.qb_mob_requirements, .@mob_id) == -1) {
+					.qb_mob_requirements[getarraysize(.qb_mob_requirements)] = .@mob_id;
+				}
+			}
+		}
+
+		return;
+	}
+
+	function	ShowQuestInfo	{
+		.@quest_id = getarg(0);
+		mes("--------------------------------");
+		mes("^0000FF" + getd(".qb_" + .@quest_id + "_name$") + "^000000");
+		mes(" ");
+		mes("[Requirement(s)]");
+
+		for(.@i = 0; .@i < getarraysize(getd(".qb_"+ .@quest_id + "_collection_requirements")); .@i += 2) {
+			.@requirement_id = getd(".qb_" + .@quest_id + "_collection_requirements[" + .@i + "]");
+			.@requirement_amount = getd(".qb_" + .@quest_id + "_collection_requirements[" + (.@i + 1) + "]");
+
+			if(getd(".qb_" + .@quest_id + "_type") != 2) {
+				.@current_amount = countitem(.@requirement_id);
+				.@requirement_name$ = "<ITEM>" + getitemname(.@requirement_id) + "<INFO>" + .@requirement_id + "</INFO></ITEM>";
+			} else {
+				.@current_amount = getd("qb_" + .@quest_id + "_" + .@requirement_id + "_kill_count");
+				.@requirement_name$ = getmonsterinfo(.@requirement_id, MOB_NAME);
+			}
+
+			mes(((.@current_amount >= .@requirement_amount) ? "^00FF00" : "^FF0000") + .@requirement_name$ + " - " + .@current_amount + "/" + .@requirement_amount + "^000000");
+		}
+		mes(" ");
+		mes("[Reward(s)]");
+		.@reward_count = getarraysize(getd(".qb_" + .@quest_id + "_reward_items"));
+		if(.@reward_count > 0) {
+			if(getd(".qb_" + .@quest_id + "_random_item")) {
+				mes("One of (chosen randomly):");
+			}
+
+			for(.@i = 0; .@i < .@reward_count; .@i += 2) {
+				.@reward_id = getd(".qb_" + .@quest_id + "_reward_items[" + .@i + "]");
+				mes("Item: ^0000FF" + getd(".qb_" + .@quest_id + "_reward_items[" + (.@i + 1) + "]") + " x <ITEM>" + getitemname(.@reward_id) + "<INFO>" + .@reward_id + "</INFO></ITEM>^000000");
+			}
+		}
+
+		if(getd(".qb_" + .@quest_id + "_reward_zeny") != 0)
+			mes("Zeny: ^0000FF" + getd(".qb_" + .@quest_id + "_reward_zeny") +  "^000000");
+
+		if(getd(".qb_" + .@quest_id + "_reward_nyan_points") != 0)
+			mes("Nyan Points: ^0000FF" + getd(".qb_" + .@quest_id + "_reward_nyan_points") + "^000000");
+
+		if(getd(".qb_" + .@quest_id + "_reward_event_points") != 0)
+			mes("Event Points: ^0000FF" + getd(".qb_" + .@quest_id + "_reward_event_points") + "^000000");
+
+		if(getd(".qb_" + .@quest_id + "_reward_base_exp") != 0)
+			mes("Base EXP: ^0000FF" + getd(".qb_" + .@quest_id + "_reward_base_exp") + "^000000");
+
+		if(getd(".qb_" + .@quest_id + "_reward_job_exp") != 0)
+			mes("Job EXP: ^0000FF" + getd(".qb_" + .@quest_id + "_reward_job_exp") + "^000000");
+
+		mes("--------------------------------");
+
+		return;
+	}
+
+	function	IncreaseKillCount	{
+		.@mob_id = getarg(0);
+
+		.@required_kills = getd("qb_mob_requirements_" + .@mob_id);
+		.@current_kill_count = getd("qb_" + qb_current_quest_id + "_" + .@mob_id + "_kill_count") + 1;
+
+		if (.@current_kill_count > .@required_kills) return;
+
+		setd("qb_" + qb_current_quest_id + "_" + .@mob_id + "_kill_count", .@current_kill_count);
+		dispbottom(getd(".qb_" + qb_current_quest_id + "_name$") + ": [" + getmonsterinfo(.@mob_id, MOB_NAME) + "] (" + .@current_kill_count + "/" + .@required_kills + ")");
+
+		return;
+	}
+
+	function	AddNyanPoints	{
+		.@account_id = getcharid(3);
+		.@nyan_points = getarg(0);
+
+		query_sql("INSERT INTO `vote` (`account_id`, `coins`) VALUES (" + .@account_id + ", " + .@nyan_points + ") ON DUPLICATE KEY UPDATE `coins` = `coins` + " + .@nyan_points);
+		query_sql("INSERT INTO `cp_nyanpoint_log` (account_id, count, modified_id, time, type) VALUES (" + .@account_id + ", " + .@nyan_points + ", 0, NOW(), 'Questboard')");
+	}
+
+	function	AddEventPoints	{
+		.@account_id = getcharid(3);
+		.@event_points = getarg(0);
+
+		query_sql("SELECT `userid` FROM `login` WHERE account_id = " + .@account_id, .@user_id$);
+		query_sql("INSERT INTO `eventpoints` (`account_id`, `account_name`, `coins`) VALUES (" + .@account_id + ", '" + escape_sql(.@user_id$) + "', " + .@event_points + ") ON DUPLICATE KEY UPDATE `coins` = `coins` + " + .@event_points);
+		query_sql("INSERT INTO `cp_eventpoint_log` (account_id, count, modified_id, time, type) VALUES (" + .@account_id + ", " + .@event_points + ", 0, NOW(), 'Questboard')");
+	}
+}
