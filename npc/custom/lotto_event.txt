@@ -116,8 +116,6 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		.@duration = .lotto_buff_prices[.@selected] * 3600;
 		.@price = .lotto_buff_prices[.@selected + 1];
 
-		lotto_buff_expiration = gettimetick(2) + .@duration;
-
 		if (Zeny < .@price) {
 			mes("[Lotto Manager]");
 			mes("It seems you do not have enough ^0000FFZeny^000000.. Please come back once you have!");
@@ -125,6 +123,7 @@ prontera,156,184,4	script	Lotto Manager	604,{
 		}
 
 		Zeny -= .@price;
+		lotto_buff_expiration = gettimetick(2) + .@duration;
 		callsub(S_ActivateBuff, .@duration);
 
 		mes("[Lotto Manager]");
