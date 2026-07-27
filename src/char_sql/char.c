@@ -1191,8 +1191,8 @@ int mmo_chars_fromsql(struct char_session_data* sd, uint8* buf)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 3,  SQLDT_SHORT,  &p.class_, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 4,  SQLDT_UINT,   &p.base_level, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 5,  SQLDT_UINT,   &p.job_level, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT,   &p.base_exp, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT,   &p.job_exp, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT64,   &p.base_exp, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT64,   &p.job_exp, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 8,  SQLDT_INT,    &p.zeny, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 9,  SQLDT_SHORT,  &p.str, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 10, SQLDT_SHORT,  &p.agi, 0, NULL, NULL)
@@ -1296,8 +1296,8 @@ int mmo_chars_fromsql_per_page(int fd, struct char_session_data* sd)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 3, SQLDT_SHORT, &p.class_, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 4, SQLDT_UINT, &p.base_level, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 5, SQLDT_UINT, &p.job_level, 0, NULL, NULL)
-		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 6, SQLDT_UINT, &p.base_exp, 0, NULL, NULL)
-		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 7, SQLDT_UINT, &p.job_exp, 0, NULL, NULL)
+		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 6, SQLDT_UINT64, &p.base_exp, 0, NULL, NULL)
+		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 7, SQLDT_UINT64, &p.job_exp, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 8, SQLDT_INT, &p.zeny, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 9, SQLDT_SHORT, &p.str, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 10, SQLDT_SHORT, &p.agi, 0, NULL, NULL)
@@ -1448,8 +1448,8 @@ int mmo_char_fromsql( uint32 char_id, struct mmo_charstatus* p, bool load_everyt
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 2,  SQLDT_UCHAR,  &p->slot, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 3,  SQLDT_STRING, &p->name, sizeof(p->name), NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 4,  SQLDT_SHORT,  &p->class_, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 5,  SQLDT_UINT,   &p->base_level, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT,   &p->job_level, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 5,  SQLDT_UINT64,   &p->base_level, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT64,   &p->job_level, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT,   &p->base_exp, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 8,  SQLDT_UINT,   &p->job_exp, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 9,  SQLDT_INT,    &p->zeny, 0, NULL, NULL)
@@ -2181,7 +2181,7 @@ int mmo_char_tobuf(uint8* buffer, struct mmo_charstatus* p)
 #if PACKETVER < 20170906
 	WBUFL(buf, 4) = min(p->base_exp, INT32_MAX);
 #else
-	WBUFQ(buf, 4) = u64min((uint64)p->base_exp, INT64_MAX);
+	WBUFQ(buf, 4) = u64min(p->base_exp, UINT64_MAX);
 	offset += 4;
 	buf = WBUFP(buffer, offset);
 #endif
@@ -2189,7 +2189,7 @@ int mmo_char_tobuf(uint8* buffer, struct mmo_charstatus* p)
 #if PACKETVER < 20170906
 	WBUFL(buf, 12) = min(p->job_exp, INT32_MAX);
 #else
-	WBUFQ(buf, 12) = u64min((uint64)p->job_exp, INT64_MAX);
+	WBUFQ(buf, 12) = u64min(p->job_exp, UINT64_MAX);
 	offset += 4;
 	buf = WBUFP(buffer, offset);
 #endif
@@ -4266,7 +4266,7 @@ int search_mapserver(unsigned short map, uint32 ip, uint16 port)
 	return -1;
 }
 
-// char_mapif‚Ì‰Šú‰»ˆ—iŒ»Ý‚Íinter_mapif‰Šú‰»‚Ì‚Ýj
+// char_mapifï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ý‚ï¿½inter_mapifï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Ýj
 static int char_mapif_init(int fd)
 {
 	return inter_mapif_init(fd);
@@ -6238,7 +6238,7 @@ int do_init(int argc, char **argv)
 
 	ShowInfo("Finished reading the char-server configuration.\n");
 
-	inter_init_sql((argc > 2) ? argv[2] : inter_cfgName); // inter server ÃÊ±âÈ­
+	inter_init_sql((argc > 2) ? argv[2] : inter_cfgName); // inter server ï¿½Ê±ï¿½È­
 	ShowInfo("Finished reading the inter-server configuration.\n");
 	
 	ShowInfo("Initializing char server.\n");

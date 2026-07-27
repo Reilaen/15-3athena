@@ -576,7 +576,7 @@ struct mmo_charstatus {
 	uint32 mother;
 	uint32 child;
 
-	unsigned int base_exp,job_exp;
+	uint64 base_exp, job_exp;
 	int zeny;
 
 	short class_;
@@ -809,14 +809,14 @@ struct fame_list {
 };
 
 enum {
-	GBI_EXP	=1,		// ƒMƒ‹ƒh‚ÌEXP
-	GBI_GUILDLV,		// ƒMƒ‹ƒh‚ÌLv
-	GBI_SKILLPOINT,		// ƒMƒ‹ƒh‚ÌƒXƒLƒ‹ƒ|ƒCƒ“ƒg
-	GBI_SKILLLV,		// ƒMƒ‹ƒhƒXƒLƒ‹Lv
+	GBI_EXP	=1,		// ï¿½Mï¿½ï¿½ï¿½hï¿½ï¿½EXP
+	GBI_GUILDLV,		// ï¿½Mï¿½ï¿½ï¿½hï¿½ï¿½Lv
+	GBI_SKILLPOINT,		// ï¿½Mï¿½ï¿½ï¿½hï¿½ÌƒXï¿½Lï¿½ï¿½ï¿½|ï¿½Cï¿½ï¿½ï¿½g
+	GBI_SKILLLV,		// ï¿½Mï¿½ï¿½ï¿½hï¿½Xï¿½Lï¿½ï¿½Lv
 };
 
 enum {
-	GMI_POSITION	=0,		// ƒƒ“ƒo[‚Ì–ğE•ÏX
+	GMI_POSITION	=0,		// ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½[ï¿½Ì–ï¿½Eï¿½ÏX
 	GMI_EXP,
 	GMI_HAIR,
 	GMI_HAIR_COLOR,

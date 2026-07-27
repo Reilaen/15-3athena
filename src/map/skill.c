@@ -6355,7 +6355,7 @@ int skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, in
 			skill_area_temp[0] = 5 - skill_area_temp[0]; // The actual penalty...
 			if (skill_area_temp[0] > 0 && !map[src->m].flag.noexppenalty) { //Apply penalty
 				//If total penalty is 1% => reduced 0.2% penalty per each revived player
-				unsigned int base_penalty = u32min(sd->status.base_exp, (pc_nextbaseexp(sd) * skill_area_temp[0] / 5) / 100);
+				uint64 base_penalty = u64min(sd->status.base_exp, pc_nextbaseexp(sd) * skill_area_temp[0] / 5 / 100);
 				sd->status.base_exp -= base_penalty;
 				clif_displayexp(sd, base_penalty, SP_BASEEXP, false, true);
 				clif_updatestatus(sd,SP_BASEEXP);
@@ -6402,14 +6402,14 @@ int skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, in
 				clif_skill_nodamage(src,bl,ALL_RESURRECTION,skill_lv,1); //Both Redemptio and Res show this skill-animation.
 				if(sd && dstsd && battle_config.resurrection_exp > 0)
 				{
-					int exp = 0,jexp = 0;
+					uint64 exp = 0,jexp = 0;
 					int lv = dstsd->status.base_level - sd->status.base_level, jlv = dstsd->status.job_level - sd->status.job_level;
 					if(lv > 0 && pc_nextbaseexp(dstsd)) {
-						exp = (int)((double)dstsd->status.base_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
+						exp = (uint64)((double)dstsd->status.base_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
 						if (exp < 1) exp = 1;
 					}
 					if(jlv > 0 && pc_nextjobexp(dstsd)) {
-						jexp = (int)((double)dstsd->status.job_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
+						jexp = (uint64)((double)dstsd->status.job_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
 						if (jexp < 1) jexp = 1;
 					}
 					if(exp > 0 || jexp > 0)
@@ -15979,8 +15979,8 @@ int skill_check_condition_castbegin(struct map_session_data* sd, uint16 skill_id
 	case PR_REDEMPTIO:
 		{
 			int exp;
-			if( ((exp = pc_nextbaseexp(sd)) > 0 && get_percentage(sd->status.base_exp, exp) < 1) ||
-				((exp = pc_nextjobexp(sd)) > 0 && get_percentage(sd->status.job_exp, exp) < 1)) {
+			if( ((exp = pc_nextbaseexp(sd)) > 0 && sd->status.base_exp / exp * 100 < 1) ||
+				((exp = pc_nextjobexp(sd)) > 0 && sd->status.job_exp / exp * 100 < 1)) {
 				clif_skill_fail(sd, skill_id,USESKILL_FAIL_LEVEL,0,0); //Not enough exp.
 				return 0;
 			}
