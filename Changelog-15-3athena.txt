@@ -5,6 +5,12 @@
 // 		- Details.
 //			--More Details.
 //========================================
+08/07/2026
+	r586 [15peaces]
+		*Removed wrong and odd parameter passed to skill_check_condition_mob_master_mer_sub.
+			-Thanks to @Reilaen
+		*Updated Nightmare Pyramids card drops.
+
 07/12/2026
 	r585 [15peaces]
 		*Fixed an nullpo error in skill_counter_additional_effect.

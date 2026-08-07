@@ -3881,7 +3881,7 @@ static int skill_check_condition_mercenary(struct block_list *bl, int skill, int
 
 					// Check to see if any Hornet's, Giant Hornet's, or Luciola Vespa's are currently summoned.
 					for ( mobid=MOBID_S_HORNET; mobid<=MOBID_S_LUCIOLA_VESPA; mobid++ )
-						map_foreachinmap(skill_check_condition_mob_master_mer_sub ,hd->bl.m, BL_MOB, hd->bl.id, mobid, skill, &count);
+						map_foreachinmap(skill_check_condition_mob_master_mer_sub ,hd->bl.m, BL_MOB, hd->bl.id, mobid, &count);
 
 					// If any of the above 3 summons are found, fail the skill.
 					if (count > 0)
