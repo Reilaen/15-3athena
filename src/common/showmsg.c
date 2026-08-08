@@ -690,7 +690,7 @@ int _vShowMessage(enum msg_type flag, const char *string, va_list ap)
 		( ( flag == MSG_ERROR || flag == MSG_SQL ) && console_msg_log&2 ) ||
 		( flag == MSG_DEBUG && console_msg_log&4 ) ) {//[Ind]
 		FILE *log = NULL;
-		if( (log = fopen(console_log_filepath ? console_log_filepath : "./log/unknown.log","a+")) ) {
+		if( (log = fopen(console_log_filepath[0] != '\0' ? console_log_filepath : "./log/unknown.log","a+")) ) {
 			char timestring[255];
 			time_t curtime;
 			time(&curtime);
