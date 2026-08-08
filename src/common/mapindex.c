@@ -159,7 +159,7 @@ unsigned short mapindex_addmap(unsigned short index, const char* name)
 	}
 
 	mapindex_indexes[index] = aStrdup(map_name);
-	strdb_put(mapindex_db, mapindex_indexes[index], (void*)index);
+	strdb_put(mapindex_db, mapindex_indexes[index], (void *)(uintptr_t)index);
 
 	return index;
 }
@@ -171,7 +171,7 @@ unsigned short mapindex_name2id(const char* name)
 
 	mapindex_getmapname(name, map_name);
 
-	if( ( index = (unsigned short)strdb_get(mapindex_db, map_name) ) == 0 )
+	if( ( index = (unsigned short)(uintptr_t)strdb_get(mapindex_db, map_name) ) == 0 )
 	{
 		ShowWarning("mapindex_name2id: Requested id for non-existant map name '%s'.\n", map_name);
 		return 0;
