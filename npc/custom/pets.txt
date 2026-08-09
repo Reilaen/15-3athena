@@ -1,6 +1,6 @@
 prontera,149,178,5	script	Nerd Skimander	832,{
 	mes("[Nerd Skimander]");
-	mes("Greetings, adventurer! I am searching for cards of pet monsters. If you bring me one I trade it for it's taming item and accessory if it has one. Does that sound like a deal? If not i also sell various pet products you might be interested in.");
+	mes("Greetings, adventurer! I am searching for cards of pet monsters. If you bring me one I trade it for it's taming item. Does that sound like a deal? If not i also sell various pet products you might be interested in.");
 	next;
 	menu("I want to trade card", GetTamingItem, "I want to buy a pet accessory.", GetAccessory, "I want to buy pet food.", GetFood, "No, I am not interested.", Cancel);
 
@@ -162,10 +162,6 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 		.card2mob_4433 = 1837;
 		.card2taming_4433 = 12374;
 
-		// Imp
-		.card2mob_4433 = 1837;
-		.card2taming_4433 = 12374;
-
 		// Incubus
 		.card2mob_4269 = 1374;
 		.card2taming_4269 = 12370;
@@ -223,8 +219,8 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 		.card2taming_4159 = 23187;
 
 		// Orc Warrior
-		.card2mob_4166 = 1023;
-		.card2taming_4166 = 635;
+		.card2mob_4066 = 1023;
+		.card2taming_4066 = 635;
 
 		// PecoPeco
 		.card2mob_4031 = 1019;
@@ -233,6 +229,7 @@ prontera,149,178,5	script	Nerd Skimander	832,{
 		// Petite
 		.card2mob_4118 = 1155;
 		.card2taming_4118 = 640;
+
 		// Picky
 		.card2mob_4008 = 1049;
 		.card2taming_4008 = 623;
