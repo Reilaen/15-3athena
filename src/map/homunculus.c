@@ -572,7 +572,7 @@ int merc_hom_mutation(struct homun_data *hd, int class_)
 	return 1 ;
 }
 
-int hom_gainexp(struct homun_data *hd,int exp)
+int hom_gainexp(struct homun_data *hd, uint64 exp_)
 {
 	if(hd->homunculus.vaporize)
 		return 1;
@@ -584,6 +584,8 @@ int hom_gainexp(struct homun_data *hd,int exp)
 
 	if (hd->homunculus.level >= hd->homunculusDB->maxlevel)
 		return 0;
+
+	unsigned int exp = (unsigned int)exp_;
 
 	hd->homunculus.exp += exp;
 

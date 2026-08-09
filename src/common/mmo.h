@@ -576,7 +576,7 @@ struct mmo_charstatus {
 	uint32 mother;
 	uint32 child;
 
-	unsigned int base_exp,job_exp;
+	uint64 base_exp,job_exp;
 	int zeny;
 
 	short class_;

@@ -719,7 +719,7 @@ enum weapon_type {
 	W_1HAXE,	//6
 	W_2HAXE,	//7
 	W_MACE,	//8
-	W_2HMACE,	//9 (unused)
+	W_2HMACE,	//9
 	W_STAFF,	//10
 	W_BOW,	//11
 	W_KNUCKLE,	//12	
@@ -791,7 +791,7 @@ struct {
 	int max_weight_base;
 	char job_bonus[MAX_LEVEL];
 	int aspd_base[MAX_WEAPON_TYPE];
-	uint32 exp_table[2][MAX_LEVEL];
+	uint64 exp_table[2][MAX_LEVEL];
 	uint32 max_level[2];
 	struct s_params {
 		uint16 str, agi, vit, int_, dex, luk;
@@ -992,10 +992,12 @@ bool pc_is_maxjoblv(struct map_session_data *sd);
 int pc_checkbaselevelup(struct map_session_data *sd);
 void pc_baselevelchanged(struct map_session_data *sd);
 int pc_checkjoblevelup(struct map_session_data *sd);
-void pc_gainexp_disp(struct map_session_data *sd, unsigned int base_exp, unsigned int next_base_exp, unsigned int job_exp, unsigned int next_job_exp, bool lost);
-int pc_gainexp(struct map_session_data *sd, struct block_list *src, unsigned int base_exp, unsigned int job_exp, bool quest); 
-unsigned int pc_nextbaseexp(struct map_session_data *sd);
-unsigned int pc_nextjobexp(struct map_session_data *sd);
+void pc_gainexp_disp(struct map_session_data* sd, const uint64 base_exp, const uint64 next_base_exp, const uint64 job_exp, const uint64 next_job_exp, const bool is_lost);
+int pc_gainexp(struct map_session_data* sd, struct block_list* src, uint64 base_exp, uint64 job_exp, bool is_quest);
+uint64 pc_nextbaseexp(struct map_session_data *sd);
+uint64 pc_thisbaseexp(struct map_session_data* sd);
+uint64 pc_nextjobexp(struct map_session_data *sd);
+uint64 pc_thisjobexp(struct map_session_data* sd);
 int pc_gets_status_point(int);
 int pc_need_status_point(struct map_session_data *,int,int);
 bool pc_statusup(struct map_session_data*, int, int);

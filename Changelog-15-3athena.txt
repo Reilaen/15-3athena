@@ -5,6 +5,17 @@
 // 		- Details.
 //			--More Details.
 //========================================
+
+08/09/2026
+	r587 [15peaces]
+		*Update of the level up calculations.
+			-Updated to use uint64 for player calculations.
+			-Updated part of caclulations with Hercules as reference.
+			-Thanks to @HerculesWS & @Reilaen for the base.
+		*Some item database updates
+			-Fixed Revolver_Buffalo_Bandit_Card script.
+			-Fixed Marlin trade restrictions.
+
 08/07/2026
 	r586 [15peaces]
 		*Removed wrong and odd parameter passed to skill_check_condition_mob_master_mer_sub.

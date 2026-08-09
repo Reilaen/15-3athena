@@ -16074,7 +16074,7 @@ void clif_parse_NoviceExplosionSpirits(int fd, struct map_session_data *sd)
 {
 	if ((sd->class_&MAPID_UPPERMASK) == MAPID_SUPER_NOVICE)
 	{
-		unsigned int next = pc_nextbaseexp(sd);
+		unsigned int next = (unsigned int)pc_nextbaseexp(sd);
 
 		if( next )
 		{
@@ -20009,9 +20009,9 @@ void clif_equip_damaged(struct map_session_data *sd, int equip_index)
 /// @param sd Player
 /// @param exp EXP value gained/loss
 /// @param type SP_BASEEXP, SP_JOBEXP
-/// @param quest False:Normal EXP; True:Quest EXP (displayed in purple color)
-/// @param lost True:if lossing EXP
-void clif_displayexp(struct map_session_data *sd, unsigned int exp, char type, bool quest, bool lost)
+/// @param is_quest False:Normal EXP; True:Quest EXP (displayed in purple color)
+/// @param is_lost True:if lossing EXP
+void clif_displayexp(struct map_session_data* sd, const uint64 exp, const char type, const bool is_quest, const bool is_lost)
 {
 	int fd;
 	int offset;
@@ -20029,14 +20029,14 @@ void clif_displayexp(struct map_session_data *sd, unsigned int exp, char type, b
 	WFIFOW(fd, 0) = cmd;
 	WFIFOL(fd,2) = sd->bl.id;
 #if PACKETVER >= 20170830
-	WFIFOQ(fd, 6) = (int64)u64min((uint64)exp, INT_MAX) * (lost ? -1 : 1);
+	WFIFOQ(fd, 6) = (int64)u64min(exp, INT64_MAX) * (is_lost ? -1 : 1);
 	offset = 4;
 #else
-	WFIFOL(fd,6) = (int)umin(exp, INT_MAX) * (lost ? -1 : 1);
+	WFIFOL(fd, 6) = (int)umin(exp, INT_MAX) * (is_lost ? -1 : 1);
 	offset = 0;
 #endif
 	WFIFOW(fd, 10 + offset) = type;
-	WFIFOW(fd, 12 + offset) = (quest && type != SP_JOBEXP) ? 1 : 0; // NOTE: Somehow JobEXP always in yellow color
+	WFIFOW(fd, 12 + offset) = is_quest && type != SP_JOBEXP ? 1 : 0; // NOTE: Somehow JobEXP always in yellow color
 	WFIFOSET(fd, packet_len(cmd));
 }
 

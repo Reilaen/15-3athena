@@ -1162,7 +1162,7 @@ int guild_emblem_changed(int len,int guild_id,int emblem_id,const char *data)
 }
 
 
-unsigned int guild_payexp(struct map_session_data* sd, unsigned int exp)
+uint64 guild_payexp(struct map_session_data* sd, uint64 exp)
 {
 	struct guild* g;
 	int pos;
@@ -1191,7 +1191,7 @@ unsigned int guild_payexp(struct map_session_data* sd, unsigned int exp)
 	if( per != 100 )
 		exp = exp * per / 100;
 
-	guild_addexp(sd->status.guild_id, sd->status.account_id, sd->status.char_id, exp);
+	guild_addexp(sd->status.guild_id, sd->status.account_id, sd->status.char_id, (unsigned int)exp);
 	return exp;
 }
 
