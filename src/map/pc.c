@@ -6833,7 +6833,7 @@ int pc_checkbaselevelup(struct map_session_data *sd)
 
 	uint64 next = pc_nextbaseexp(sd);
 
-	if (!next || sd->status.base_exp < next)
+	if (!next || sd->status.base_exp < next || pc_is_maxbaselv(sd))
 		return 0;
 
 	do {
@@ -6911,7 +6911,7 @@ int pc_checkjoblevelup(struct map_session_data *sd)
 
 	uint64 next = pc_nextjobexp(sd);
 
-	if (!next || sd->status.job_exp < next)
+	if (!next || sd->status.job_exp < next || pc_is_maxjoblv(sd))
 		return 0;
 
 	do {

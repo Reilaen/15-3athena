@@ -370,6 +370,8 @@ int skill_get_range2(struct block_list *bl, uint16 id, uint16 lv, bool isServer)
  **/
 uint16 skill_dummy2skill_id(uint16 skill_id) {
 	switch (skill_id) {
+		case NPC_MAXPAIN_ATK:
+			return NPC_MAXPAIN;
 		case AB_DUPLELIGHT_MELEE:
 		case AB_DUPLELIGHT_MAGIC:
 			return AB_DUPLELIGHT;
@@ -404,8 +406,6 @@ uint16 skill_dummy2skill_id(uint16 skill_id) {
 			return GN_SLINGITEM;
 		case RL_R_TRIP_PLUSATK:
 			return RL_R_TRIP;
-		case NPC_MAXPAIN_ATK:
-			return NPC_MAXPAIN;
 		case SU_CN_METEOR2:
 			return SU_CN_METEOR;
 		case SU_SV_ROOTTWIST_ATK:
@@ -5017,6 +5017,7 @@ int skill_castend_damage_id (struct block_list* src, struct block_list *bl, int 
 	case NPC_PULSESTRIKE:
 	case NPC_HELLJUDGEMENT:
 	case NPC_VAMPIRE_GIFT:
+	case NPC_MAXPAIN_ATK:
 	case RK_IGNITIONBREAK:
 	case RK_HUNDREDSPEAR:
 	case GC_ROLLINGCUTTER:
@@ -6863,6 +6864,7 @@ int skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, in
 	case ALL_FULL_THROTTLE:
 	case SU_ARCLOUSEDASH:
 	case SU_FRESHSHRIMP:
+	case NPC_MAXPAIN:
 		clif_skill_nodamage( src, bl, skill_id, skill_lv, status_change_start(src, bl, type, 10000, skill_lv, 0, 0, 0, skill_get_time( skill_id, skill_lv ), 0) );
 		break;
 

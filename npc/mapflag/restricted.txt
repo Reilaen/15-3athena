@@ -27,6 +27,10 @@ Oninit:
 	if(getepisode() >= 30)
 		setmapflag "comodo",mf_restricted,7;
 		
+	// Episode 14.2
+	if(getepisode() >= 142)
+		setmapflag "1@xm_d",mf_restricted,6;
+		
 	end;
 }
 

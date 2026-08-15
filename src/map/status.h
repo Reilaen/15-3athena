@@ -880,6 +880,8 @@ typedef enum sc_type {
 	SC_LUXANIMA,
 	SC_REUSE_LIMIT_LUXANIMA,
 
+	SC_MAXPAIN,
+
 	SC_MAX, //Automatically updated max, used in for's to check we are within bounds.
 } sc_type;
 
@@ -1590,7 +1592,7 @@ enum si_type {
 //	SI_HANDICAPSTATE_ICEEXPLO = 710,
 //	SI_FENRIR_CARD = 711,
 	SI_REUSE_LIMIT_ASPD_POTION = 712,
-//	SI_MAXPAIN = 713,
+	SI_MAXPAIN = 713,
 //	SI_PC_STOP = 714,
 	SI_FRIGG_SONG = 715,
 	SI_OFFERTORIUM = 716,

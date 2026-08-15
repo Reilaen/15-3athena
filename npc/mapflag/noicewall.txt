@@ -81,6 +81,7 @@ Oninit:
 	// Episode 14.2
 	if(getepisode() >= 142){
 		setmapflag "1@spa",mf_noicewall;
+		setmapflag "1@xm_d",mf_noicewall;
 	}
 	
 	// Episode 15

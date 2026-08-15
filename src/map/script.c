@@ -17123,25 +17123,6 @@ BUILDIN_FUNC(rid2name)
 	return 0;
 }
 
-BUILDIN_FUNC(pcblockmove)
-{
-	int id, flag;
-	TBL_PC *sd = NULL;
-
-	id = script_getnum(st,2);
-	flag = script_getnum(st,3);
-
-	if(id)
-		sd = map_id2sd(id);
-	else
-		sd = script_rid2sd(st);
-
-	if(sd)
-		sd->state.blockedmove = flag > 0;
-
-	return 0;
-}
-
 BUILDIN_FUNC(setpcblock)
 {
 	TBL_PC *sd;
@@ -22427,7 +22408,6 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(rid2name,"i"),
 	BUILDIN_DEF(pcfollow,"ii"),
 	BUILDIN_DEF(pcstopfollow,"i"),
-	BUILDIN_DEF(pcblockmove,"ii"),
 	BUILDIN_DEF(setpcblock, "ii?"),
 	BUILDIN_DEF(getpcblock, "?"),
 	// <--- [zBuffer] List of player cont commands

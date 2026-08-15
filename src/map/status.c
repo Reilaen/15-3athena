@@ -521,10 +521,11 @@ void initChangeTables(void)
 	add_sc( NPC_WIDECURSE        , SC_CURSE           );
 	add_sc( NPC_WIDESTUN         , SC_STUN            );
 
-	set_sc( NPC_HELLPOWER        , SC_HELLPOWER       , SI_HELLPOWER       , SCB_NONE );
-	set_sc( NPC_WIDEHELLDIGNITY  , SC_HELLPOWER       , SI_HELLPOWER       , SCB_NONE );
-	set_sc( NPC_INVINCIBLE       , SC_INVINCIBLE      , SI_INVINCIBLE      , SCB_SPEED );
-	set_sc( NPC_INVINCIBLEOFF    , SC_INVINCIBLEOFF   , SI_BLANK           , SCB_SPEED );
+	set_sc( NPC_HELLPOWER        , SC_HELLPOWER          , SI_HELLPOWER       , SCB_NONE );
+	set_sc( NPC_WIDEHELLDIGNITY  , SC_HELLPOWER          , SI_HELLPOWER       , SCB_NONE );
+	set_sc( NPC_INVINCIBLE       , SC_INVINCIBLE         , SI_INVINCIBLE      , SCB_SPEED );
+	set_sc( NPC_INVINCIBLEOFF    , SC_INVINCIBLEOFF      , SI_BLANK           , SCB_SPEED );
+	set_sc_with_vfx( NPC_MAXPAIN , SC_MAXPAIN            , SI_MAXPAIN         , SCB_NONE );
 
 	set_sc( CASH_BLESSING        , SC_BLESSING        , SI_BLESSING        , SCB_STR|SCB_INT|SCB_DEX );
 	set_sc( CASH_INCAGI          , SC_INCREASEAGI     , SI_INCREASEAGI     , SCB_AGI|SCB_SPEED );

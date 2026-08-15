@@ -48,6 +48,7 @@ Oninit:
 	// Episode 14.2
 	if(getepisode() >= 142){
 		setmapflag "1@spa",mf_nowarpto;
+		setmapflag "1@xm_d",mf_nowarpto;
 	}
 	
 	// Episode 15

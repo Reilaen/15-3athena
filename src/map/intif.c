@@ -2664,7 +2664,7 @@ static bool intif_parse_StorageReceived(int fd)
  */
 static void intif_parse_StorageSaved(int fd)
 {
-	TBL_PC *sd = map_id2sd(RFIFOL(fd,2));
+	struct map_session_data* sd = NULL;
 
 	if (RFIFOB(fd, 6)) {
 		switch (RFIFOB(fd, 7)) {
@@ -2672,12 +2672,23 @@ static void intif_parse_StorageSaved(int fd)
 				//ShowInfo("Inventory has been saved (AID: %d).\n", RFIFOL(fd, 2));
 				break;
 			case TABLE_STORAGE: //storage
-				//ShowInfo("Storage has been saved (AID: %d).\n", RFIFOL(fd, 2));
+				sd = map_id2sd(RFIFOL(fd, 2));
+				struct s_storage* stor = NULL;
+				
 				if (RFIFOB(fd, 8))
-					storage_storage2_saved(map_id2sd(RFIFOL(fd, 2)));
-				sd->storage.dirty = false;
+				{
+					//ShowInfo("Storage has been saved (AID: %d).\n", RFIFOL(fd, 2));
+					storage_storage2_saved(sd);
+					sd->storage2.dirty = false;
+				}
+				else
+				{
+					sd->storage.dirty = false;
+				}
 				break;
 			case TABLE_CART: // cart
+				sd = map_id2sd(RFIFOL(fd, 2));
+
 				//ShowInfo("Cart has been saved (AID: %d).\n", RFIFOL(fd, 2));
 				if( sd && sd->state.prevend ){
 					intif_storage_request(sd,TABLE_CART,0);

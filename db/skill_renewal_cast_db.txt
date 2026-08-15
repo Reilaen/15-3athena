@@ -2,7 +2,7 @@
 //
 // Structure of Database:
 // SkillID,CastTime,FixedCastTime,AfterCastDelay,CoolDown,AfterCastWalkDelay,Duration1,Duration2
-
+716,0,0,0,0,0,10000,0
 //==========================================
 //== Structure Details:
 // Skill ID : The ID of the skill used.
@@ -30,6 +30,8 @@
 //===== NPC SKILLS =========================
 // -- NPC_VENOMFOG
 706,0,0,0,0,0,3000,0
+//-- NPC_MAXPAIN
+716,0,0,0,0,0,10000,0
 //==========================================
 
 //===== Rune Knight ========================

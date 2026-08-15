@@ -6,6 +6,20 @@
 //			--More Details.
 //========================================
 
+08/15/2026
+	r588 [15peaces]
+		*Follow-up: Re-added some checks to prevent levelups over maxlvl.
+		*Fixed a nullpo error in intif_parse_StorageSaved.
+			-Also the function will now mark the correct storage as cleaned...
+		*Removed pcblockmove script command.
+			-You cen use setpcblock(PCBLOCK_MOVE) instead.
+		*Horror Toy Factory - part 1
+			-Added some stuff to prepare the instance release.
+			-Added monsters, skills, items, etc.
+			-Added scripts.
+				--Scripts not yet enabled, needs to be ported...
+			-Thanks to @rathena
+
 08/09/2026
 	r587 [15peaces]
 		*Update of the level up calculations.
