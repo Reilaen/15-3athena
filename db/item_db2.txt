@@ -72,18 +72,14 @@
 20250,C_White_Strong_Hair,Costume White Hand of Fate,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,1317,{},{},{}
 
 //Currently not working / Client Files missing in kRO (renewal versions)
-20271,C_Sunflower,Costume Sunflower,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,37,{},{},{}
-20272,C_Unicorn_Horn,Costume Unicorn Horn,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,42,{},{},{}
-20307,C_Beginner_Cap,Costume Beginner Cap,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,,,1348,{if(BaseLevel<100) {	bonus bHit,30-(3*(BaseLevel/10)); bonus bMaxHP,1000-(100*(BaseLevel/10)); bonus bMaxSP,200-(20*(BaseLevel/10)); bonus bCastrate,-10+(BaseLevel/10); bonus bHealPower,150-(10*(BaseLevel/10)); bonus bHealPower2,10*(BaseLevel/10); bonus bAddItemHealRate,10*(BaseLevel/10);}},{},{}
-20311,Costume_Magical_Booster,Costume Magical Booster,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,,,873,{},{},{}
-20331,Costume_Desert_Prince,Costume Desert Prince,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,567,{},{},{}
+
+
 20332,Costume_Pure_White_Ribbon,Costume Pure White Ribbon,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,1175,{},{},{}
 20333,Costume_Family_Hat,Costume Family Hat,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,650,{},{},{}
 20757,Heavenly_Wings1,Heavenly Wings1,5,0,,0,,1,,1,0xFFFFFFFF,63,2,4,,,,9,{	bonus bAllStats,3; skill AL_INCAGI,3;},{},{}
 20758,Heavenly_Wings2,Heavenly Wings2,5,0,,0,,1,,1,0xFFFFFFFF,63,2,4,,,,9,{	bonus bAllStats,3; skill AL_INCAGI,3;},{},{}
 22812,Sealed_Dracula_Scroll,Sealed Dracula Scroll,2,10,,10,,,,,,,,,,,,,{ getitem callfunc("F_Rand",22813,19937,17314, 6635),1; },{},{}
 22813,Bearer's_Shadow_Box,Bearer's Shadow Box,2,10,,10,,,,,,,,,,,,,{ getitem callfunc("F_Rand",24180,24181,24182,28183,24184,24185),1; },{},{}
-
 
 //LHZ 4 and more (renewal versions)
 1282,Krieger_Katar2,Glorious Jamadhar,4,20,,0,140,,1,0,0x00001000,63,2,34,4,80,1,16,{ bonus2 bAddRace,RC_DemiHuman,70; bonus2 bAddRace,RC_DemiHuman,70; bonus2 bIgnoreDefRaceRate,RC_DemiHuman,20; bonus2 bIgnoreDefRaceRate,RC_DemiHuman,20; bonus bUnbreakableWeapon,1; set .@r,getrefine(); if(.@r>5) { bonus2 bAddRace,RC_DemiHuman,pow(((.@r>14)?14:.@r)-4,2); bonus2 bAddRace,RC_DemiHuman,pow(((.@r>14)?14:.@r)-4,2); bonus2 bCriticalAddRace,RC_DemiHuman,5; bonus2 bCriticalAddRace,RC_DemiHuman,5; } if(.@r>8) autobonus "{ bonus bAspdRate,100; }",70,3000,BF_WEAPON,"{ specialeffect2 EF_POTION_BERSERK; }"; },{},{}

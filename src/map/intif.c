@@ -2675,15 +2675,18 @@ static void intif_parse_StorageSaved(int fd)
 				sd = map_id2sd(RFIFOL(fd, 2));
 				struct s_storage* stor = NULL;
 				
-				if (RFIFOB(fd, 8))
+				if (sd)
 				{
-					//ShowInfo("Storage has been saved (AID: %d).\n", RFIFOL(fd, 2));
-					storage_storage2_saved(sd);
-					sd->storage2.dirty = false;
-				}
-				else
-				{
-					sd->storage.dirty = false;
+					if (RFIFOB(fd, 8))
+					{
+						//ShowInfo("Storage has been saved (AID: %d).\n", RFIFOL(fd, 2));
+						storage_storage2_saved(sd);
+						sd->storage2.dirty = false;
+					}
+					else
+					{
+						sd->storage.dirty = false;
+					}
 				}
 				break;
 			case TABLE_CART: // cart

@@ -1,17 +1,24 @@
 #ifndef SQL_COMMON_INCLUDED
 #define SQL_COMMON_INCLUDED
 
-/* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
+/* Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
    
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 of the License.
-   
+   it under the terms of the GNU General Public License, version 2.0,
+   as published by the Free Software Foundation.
+
+   This program is also distributed with certain software (including
+   but not limited to OpenSSL) that is licensed under separate terms,
+   as designated in a particular file or component or in included license
+   documentation.  The authors of MySQL hereby grant you an additional
+   permission to link the program and your derivative works with the
+   separately licensed software that they have included with MySQL.
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   
+   GNU General Public License, version 2.0, for more details.
+
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
@@ -23,6 +30,7 @@ extern "C" {
 #endif
 
 #include <mysql.h>
+#include <hash.h>
 
 extern const char	*unknown_sqlstate;
 extern const char	*cant_connect_sqlstate;
@@ -31,6 +39,13 @@ extern const char	*not_error_sqlstate;
 struct st_mysql_options_extention {
   char *plugin_dir;
   char *default_auth;
+  char *ssl_crl;				/* PEM CRL file */
+  char *ssl_crlpath;				/* PEM directory of CRL-s? */
+  HASH connection_attributes;
+  char *server_public_key_path;
+  size_t connection_attributes_length;
+  my_bool enable_cleartext_plugin;
+  unsigned int ssl_mode;
 };
 
 typedef struct st_mysql_methods
@@ -72,8 +87,9 @@ typedef struct st_mysql_methods
                                         0, arg, length, 1, stmt)
 
 extern CHARSET_INFO *default_client_charset_info;
-MYSQL_FIELD *unpack_fields(MYSQL_DATA *data,MEM_ROOT *alloc,uint fields,
-			   my_bool default_value, uint server_capabilities);
+MYSQL_FIELD *unpack_fields(MYSQL *mysql, MYSQL_DATA *data,MEM_ROOT *alloc,
+                           uint fields, my_bool default_value, 
+                           uint server_capabilities);
 void free_rows(MYSQL_DATA *cur);
 void free_old_query(MYSQL *mysql);
 void end_server(MYSQL *mysql);
@@ -93,6 +109,9 @@ void set_stmt_error(MYSQL_STMT *stmt, int errcode, const char *sqlstate,
 void set_mysql_error(MYSQL *mysql, int errcode, const char *sqlstate);
 void set_mysql_extended_error(MYSQL *mysql, int errcode, const char *sqlstate,
                               const char *format, ...);
+#ifdef EMBEDDED_LIBRARY
+int embedded_ssl_check(MYSQL *mysql);
+#endif
 
 /* client side of the pluggable authentication */
 struct st_plugin_vio_info;
@@ -103,6 +122,9 @@ int mysql_client_plugin_init();
 void mysql_client_plugin_deinit();
 struct st_mysql_client_plugin;
 extern struct st_mysql_client_plugin *mysql_client_builtins[];
+uchar * send_client_connect_attrs(MYSQL *mysql, uchar *buf);
+extern my_bool libmysql_cleartext_plugin_enabled;
+int is_file_or_dir_world_writable(const char *filepath);
 
 #ifdef	__cplusplus
 }

@@ -6,6 +6,23 @@
 //			--More Details.
 //========================================
 
+08/22/2026
+	r589 [15peaces]
+		*Follow-up eb7a487
+			-Added the nullpo error fix in intif_parse_StorageSaved...
+		*Added getstatus script command.
+			-Thanks to @rathena for the base.
+		*Horror Toy Factory - part 2
+			-Ported & enabled scripts.
+		*Added a safe-check in areamonster script command.
+		*Updated MySQL library from 5.5.24 to 5.6.51.
+			-It is compiled using VS2010, so you need to make sure to have the correct redistributable package installed.
+		*Added x64 compilation targets.
+			-They are not working yet and only for testing purposes.
+		*Some cleaning in databases.
+			-Moved some stable items.
+			-Changed some monsters to fit pre-renewal calculations.
+
 08/15/2026
 	r588 [15peaces]
 		*Follow-up: Re-added some checks to prevent levelups over maxlvl.

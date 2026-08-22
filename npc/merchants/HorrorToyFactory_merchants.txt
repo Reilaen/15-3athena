@@ -8,7 +8,7 @@
 //=     from iRO. [Capuche]
 //============================================================
 
-xmas,240,291,3	script	Billy The Golden Hands#1	4_F_05,{
+xmas,240,291,3	script	Billy The Golden Hands#1	711,{
 	disable_items;
 	if (checkweight(1201,1) == 0) {
 		mes "The kind of items you have is too various. Retry after reducing the sort of items.";
@@ -63,7 +63,7 @@ xmas,240,291,3	script	Billy The Golden Hands#1	4_F_05,{
 }
 
 
-xmas,240,297,3	script	Vagrant Cain#1	4_M_06,{
+xmas,240,297,3	script	Vagrant Cain#1	713,{
 	disable_items;
 	if (checkweight(1201,1) == 0) {
 		mes "The kind of items you have is too various. Retry after reducing the sort of items.";
@@ -172,7 +172,7 @@ xmas,240,297,3	script	Vagrant Cain#1	4_M_06,{
 	}
 }
 
-xmas,240,294,3	script	Black Beard Joe#pa0829	4_M_05,{
+xmas,240,294,3	script	Black Beard Joe#pa0829	712,{
 	disable_items;
 	if (checkweight(1201,1) == 0) {
 		mes "The kind of items you have is too various. Retry after reducing the sort of items.";

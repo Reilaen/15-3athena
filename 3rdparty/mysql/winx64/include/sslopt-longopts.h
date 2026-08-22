@@ -1,16 +1,23 @@
 #ifndef SSLOPT_LONGOPTS_INCLUDED
 #define SSLOPT_LONGOPTS_INCLUDED
 
-/* Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved.
+/* Copyright (c) 2000, 2016, Oracle and/or its affiliates. All rights reserved.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 of the License.
+   it under the terms of the GNU General Public License, version 2.0,
+   as published by the Free Software Foundation.
+
+   This program is also distributed with certain software (including
+   but not limited to OpenSSL) that is licensed under separate terms,
+   as designated in a particular file or component or in included license
+   documentation.  The authors of MySQL hereby grant you an additional
+   permission to link the program and your derivative works with the
+   separately licensed software that they have included with MySQL.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU General Public License, version 2.0, for more details.
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
@@ -38,12 +45,22 @@
   {"ssl-key", OPT_SSL_KEY, "X509 key in PEM format (implies --ssl).",
    &opt_ssl_key, &opt_ssl_key, 0, GET_STR, REQUIRED_ARG,
    0, 0, 0, 0, 0, 0},
+  {"ssl-crl", OPT_SSL_CRL, "Certificate revocation list (implies --ssl).",
+   &opt_ssl_crl, &opt_ssl_crl, 0, GET_STR, REQUIRED_ARG,
+   0, 0, 0, 0, 0, 0},
+  {"ssl-crlpath", OPT_SSL_CRLPATH, 
+    "Certificate revocation list path (implies --ssl).",
+   &opt_ssl_crlpath, &opt_ssl_crlpath, 0, GET_STR, REQUIRED_ARG,
+   0, 0, 0, 0, 0, 0},
 #ifdef MYSQL_CLIENT
   {"ssl-verify-server-cert", OPT_SSL_VERIFY_SERVER_CERT,
    "Verify server's \"Common Name\" in its cert against hostname used "
    "when connecting. This option is disabled by default.",
    &opt_ssl_verify_server_cert, &opt_ssl_verify_server_cert,
    0, GET_BOOL, OPT_ARG, 0, 0, 0, 0, 0, 0},
+  {"ssl-mode", OPT_SSL_MODE,
+   "SSL connection mode.",
+   0, 0, 0, GET_STR, REQUIRED_ARG, 0, 0, 0, 0, 0, 0},
 #endif
 #endif /* HAVE_OPENSSL */
 #endif /* SSLOPT_LONGOPTS_INCLUDED */

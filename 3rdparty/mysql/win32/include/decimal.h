@@ -1,13 +1,20 @@
 /* Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 of the License.
+   it under the terms of the GNU General Public License, version 2.0,
+   as published by the Free Software Foundation.
+
+   This program is also distributed with certain software (including
+   but not limited to OpenSSL) that is licensed under separate terms,
+   as designated in a particular file or component or in included license
+   documentation.  The authors of MySQL hereby grant you an additional
+   permission to link the program and your derivative works with the
+   separately licensed software that they have included with MySQL.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU General Public License, version 2.0, for more details.
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
@@ -51,6 +58,28 @@ int decimal_actual_fraction(decimal_t *from);
 int decimal2bin(decimal_t *from, uchar *to, int precision, int scale);
 int bin2decimal(const uchar *from, decimal_t *to, int precision, int scale);
 
+/**
+  Convert decimal to lldiv_t.
+  The integer part is stored in to->quot.
+  The fractional part is multiplied to 10^9 and stored to to->rem.
+  @param  from  Decimal value
+  @param  to    lldiv_t value
+  @retval 0     on success
+  @retval !0    in error
+*/
+int decimal2lldiv_t(const decimal_t *from, lldiv_t *to);
+
+/**
+  Convert doube to lldiv_t.
+  The integer part is stored in to->quot.
+  The fractional part is multiplied to 10^9 and stored to to->rem.
+  @param  from  Decimal value
+  @param  to    lldiv_t value
+  @retval 0     on success
+  @retval !0    in error
+*/
+
+int double2lldiv_t(double from, lldiv_t *to);
 int decimal_size(int precision, int scale);
 int decimal_bin_size(int precision, int scale);
 int decimal_result_size(decimal_t *from1, decimal_t *from2, char op,

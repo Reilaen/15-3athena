@@ -10063,7 +10063,10 @@ BUILDIN_FUNC(areamonster)
 		m = sd->bl.m;
 	else
 	{
-		m = map_mapname2mapid(mapn);
+		if ((m = map_mapname2mapid(mapn)) == -1) {
+			ShowWarning("buildin_areamonster: Attempted to spawn monster class %d on non-existing map '%s'\n", class_, mapn);
+			return false;
+		}
 		if (map[m].flag.src4instance && st->instance_id >= 0) { // Try to redirect to the instance map, not the src map
 			if ((m = instance_mapid2imapid(m, st->instance_id)) < 0) {
 				ShowError("buildin_areamonster: Trying to spawn monster (%d) on instance map (%s) without instance attached.\n", class_, mapn);
@@ -11162,6 +11165,69 @@ BUILDIN_FUNC(getscrate)
 		rate = status_get_sc_def(NULL, bl, (sc_type)type, 10000, 10000, 0);
 
 	script_pushint(st,rate);
+	return 0;
+}
+
+/*==========================================
+ * getstatus(<effect type>{,<type>{,<char_id>}});
+ *------------------------------------------*/
+BUILDIN_FUNC(getstatus)
+{
+	int32 id, type;
+	struct map_session_data* sd;
+
+	if (!script_charid2sd(4, sd))
+		return 1;
+
+	id = script_getnum(st, 2);
+	type = script_hasdata(st, 3) ? script_getnum(st, 3) : 0;
+
+	if (id <= SC_NONE || id >= SC_MAX)
+	{// invalid status type given
+		ShowWarning("buildin_getstatus: Invalid status type given (%d).\n", id);
+		return 0;
+	}
+
+	struct status_change_entry* sce = sd->sc.data[id];
+
+	// Check if the status is active
+	if (sce == NULL) {
+		script_pushint(st, 0);
+		return 0;
+	}
+
+	switch (type)
+	{
+		case 1:
+			script_pushint(st, sce->val1);
+			break;
+		case 2:
+			script_pushint(st, sce->val2);
+			break;
+		case 3:
+			script_pushint(st, sce->val3);
+			break;
+		case 4:
+			script_pushint(st, sce->val4);
+			break;
+		case 5:
+			{
+				const struct TimerData* timer = get_timer(sce->timer);
+
+				if (timer)
+				{// return the amount of time remaining
+					script_pushint(st, timer->tick - gettick());
+				}
+				else {
+					script_pushint(st, -1);
+				}
+			}
+			break;
+		default:
+			script_pushint(st, 1);
+			break;
+	}
+
 	return 0;
 }
 
@@ -22221,6 +22287,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF2(sc_start, "sc_start4", "iiiiii???"),
 	BUILDIN_DEF(sc_end,"i?"),
 	BUILDIN_DEF(getscrate,"ii?"),
+	BUILDIN_DEF(getstatus, "i??"),
 	BUILDIN_DEF(debugmes,"s"),
 	BUILDIN_DEF2(catchpet,"pet","i"),
 	BUILDIN_DEF2(birthpet,"bpet",""),

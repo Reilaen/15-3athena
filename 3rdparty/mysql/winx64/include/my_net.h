@@ -1,17 +1,24 @@
 /* Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 of the License.
+   it under the terms of the GNU General Public License, version 2.0,
+   as published by the Free Software Foundation.
+
+   This program is also distributed with certain software (including
+   but not limited to OpenSSL) that is licensed under separate terms,
+   as designated in a particular file or component or in included license
+   documentation.  The authors of MySQL hereby grant you an additional
+   permission to link the program and your derivative works with the
+   separately licensed software that they have included with MySQL.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU General Public License, version 2.0, for more details.
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA */
 
 /*
   This file is also used to make handling of sockets and ioctl()
@@ -27,18 +34,23 @@
 C_MODE_START
 
 #include <errno.h>
+
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
+
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
+
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
+
 #ifdef HAVE_POLL
 #include <sys/poll.h>
 #endif
+
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -47,9 +59,9 @@ C_MODE_START
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-#if !defined(alpha_linux_port)
-#include <netinet/tcp.h>
-#endif
+# if !defined(alpha_linux_port)
+#   include <netinet/tcp.h>
+# endif
 #endif
 
 #if defined(__WIN__)
@@ -61,7 +73,8 @@ C_MODE_START
   #define SD_BOTH 0x02
 */
 #define SHUT_RDWR 0x02
-
+#else
+#include <netdb.h>     /* getaddrinfo() & co */
 #endif
 
 /*

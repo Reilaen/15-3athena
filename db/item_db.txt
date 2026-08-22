@@ -8216,6 +8216,12 @@
 20258,C_Blue_Headdress,Costume Blue Headdress,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,1321,{},{},{}
 20259,C_Pink_Clover,Costume Pink Clover,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,,,1322,{},{},{}
 //
+20271,C_Sunflower,Costume Sunflower,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,37,{},{},{}
+20272,C_Unicorn_Horn,Costume Unicorn Horn,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,42,{},{},{}
+//
+20307,C_Beginner_Cap,Costume Beginner Cap,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,,,1348,{if(BaseLevel<100) {	bonus bHit,30-(3*(BaseLevel/10)); bonus bMaxHP,1000-(100*(BaseLevel/10)); bonus bMaxSP,200-(20*(BaseLevel/10)); bonus bCastrate,-10+(BaseLevel/10); bonus bHealPower,150-(10*(BaseLevel/10)); bonus bHealPower2,10*(BaseLevel/10); bonus bAddItemHealRate,10*(BaseLevel/10);}},{},{}
+//
+20311,Costume_Magical_Booster,Costume Magical Booster,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,,,873,{},{},{}
 20312,Costume_Barons_Evil_Eye,Costume Baron's Evil Eye,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,,,989,{},{},{}
 20313,Costume_CD_in_Mouth,Costume CD in Mouth,5,0,,0,,,,0,0xFFFFFFFF,63,2,4096,,,,815,{},{},{}
 20314,Costume_New_Wave_Sunglasses,Costume New Wave Sunglasses,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,,,856,{},{},{}
@@ -8224,6 +8230,8 @@
 20317,Costume_Nekomimi_Cyber_Headphone,Costume Nekomimi Cyber Headphone,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,1353,{},{},{}
 20318,Costume_Charleston_Antenna,Costume Charleston Antenna,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,,,1354,{},{},{}
 20319,Costume_Crimson_Booster,Costume Crimson Booster,5,0,,0,,,,0,0xFFFFFFFF,63,2,2048,,,,1355,{},{},{}
+//
+20331,Costume_Desert_Prince,Costume Desert Prince,5,0,,0,,,,0,0xFFFFFFFF,63,2,1024,,,,567,{},{},{}
 //
 20706,Amistr_Bag,Amistr Bag,5,0,,500,,2,,0,0xFFFFFFFF,63,2,4,,,,4,{	bonus bAllStats,1; bonus2 bSubEle,Ele_Neutral,5; bonus2 bSubEle,Ele_Water,5; bonus2 bSubEle,Ele_Earth,5; bonus2 bSubEle,Ele_Fire,5; bonus2 bSubEle,Ele_Wind,5; bonus2 bSubEle,Ele_Poison,5; bonus2 bSubEle,Ele_Holy,5; bonus2 bSubEle,Ele_Dark,5; bonus2 bSubEle,Ele_Ghost,5; bonus2 bSubEle,Ele_Undead,5;},{},{}
 //Faceworm Nest

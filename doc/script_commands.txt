@@ -5541,6 +5541,26 @@ Note: to use SC_NOCHAT you should alter Manner
 
 ---------------------------------------
 
+*getstatus(<effect type>{,<type>{,<char_id>}})
+
+Retrieve information about a specific status effect when called. Depending on <type>
+specified the function will return different information.
+
+Possible <type> values:
+	- 0 or undefined: whether the status is active
+	- 1: the val1 of the status
+	- 2: the val2 of the status
+	- 3: the val3 of the status
+	- 4: the val4 of the status
+	- 5: the amount of time in milliseconds that the status has remaining
+
+If <type> is not defined or is set to 0, then the script function will either
+return 1 if the status is active, or 0 if the status is not active. If the status
+is not active when any of the <type> fields are provided, this script function
+will always return 0.
+
+---------------------------------------
+
 *skilleffect <skill id>,<number>;
 *skilleffect "<skill name>",<number>;
 
@@ -5883,21 +5903,6 @@ Example(s):
 	PCStopFollow getCharID(3,"Aaron");
 	
 ---------------------------------------
-
-*pcblockmove <id>,<option>;
-
-Prevents the given ID from moving when the option != 0, 0 enables the ID to move again.
-ID should be able to be GID of a monster/NPC or AID from a character.
-
-Example(s):
-
-//prevents the current char from moving away;
-	pcblockmove getcharid(3),1;
-	
-//enables the current char to move again.
-	pcblockmove getcharid(3),0;
-
---------------------------------------- 
 
 *setpcblock <type>,<state>{,<account ID>};
 *getpcblock {<account ID>};
