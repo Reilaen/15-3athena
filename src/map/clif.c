@@ -22337,6 +22337,21 @@ void __attribute__((unused)) clif_parse_dull(int fd, struct map_session_data *sd
 	return;
 }
 
+/// Send out the percentage of weight that causes it to be displayed in red.
+/// 0ADE <percentage>.L (ZC_OVERWEIGHT_PERCENT)
+void clif_weight_limit(struct map_session_data* sd) {
+#if PACKETVER >= 20171025
+	nullpo_retv(sd);
+
+	int fd = sd->fd;
+
+	WFIFOHEAD(fd, packet_len(0xADE));
+	WFIFOW(fd, 0) = 0xADE;
+	WFIFOL(fd, 2) = battle_config.natural_heal_weight_rate;
+	WFIFOSET(fd, packet_len(0xADE));
+#endif
+}
+
 /// Main client packet processing function
 static int clif_parse(int fd)
 {
@@ -22820,7 +22835,7 @@ void packetdb_readdb(void)
 
 //#0x0AC0
 		26,26,  0,  0, -1,156,  0,  0,  0,  0,  0, 12, 18,  0,  0,  0,
-	    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 22,  0,  0,
+	    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 22,  6,  0,
 	    0,  0,  7,  0,  0,  0,  0,  0,  2,  0,  0,  0,  0,  0,  0,  2,
 	   10,  0,  0,  0, 11,  0,  0, 32,  0,  0,  0,  0,  0,  0,  0,  0,
 //#0x0B00

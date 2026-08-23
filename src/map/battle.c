@@ -1803,7 +1803,6 @@ static int battle_range_type(struct block_list *src, struct block_list *target, 
 	// Forces damage to ranged no matter the set skill range.
 	// Ground targeted skills must be placed here since NK settings don't work with them.
 	if (skill_get_nk(skill_id)&NK_FORCE_RANGED_DAMAGE ||
-		//skill_id == RL_R_TRIP ||// Set to deal ranged damage in official? Is this a bug?
 		skill_id == RL_FIRE_RAIN)
 		return BF_LONG;
 
@@ -3554,7 +3553,12 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 		skillratio = 200 + 200 * skill_lv;
 		break;
 	case RL_R_TRIP:
-		skillratio = 1000 + 300 * skill_lv;
+		skillratio += -100 + 350 * skill_lv;
+		if (rebel_level_effect == 1)
+			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
+		break;
+	case RL_R_TRIP_PLUSATK:
+		skillratio += -100 + 300 + 300 * skill_lv;
 		break;
 	case RL_D_TAIL:
 		if (rebel_level_effect == 1)
@@ -3591,9 +3595,6 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 			skillratio += 100 * (sd ? sd->spiritball_old : 10);
 		else
 			skillratio += 10 * (sd ? sd->spiritball_old : 10);
-		break;
-	case RL_R_TRIP_PLUSATK:// Need to confirm if level 5 is really 2700% and not a typo. [Rytech]
-		skillratio = 500 + 100 * skill_lv;
 		break;
 	}
 	return skillratio;

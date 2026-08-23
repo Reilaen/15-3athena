@@ -3356,6 +3356,10 @@ int64 skill_attack (int attack_type, struct block_list* src, struct block_list *
 		//Sightblaster should never call clif_skill_damage twice
 		dmg.dmotion = clif_skill_damage(src, bl, tick, dmg.amotion, dmg.dmotion, damage, dmg.div_, skill_id, (flag&SD_LEVEL) ? -1 : skill_lv, 5);
 		break;
+	case RL_R_TRIP_PLUSATK:
+	case RL_S_STORM:
+		clif_skill_damage(dsrc, bl, tick, status_get_amotion(src), dmg.dmotion, damage, dmg.div_, skill_id, -1, DMG_SPLASH);
+		break;
 	default:
 		if( flag&SD_ANIMATION && dmg.div_ < 2 ) //Disabling skill animation doesn't works on multi-hit.
 			type = 5;
@@ -3422,70 +3426,29 @@ int64 skill_attack (int attack_type, struct block_list* src, struct block_list *
 					direction = map_calc_dir(bl, skill_area_temp[4], skill_area_temp[5]);
 				break;
 		}
-		if ( skill_id == SR_KNUCKLEARROW )
-		{
-			// Main attack has no flag set which allows the knockback code to be processed.
-			// If a flag is detected, then it means the knockback code was already ran.
-			if ( !flag )
-			{
-				short x = bl->x, y = bl->y;
 
+		// Blown-specific handling
+		switch (skill_id) {
+			case SR_KNUCKLEARROW:
 				// Ignore knockback damage bonus if in WOE (player cannot be knocked in WOE)
-				// Boss & Immune Knockback (mode or from bonus bNoKnockBack) target still remains the damage bonus
+				// Boss & Immune Knockback stay in place and don't get bonus damage
+				// Give knockback damage bonus only hits the wall. (bugreport:9096)
 				if (skill_blown(dsrc, bl, dmg.blewcount, direction, 0x04) < dmg.blewcount)
 					skill_addtimerskill(src, tick + 300 * ((flag & 2) ? 1 : 2), bl->id, 0, 0, skill_id, skill_lv, BF_WEAPON, flag | 4);
-
 				direction = -1;
-
-				// Move attacker to the target position after knocked back
-				if ((bl->x != x || bl->y != y) && skill_check_unit_movepos(5, src, bl->x, bl->y, 1, 1))
-					clif_blown(src);
-			}
-		}
-		/*if (skill_id == LG_OVERBRAND_BRANDISH)
-		{
-			if (skill_blown(dsrc, bl, dmg.blewcount, direction, 0x04|0x08|0x10|0x20))
-			{
-				short dir_x, dir_y;
-				dir_x = dirx[(direction + 4)%8];
-				dir_y = diry[(direction + 4)%8];
-				if (map_getcell(bl->m, bl->x+dir_x, bl->y+dir_y, CELL_CHKNOPASS) != 0)
-					skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, LG_OVERBRAND_PLUSATK, skill_lv, BF_WEAPON, flag);
-			}
-			else
-				skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, LG_OVERBRAND_PLUSATK, skill_lv, BF_WEAPON, flag);
- 		}
-		else*/ if (skill_id == RL_R_TRIP)
-		{
-			struct mob_data* tmd = BL_CAST(BL_MOB, bl);
-			static int dx[] = { 0, 1, 0, -1, -1,  1, 1, -1 };
-			static int dy[] = { -1, 0, 1,  0, -1, -1, 1,  1 };
-			bool wall_damage = true;
-			int i = 0;
-
-			// Knock back the target first if possible before we do a wall check.
-			skill_blown(dsrc, bl, dmg.blewcount, direction, 0);
-
-			// Check if the target will receive wall damage.
-			// Targets that can be knocked back will receive wall damage if pushed next to a wall.
-			// Player's with anti-knockback and boss monsters will always receive wall damage.
-			if (!((tsd && tsd->special_state.no_knockback) || (tmd && status_get_class_(bl) == CLASS_BOSS)))
-			{// Is there a wall next to the target?
-				ARR_FIND(0, 8, i, map_getcell(bl->m, bl->x + dx[i], bl->y + dy[i], CELL_CHKNOPASS) != 0);
-				if (i == 8)// No wall detected.
-					wall_damage = false;
-			}
-
-			if (wall_damage == true)// Deal wall damage if the above check detected a wall or the target has anti-knockback.
-				skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, RL_R_TRIP_PLUSATK, skill_lv, BF_WEAPON, flag);
-		}
-		else {
-			skill_blown(dsrc, bl, dmg.blewcount, direction, 0);
-			if (!dmg.blewcount && bl->type == BL_SKILL && damage > 0) {
-				TBL_SKILL *su = (TBL_SKILL*)bl;
-				if (su->group && su->group->skill_id == HT_BLASTMINE)
-					skill_blown(src, bl, 3, -1, 0);
-			}
+				break;
+			case RL_R_TRIP:
+				if (skill_blown(dsrc, bl, dmg.blewcount, direction, 0) < dmg.blewcount)
+					skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, RL_R_TRIP_PLUSATK, skill_lv, BF_WEAPON, flag | SD_ANIMATION);
+				break;
+			default:
+				skill_blown(dsrc, bl, dmg.blewcount, direction, 0);
+				if (!dmg.blewcount && bl->type == BL_SKILL && damage > 0) {
+					TBL_SKILL* su = (TBL_SKILL*)bl;
+					if (su->group && su->group->skill_id == HT_BLASTMINE)
+						skill_blown(src, bl, 3, -1, 0);
+				}
+				break;
 		}
 	}
 
@@ -4626,7 +4589,6 @@ int skill_castend_damage_id (struct block_list* src, struct block_list *bl, int 
 	case WM_SEVERE_RAINSTORM_MELEE:
 	case WM_GREAT_ECHO:
 	case GN_SLINGITEM_RANGEMELEEATK:
-	case RL_R_TRIP_PLUSATK:
 	case KO_SETSUDAN:
 	case KO_BAKURETSU:
 	case KO_HUUMARANKA:
@@ -16814,11 +16776,24 @@ int skill_check_condition_castend(struct map_session_data* sd, uint16 skill_id, 
 
 	if( require.ammo )
 	{ //Skill requires stuff equipped in the arrow slot.
+		uint8 extra_ammo = 0;
+
+		switch (skill_id) { // 2016-10-26 kRO update made these skills require an extra ammo to cast
+			//case WM_SEVERE_RAINSTORM:
+			//case RL_FIREDANCE:
+			case RL_R_TRIP:
+			//case RL_FIRE_RAIN:
+				extra_ammo = 1;
+				break;
+			default:
+				break;
+		}
+
 		if ((i = sd->equip_index[EQI_AMMO]) < 0 || !sd->inventory_data[i]) {
 			clif_arrow_fail(sd, 0);
 			return 0;
 		}
-		else if (sd->inventory.u.items_inventory[i].amount < require.ammo_qty) {
+		else if (sd->inventory.u.items_inventory[i].amount < require.ammo_qty + extra_ammo) {
 			if (require.ammo&(1 << A_BULLET | 1 << A_GRENADE | 1 << A_SHELL)) {
 				clif_skill_fail(sd, skill_id, USESKILL_FAIL_NEED_MORE_BULLET, 0, 0);
 				return 0;

@@ -6,6 +6,15 @@
 //			--More Details.
 //========================================
 
+08/23/2026
+	r590 [15peaces]
+		*Updated RA_RESEARCHTRAP max level.
+		*Added support for ZC_OVERWEIGHT_PERCENT packet.
+			-It will send the natural_heal_weight_rate battle config as limit.
+			-It is set to 50% by default. You can set it to 70% now to support the renewal limit.
+		*RL_R_TRIP
+			-Updated skill to latest official version.
+
 08/22/2026
 	r589 [15peaces]
 		*Follow-up eb7a487
