@@ -6,6 +6,16 @@
 //			--More Details.
 //========================================
 
+08/24/2026
+	r591 [15peaces]
+		*Some item updates.
+			-Added Foul_Rotten_Meat.
+			-Fixed Shield_Of_Gray location.
+			-Added missing RWC Gold Brooch[1] & RWC Silver Brooch combo bonus.
+			-Added some missing guns.
+		*RL_FIREDANCE
+			-Updated skill to latest official version.
+
 08/23/2026
 	r590 [15peaces]
 		*Updated RA_RESEARCHTRAP max level.

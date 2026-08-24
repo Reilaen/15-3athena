@@ -3547,7 +3547,10 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 			skillratio = 1700 + 200 * skill_lv;
 		break;
 	case RL_FIREDANCE:
-		skillratio = 200 * skill_lv + 50 * (sd ? pc_checkskill(sd, GS_DESPERADO) : 10);
+		skillratio += 100 + 100 * skill_lv;
+		skillratio += (sd ? pc_checkskill(sd, GS_DESPERADO) * 20 : 0);
+		if (rebel_level_effect == 1)
+			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
 		break;
 	case RL_H_MINE:
 		skillratio = 200 + 200 * skill_lv;
