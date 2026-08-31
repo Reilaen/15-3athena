@@ -20,6 +20,16 @@ enum e_storage_add {
 	STORAGE_ADD_INVALID,
 };
 
+/// Guild storage flags
+enum e_guild_storage_flags {
+	GSTORAGE_OPEN = 0,
+	GSTORAGE_STORAGE_ALREADY_OPEN,
+	GSTORAGE_ALREADY_OPEN,
+	GSTORAGE_NO_GUILD,
+	GSTORAGE_NO_STORAGE,
+	GSTORAGE_NO_PERMISSION
+};
+
 int storage_delitem(struct map_session_data* sd, struct s_storage *stor, int n, int amount);
 int storage_storageopen(struct map_session_data *sd);
 void storage_storageadd(struct map_session_data *sd, struct s_storage *stor, int index,int amount);

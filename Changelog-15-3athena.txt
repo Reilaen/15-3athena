@@ -5,6 +5,14 @@
 // 		- Details.
 //			--More Details.
 //========================================
+08/31/2026
+	r592 [15peaces]
+		*Added Roween & Eggring Pets.
+			-Also added Drops -> Eggring evolution.
+		*Updated storage_guild_storageopen.
+			-It will now check for GD_GUILD_STORAGE skill before open the storage.
+			-This update also adds support for the "Guild Storage Access" Permission.
+				--Requires PACKETVER 20140205+
 
 08/24/2026
 	r591 [15peaces]

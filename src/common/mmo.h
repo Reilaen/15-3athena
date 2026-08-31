@@ -802,6 +802,19 @@ struct guild_castle {
 	int temp_guardians_max;
 };
 
+/// Guild Permissions
+enum e_guild_permission {
+	GUILD_PERM_INVITE = 0x001,
+	GUILD_PERM_EXPEL = 0x010,
+	GUILD_PERM_STORAGE = 0x100,
+#if PACKETVER >= 20140205
+	GUILD_PERM_ALL = GUILD_PERM_INVITE | GUILD_PERM_EXPEL | GUILD_PERM_STORAGE,
+#else
+	GUILD_PERM_ALL = GUILD_PERM_INVITE | GUILD_PERM_EXPEL,
+#endif
+	GUILD_PERM_DEFAULT = GUILD_PERM_ALL,
+};
+
 struct fame_list {
 	int id;
 	int fame;
