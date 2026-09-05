@@ -7162,31 +7162,122 @@ BUILDIN_FUNC(makeitem)
 }
 
 /**
+ * Set random options for new item
+ * @param st Script state
+ * @param it Temporary item data
+ * @param funcname Function name
+ * @param x First position of random option id array from the script
+ **/
+static bool script_getitem_randomoption(struct script_state *st, struct map_session_data* sd, struct item *it, const char *funcname, int32 x) {
+	const struct script_data *opt_id = script_getdata(st,x);
+	const struct script_data *opt_val = script_getdata(st,x+1);
+	const struct script_data *opt_param = script_getdata(st,x+2);
+	const char *opt_id_var = reference_getname(opt_id);
+	const char *opt_val_var = reference_getname(opt_val);
+	const char *opt_param_var = reference_getname(opt_param);
+
+	// Check if the variable requires a player
+	if(not_server_variable(opt_id_var[0]) && sd == NULL) {
+		// If no player is attached
+		if(!script_rid2sd(st)) {
+			ShowError("buildin_%s: variable \"%s\" was not a server variable, but no player was attached.\n", funcname, opt_id_var);
+			return false;
+		}
+	}
+
+	if(!data_isreference(opt_id) || not_array_variable(*opt_id_var)) {
+		ShowError("buildin_%s: The option id parameter is not an array.\n", funcname);
+		return false;
+	}
+
+	if (is_string_variable(opt_id_var)) {
+		ShowError("buildin_%s: The array %s is not numeric type.\n", funcname, opt_id_var);
+		return false;
+	}
+
+	// Check if the variable requires a player
+	if(not_server_variable(opt_val_var[0]) && sd == NULL) {
+		// If no player is attached
+		if(!script_rid2sd(st)){
+			ShowError("buildin_%s: variable \"%s\" was not a server variable, but no player was attached.\n", funcname, opt_val_var);
+			return false;
+		}
+	}
+
+	if(!data_isreference(opt_val) || not_array_variable(*opt_val_var)) {
+		ShowError("buildin_%s: The option value parameter is not an array.\n", funcname);
+		return false;
+	}
+
+	if (is_string_variable(opt_val_var)) {
+		ShowError("buildin_%s: The array %s is not numeric type.\n", funcname, opt_val_var);
+		return false;
+	}
+
+	// Check if the variable requires a player
+	if(not_server_variable(opt_param_var[0]) && sd == NULL){
+		// If no player is attached
+		if(!script_rid2sd(st)) {
+			ShowError("buildin_%s: variable \"%s\" was not a server variable, but no player was attached.\n", funcname, opt_param_var);
+			return false;
+		}
+	}
+
+	if(!data_isreference(opt_param) || not_array_variable(*opt_param_var)){
+		ShowError( "buildin_%s: The option param parameter is not an array.\n", funcname );
+		return false;
+	}
+
+	if (is_string_variable(opt_param_var)) {
+		ShowError("buildin_%s: The array %s is not numeric type.\n", funcname, opt_param_var);
+		return false;
+	}
+
+	DBMap **opt_id_ref = reference_getref(opt_id);
+	DBMap **opt_val_ref = reference_getref(opt_val);
+	DBMap **opt_param_ref = reference_getref(opt_param);
+
+	const int32 opt_id_n = getarraysize(st, reference_getid(opt_id), reference_getindex(opt_id), is_string_variable(opt_id_var), opt_id_ref);
+
+	const int32 opt_id_id = reference_getid(opt_id);
+	const int32 opt_val_id = reference_getid(opt_val);
+	const int32 opt_param_id = reference_getid(opt_param);
+
+	const int32 opt_id_idx = reference_getindex(opt_id);
+	const int32 opt_val_idx = reference_getindex(opt_val);
+	const int32 opt_param_idx = reference_getindex(opt_param);
+
+	for (int32 i = 0; i < opt_id_n && i < MAX_ITEM_RDM_OPT; i++) {
+		it->option[i].id = (int16)get_val2_num( st, reference_uid(opt_id_id, opt_id_idx + i), opt_id_ref);
+		it->option[i].value = (int16)get_val2_num( st, reference_uid(opt_val_id, opt_val_idx + i), opt_val_ref);
+		it->option[i].param = (char)get_val2_num( st, reference_uid(opt_param_id, opt_param_idx + i), opt_param_ref);
+	}
+
+	return true;
+}
+
+/**
 * makeitem2 <item id>,<amount>,"<map name>",<X>,<Y>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>;
 * makeitem2 "<item name>",<amount>,"<map name>",<X>,<Y>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>;
 */
 BUILDIN_FUNC(makeitem2) {
 	t_itemid nameid;
-	uint16 amount, x, y;
-	const char *mapname;
 	int m;
 	struct item item_tmp;
 	struct item_data *id;
 	const char *funcname = script_getfuncname(st);
 
-	if (script_isstring(st, 2)){
+	if (script_isstring(st, 2)) {
 		const char *name = script_getstr(st, 2);
-		struct item_data *item_data = itemdb_searchname(name);
+		const struct item_data *item_data = itemdb_searchname(name);
 
 		if (item_data){
 			nameid = item_data->nameid;
-		}
-		else {
+		} else {
 			ShowError("buildin_%s: Unknown item %s\n", funcname, name);
 			return 1;
 		}
-	}
-	else {
+	} else {
 		nameid = (t_itemid)script_getnum(st, 2);
 
 		if (!itemdb_exists(nameid)) {
@@ -7195,53 +7286,56 @@ BUILDIN_FUNC(makeitem2) {
 		}
 	}
 
-	amount = script_getnum(st, 3);
-	mapname = script_getstr(st, 4);
-	x = script_getnum(st, 5);
-	y = script_getnum(st, 6);
+	const uint16 amount = script_getnum(st, 3);
+	const char *mapname = script_getstr(st, 4);
+	const uint16 x = script_getnum(st, 5);
+	const uint16 y = script_getnum(st, 6);
 
 	if (strcmp(mapname, "this") == 0) {
-		TBL_PC *sd;
-		sd = script_rid2sd(st);
+		TBL_PC *sd = script_rid2sd(st);
 		if (!sd) return 0; //Failed...
+
 		m = sd->bl.m;
-	}
-	else
+	} else {
 		m = map_mapname2mapid(mapname);
-
-	if ((id = itemdb_search(nameid))) {
-		char iden, ref, attr;
-		memset(&item_tmp, 0, sizeof(item_tmp));
-		item_tmp.nameid = nameid;
-
-		iden = (char)script_getnum(st, 7);
-		ref = (char)script_getnum(st, 8);
-		attr = (char)script_getnum(st, 9);
-
-		if (id->type == IT_WEAPON || id->type == IT_ARMOR) {
-			if (ref > MAX_REFINE) ref = MAX_REFINE;
-		}
-		else if (id->type == IT_PETEGG) {
-			iden = 1;
-			ref = 0;
-		}
-		else {
-			iden = 1;
-			ref = attr = 0;
-		}
-
-		item_tmp.identify = iden;
-		item_tmp.refine = ref;
-		item_tmp.attribute = attr;
-		item_tmp.card[0] = script_getnum(st, 10);
-		item_tmp.card[1] = script_getnum(st, 11);
-		item_tmp.card[2] = script_getnum(st, 12);
-		item_tmp.card[3] = script_getnum(st, 13);
-
-		map_addflooritem(&item_tmp, amount, m, x, y, 0, 0, 0, 4, 0, false);
 	}
-	else
+
+	if ((id = itemdb_exists(nameid)) == NULL) {
 		return 1;
+	}
+
+	memset(&item_tmp, 0, sizeof(item_tmp));
+	item_tmp.nameid = nameid;
+
+	char iden = (char) script_getnum(st, 7);
+	char ref = (char) script_getnum(st, 8);
+	char attr = (char) script_getnum(st, 9);
+
+	if (id->type == IT_WEAPON || id->type == IT_ARMOR) {
+		if (ref > MAX_REFINE) ref = MAX_REFINE;
+	} else if (id->type == IT_PETEGG) {
+		iden = 1;
+		ref = 0;
+	} else {
+		iden = 1;
+		ref = attr = 0;
+	}
+
+	item_tmp.identify = iden;
+	item_tmp.refine = ref;
+	item_tmp.attribute = attr;
+	item_tmp.card[0] = script_getnum(st, 10);
+	item_tmp.card[1] = script_getnum(st, 11);
+	item_tmp.card[2] = script_getnum(st, 12);
+	item_tmp.card[3] = script_getnum(st, 13);
+
+	if (funcname[strlen(funcname)-1] == '3' || funcname[strlen(funcname)-1]) {
+		if (!script_getitem_randomoption(st, NULL, &item_tmp, funcname, 14))
+			return 1;
+	}
+
+	map_addflooritem(&item_tmp, amount, m, x, y, 0, 0, 0, 4, 0, false);
+
 	return 0;
 }
 
@@ -22464,6 +22558,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(getitempackage,"i"),
 	BUILDIN_DEF(makeitem,"visii"),
 	BUILDIN_DEF(makeitem2, "visiiiiiiiii"),
+	BUILDIN_DEF2(makeitem2,"makeitem3","visiiiiiiiiirrr?"),
 	BUILDIN_DEF(mergeitem,"?"),
 	BUILDIN_DEF(mergeitem2,"??"),
 	BUILDIN_DEF(delitem,"vi?"),
