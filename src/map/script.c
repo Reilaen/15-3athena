@@ -2484,6 +2484,28 @@ void script_hardcoded_constants(void)
 	export_constant(EQI_SHADOW_ACC_R);
 	export_constant(EQI_SHADOW_ACC_L);
 
+	export_constant(EQP_HEAD_TOP);
+	export_constant(EQP_ARMOR);
+	export_constant(EQP_HAND_L);
+	export_constant(EQP_HAND_R);
+	export_constant(EQP_GARMENT);
+	export_constant(EQP_SHOES);
+	export_constant(EQP_ACC_L);
+	export_constant(EQP_ACC_R);
+	export_constant(EQP_HEAD_MID);
+	export_constant(EQP_HEAD_LOW);
+	export_constant(EQP_COSTUME_HEAD_LOW);
+	export_constant(EQP_COSTUME_HEAD_MID);
+	export_constant(EQP_COSTUME_HEAD_TOP);
+	export_constant(EQP_COSTUME_GARMENT);
+	export_constant(EQP_AMMO);
+	export_constant(EQP_SHADOW_ARMOR );
+	export_constant(EQP_SHADOW_WEAPON);
+	export_constant(EQP_SHADOW_SHIELD);
+	export_constant(EQP_SHADOW_SHOES);
+	export_constant(EQP_SHADOW_ACC_R);
+	export_constant(EQP_SHADOW_ACC_L);
+
 	/* refine cost types */
 	export_constant(REFINE_COST_NORMAL);
 	export_constant(REFINE_COST_OVER10);
