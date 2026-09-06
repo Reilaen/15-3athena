@@ -123,8 +123,9 @@ Oninit:
 		setmapflag "1@ecl"     ,mf_nobranch;
 		setmapflag "ecl_hub01" ,mf_nobranch;
 		setmapflag "que_avan01",mf_nobranch;
-		// Ghost Palace ===========
 		setmapflag "1@spa",mf_nobranch;
+		setmapflag "1@xm_d",mf_nobranch;
+
 	}
 	
 	// Episode 15

@@ -24,6 +24,7 @@ Oninit:
 	// Episode 14.2
 	if(getepisode() >= 142){
 		setmapflagnosave "1@spa","SavePoint",0,0;
+		setmapflagnosave "1@xm_d","SavePoint",0,0;
 	}
 	end;
 }

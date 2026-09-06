@@ -521,10 +521,11 @@ void initChangeTables(void)
 	add_sc( NPC_WIDECURSE        , SC_CURSE           );
 	add_sc( NPC_WIDESTUN         , SC_STUN            );
 
-	set_sc( NPC_HELLPOWER        , SC_HELLPOWER       , SI_HELLPOWER       , SCB_NONE );
-	set_sc( NPC_WIDEHELLDIGNITY  , SC_HELLPOWER       , SI_HELLPOWER       , SCB_NONE );
-	set_sc( NPC_INVINCIBLE       , SC_INVINCIBLE      , SI_INVINCIBLE      , SCB_SPEED );
-	set_sc( NPC_INVINCIBLEOFF    , SC_INVINCIBLEOFF   , SI_BLANK           , SCB_SPEED );
+	set_sc( NPC_HELLPOWER        , SC_HELLPOWER          , SI_HELLPOWER       , SCB_NONE );
+	set_sc( NPC_WIDEHELLDIGNITY  , SC_HELLPOWER          , SI_HELLPOWER       , SCB_NONE );
+	set_sc( NPC_INVINCIBLE       , SC_INVINCIBLE         , SI_INVINCIBLE      , SCB_SPEED );
+	set_sc( NPC_INVINCIBLEOFF    , SC_INVINCIBLEOFF      , SI_BLANK           , SCB_SPEED );
+	set_sc_with_vfx( NPC_MAXPAIN , SC_MAXPAIN            , SI_MAXPAIN         , SCB_NONE );
 
 	set_sc( CASH_BLESSING        , SC_BLESSING        , SI_BLESSING        , SCB_STR|SCB_INT|SCB_DEX );
 	set_sc( CASH_INCAGI          , SC_INCREASEAGI     , SI_INCREASEAGI     , SCB_AGI|SCB_SPEED );
@@ -3994,9 +3995,7 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 void status_calc_atk_ele_pc(struct map_session_data *sd, struct status_change *sc) {
 	int i = 0;
 	nullpo_retv(sd);
-	memset(sd->magic_addele, 0, sizeof(sd->magic_addele));
-	memset(sd->right_weapon.addele, 0, sizeof(sd->right_weapon.addele));
-	memset(sd->left_weapon.addele, 0, sizeof(sd->left_weapon.addele));
+
 	if ((i = pc_checkskill(sd, AB_EUCHARISTICA)) > 0) {
 		sd->right_weapon.addele[ELE_DARK] += i;
 		sd->left_weapon.addele[ELE_DARK] += i;

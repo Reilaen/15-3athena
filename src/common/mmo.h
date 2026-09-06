@@ -576,7 +576,7 @@ struct mmo_charstatus {
 	uint32 mother;
 	uint32 child;
 
-	unsigned int base_exp,job_exp;
+	uint64 base_exp,job_exp;
 	int zeny;
 
 	short class_;
@@ -799,6 +799,19 @@ struct guild_castle {
 	} guardian[MAX_GUARDIANS];
 	int* temp_guardians; // ids of temporary guardians (mobs)
 	int temp_guardians_max;
+};
+
+/// Guild Permissions
+enum e_guild_permission {
+	GUILD_PERM_INVITE = 0x001,
+	GUILD_PERM_EXPEL = 0x010,
+	GUILD_PERM_STORAGE = 0x100,
+#if PACKETVER >= 20140205
+	GUILD_PERM_ALL = GUILD_PERM_INVITE | GUILD_PERM_EXPEL | GUILD_PERM_STORAGE,
+#else
+	GUILD_PERM_ALL = GUILD_PERM_INVITE | GUILD_PERM_EXPEL,
+#endif
+	GUILD_PERM_DEFAULT = GUILD_PERM_ALL,
 };
 
 struct fame_list {

@@ -2875,6 +2875,10 @@
 12328,86400,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"Dol-Seoi's Sorrow"
 12329,86400,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"Keaton's Bracelet"
 
+// Horror Toy Factory - Ep 14.2
+12330,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"Skull-faced Girl"
+12331,82800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"Trail of Toy Factory"
+
 // Episode 15.2: Central Laboratory
 12346,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"Strange Ancient Science"
 12347,82800,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"Trace of Laboratory Access"

@@ -1066,7 +1066,7 @@ void clif_quest_delete(struct map_session_data * sd, int quest_id);
 void clif_quest_update_status(struct map_session_data * sd, int quest_id, bool active);
 void clif_quest_update_objective(struct map_session_data * sd, struct quest * qd);
 void clif_quest_show_event(struct map_session_data *sd, struct block_list *bl, short state, short color);
-void clif_displayexp(struct map_session_data *sd, unsigned int exp, char type, bool quest, bool lost);
+void clif_displayexp(struct map_session_data* sd, const uint64 exp, const char type, const bool is_quest, const bool is_lost);
 
 int clif_send(const void* buf, int len, struct block_list* bl, enum send_target type);
 void do_init_clif(void);
@@ -1131,6 +1131,8 @@ void clif_party_show_picker(struct map_session_data * sd, struct item * item_dat
 // Progress Bar [Inkfish]
 void clif_progressbar(struct map_session_data * sd, unsigned long color, unsigned int second);
 void clif_progressbar_abort(struct map_session_data * sd);
+void clif_progressbar_npc(struct npc_data* nd, struct map_session_data* sd);
+#define clif_progressbar_npc_area(nd) clif_progressbar_npc((nd),NULL)
 
 void clif_PartyBookingRegisterAck(struct map_session_data *sd, int flag);
 void clif_PartyBookingDeleteAck(struct map_session_data* sd, int flag);
@@ -1241,5 +1243,7 @@ bool clif_lapineDdukDdak_open(struct map_session_data *sd, int item_id);
 bool clif_lapineUpgrade_open(struct map_session_data *sd, int item_id);
 
 void clif_parse_skill_toid(struct map_session_data* sd, uint16 skill_id, uint16 skill_lv, int target_id);
+
+void clif_weight_limit(struct map_session_data* sd);
 
 #endif /* _CLIF_H_ */

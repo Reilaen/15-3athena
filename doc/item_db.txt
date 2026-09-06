@@ -312,7 +312,7 @@ Weapons
  6 = One-Handed Axes
  7 = Two-Handed Axes
  8 = Maces
- 9 = Two-Handed Maces (Unused)
+ 9 = Two-Handed Maces
 10 = Staffs
 11 = Bows
 12 = Knuckles

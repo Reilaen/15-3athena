@@ -1581,14 +1581,14 @@ prt_lib,91,85,3	script	Mage Nillem#ep16_warp	735,{
 		mes "[Nillem]";
 		mes "Phew, did you see? We are the last ones entering.";
 		mes "Others must have entered already.";
-		/* // Instance not added yet...
 		next;
 		if (select( "Enter now.", "Do not enter." ) == 2) {
 			mes "[Nillem]";
 			mes "Haha, it is not good either when it is too late...";
 			close;
 		}
-		if (instance_create("Ritual of Blessing") < 0) {
+		set .@rob_instance, instance_create("Ritual of Blessing", getcharid(1));
+		if (instance_attachmap( "2@mir",.@rob_instance ) == "") {
 			mes "[Nillem]";
 			mes "Oh... It doesn't work well.";
 			mes "Wait, phew... Let me collect my strength again...";
@@ -1597,11 +1597,12 @@ prt_lib,91,85,3	script	Mage Nillem#ep16_warp	735,{
 			mes "... I'll make it work, wait a minute.";
 			close;
 		}
+		instance_set_timeout 3600,300,.@rob_instance;
+		instance_init(.@rob_instance);
 		mes "[Nillem]";
 		mes "Whoa! The gate to the next area has been activated!";
 		mes "Well, let's get in there!";
 		classchange( 10007, "Room of Consciousness#e", bc_self );
-		*/
 		close;
 	case 9:
 		mes "[Nillem]";
@@ -1768,7 +1769,6 @@ prt_lib,88,90,1	script	Room of Consciousness#e	139,{
 			close;
 		}
 		mes "You can move to where the ritual of blessing is held.";
-		/* // Instance not added yet...
 		next;
 		if (select( "Enter.", "Do not enter." ) == 2) {
 			mes "[Nillem]";
@@ -1779,20 +1779,15 @@ prt_lib,88,90,1	script	Room of Consciousness#e	139,{
 			mes "^4d4dffOnly the party leader can enter MD [Ritual of Blessing].^000000";
 			close;
 		}
-		switch( instance_enter("Ritual of Blessing") ) {
-		case IE_OTHER:
-			mes "An unknown error occurred.";
-			close;
-		case IE_NOINSTANCE:// todo
-			end;
-		case IE_NOMEMBER:
-			end;
-		case IE_OK:
+		if( has_instance("2@mir") == "" ){
+			mes "Ritual of Blessing doesnt exist for Party - "+getpartyname( getcharid(1) );
+		}
+		else
+		{
 			mapannounce "prt_lib", "Party member " + strcharinfo(0) + " of party's " + getpartyname( getcharid(1) ) + " enters Ritual of Blessing.", bc_map,0xFF99,FW_NORMAL,12;
-			//warp "2@mir",101,12;
+			warp "2@mir",101,12;
 			end;
 		}
-		*/
 	}
 	end;
 }
@@ -2276,13 +2271,13 @@ prt_lib_q,91,85,3	script	Nillem#ep16_lib_q	735,{
 		mes "[Nillem]";
 		mes "Please, come back alive and well-";
 		next;
-		/* Instance not added yet
 		if (select( "Connect now.", "Do not go." ) == 2) {
 			mes "[Nillem]";
 			mes "Haha, it is not good either when it is too late...";
 			close;
 		}
-		if (instance_create("Room of Consciousness") < 0) {
+		set .@roc_instance, instance_create("Room of Consciousness", getcharid(1));
+		if( instance_attachmap( "1@mir",.@roc_instance ) == "" ){
 			mes "[Nillem]";
 			mes "Oh... It doesn't work well.";
 			mes "Wait, phew... Let me collect my strength again...";
@@ -2291,10 +2286,11 @@ prt_lib_q,91,85,3	script	Nillem#ep16_lib_q	735,{
 			mes "... I'll make it work, wait a minute.";
 			close;
 		}
+		instance_set_timeout 3600,300,.@roc_instance;
+		instance_init(.@roc_instance);
 		mes "[Nillem]";
 		mes "Whoa! The gate to the next area has been activated!";
 		mes "Well, let's get in there!";
-		*/
 		close;
 	}
 	if (banquet_main_quest == 22) {
@@ -2474,8 +2470,8 @@ prt_lib_q,91,85,3	script	Nillem#ep16_lib_q	735,{
 					mes "Haha, it is not good either when it is too late...";
 					close;
 				}
-				/* Instance not added yet
-				if (instance_create("Room of Consciousness") < 0) {
+				set .@roc_instance, instance_create("Room of Consciousness", getcharid(1));
+				if( instance_attachmap( "1@mir",.@roc_instance ) == "" ){
 					mes "[Nillem]";
 					mes "Oh... It doesn't work well.";
 					mes "Wait, phew... Let me collect my strength again...";
@@ -2484,11 +2480,12 @@ prt_lib_q,91,85,3	script	Nillem#ep16_lib_q	735,{
 					mes "... I'll make it work, wait a minute.";
 					close;
 				}
+				instance_set_timeout 3600,300,.@roc_instance;
+				instance_init(.@roc_instance);
 				mes "[Nillem]";
 				mes "Whoa! The gate to the next area has been activated!";
 				mes "Well, let's get in there!";
 				classchange( 10042, "Swaying Space#evt_gate0", bc_self );
-				*/
 				close;
 			case 2:
 				mes "[Nillem]";
@@ -2538,24 +2535,15 @@ prt_lib_q,88,90,1	script	Swaying Space#evt_gate0	139,{
 				mes "^4d4dffOnly the party leader can enter MD [Room of Consciousness].^000000";
 				close;
 			}
-			/* Instance not added yet
-			switch( instance_enter("Room of Consciousness") ) {
-			case IE_OTHER:
-				mes "An unknown error occurred.";
-				close;
-			case IE_NOINSTANCE:
-				mes "[Nillem]";
-				mes "Hum, is it too difficult to connect it by force?";
-				mes "Wait a minute.";
-				close;
-			case IE_NOMEMBER:
-				end;
-			case IE_OK:
+			if( has_instance("1@mir") == "" ){
+				mes "Room of Consciousness doesnt exist for Party - "+getpartyname( getcharid(1) );
+			}
+			else
+			{
 				mapannounce strnpcinfo(4), "Party member " + strcharinfo(0) + " of party's " + getpartyname( getcharid(1) ) + " enters Room of Consciousness.", bc_map,0xFF99,FW_NORMAL,12;
-				//warp "1@mir",101,10;
+				warp "1@mir",101,10;
 				end;
 			}
-			*/
 		}
 		mes "[Nillem]";
 		mes "Hum, I have just torn and connected these spaces by force.";
@@ -2584,21 +2572,15 @@ prt_lib_q,88,90,1	script	Swaying Space#evt_gate0	139,{
 			mes "^4d4dffOnly the party leader can enter MD [Room of Consciousness].^000000";
 			close;
 		}
-		/* Instance not added yet
-		switch( instance_enter("Room of Consciousness") ) {
-		case IE_OTHER:
-			mes "An unknown error occurred.";
-			close;
-		case IE_NOINSTANCE:// todo
-			close;
-		case IE_NOMEMBER:
-			end;
-		case IE_OK:
+			if( has_instance("1@mir") == "" ){
+				mes "Room of Consciousness doesnt exist for Party - "+getpartyname( getcharid(1) );
+			}
+			else
+			{
 			mapannounce strnpcinfo(4), "Party member " + strcharinfo(0) + " of party's " + getpartyname( getcharid(1) ) + " enters Room of Consciousness.", bc_map,0xFF99,FW_NORMAL,12;
-			//warp "1@mir",101,10;
+			warp "1@mir",101,10;
 			end;
 		}
-		*/
 		end;
 	}
 }
@@ -15268,7 +15250,13 @@ prt_pri00,61,136,3	script	Dylan#pa0829	561,{
 				124, 4701,	// STR+2
 				126, 4731,	// AGI+2
 				128, 4751,	// LUK+2
-				129, 4741;	// VIT+2
+				129, 4741,	// VIT+2
+				130, 4752,	// LUK+3
+				131, 4702,	// STR+3
+				132, 4732,	// AGI+3
+				133, 4712,	// INT+3
+				134, 4722,	// DEX+3
+				135, 4742;	// VIT+3
 			.@card_index = 3;
 		}
 		else {
@@ -15283,9 +15271,14 @@ prt_pri00,61,136,3	script	Dylan#pa0829	561,{
 				120, 4711,	// INT+2
 				122, 4721,	// DEX+2
 				124, 4741,	// VIT+2
-				126, 4742,	// VIT+3
-				128, 4701,	// STR+2
-				129, 4752;	// LUK+3
+				126, 4701,	// STR+2
+				128, 4731,	// AGI+2
+				129, 4742,	// VIT+3
+				130, 4752,	// LUK+3
+				131, 4702,	// STR+3
+				132, 4732,	// AGI+3
+				133, 4712,	// INT+3
+				134, 4722;	// DEX+3
 			.@card_index = 2;
 		}
 		.@size = getarraysize(.@enhance);

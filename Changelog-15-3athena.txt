@@ -5,6 +5,99 @@
 // 		- Details.
 //			--More Details.
 //========================================
+09/06/2026
+	r593 [15peaces]
+		*Fixed element bonuses getting cleared in the wrong place.
+			-Thanks to @Reilaen
+		*Fixed the definition for the repairitem packet of version 46.
+			-Thanks to @Reilaen
+		*Added progressbar_npc script command.
+			-Added support for ZC_PROGRESS_ACTOR packet.
+		*WM_SEVERE_RAINSTORM
+			-Updated skill to official 2022 version.
+		*Added some missing items & fixed others.
+		*Banquet for Heroes ep16.1 - part 3
+			-Updated accessory enchants of ep16 according to kRO 2015.02.25
+			-Added & enabled instances.
+		*Added Cat o' Nine Tails Pet.
+			-Also added Nine Tail -> Cat o' Nine Tails evolution.
+		*Added missing Elite Buffalo Bandit drops.
+
+08/31/2026
+	r592 [15peaces]
+		*Added Roween & Eggring Pets.
+			-Also added Drops -> Eggring evolution.
+		*Updated storage_guild_storageopen.
+			-It will now check for GD_GUILD_STORAGE skill before open the storage.
+			-This update also adds support for the "Guild Storage Access" Permission.
+				--Requires PACKETVER 20140205+
+
+08/24/2026
+	r591 [15peaces]
+		*Some item updates.
+			-Added Foul_Rotten_Meat.
+			-Fixed Shield_Of_Gray location.
+			-Added missing RWC Gold Brooch[1] & RWC Silver Brooch combo bonus.
+			-Added some missing guns.
+		*RL_FIREDANCE
+			-Updated skill to latest official version.
+
+08/23/2026
+	r590 [15peaces]
+		*Updated RA_RESEARCHTRAP max level.
+		*Added support for ZC_OVERWEIGHT_PERCENT packet.
+			-It will send the natural_heal_weight_rate battle config as limit.
+			-It is set to 50% by default. You can set it to 70% now to support the renewal limit.
+		*RL_R_TRIP
+			-Updated skill to latest official version.
+
+08/22/2026
+	r589 [15peaces]
+		*Follow-up eb7a487
+			-Added the nullpo error fix in intif_parse_StorageSaved...
+		*Added getstatus script command.
+			-Thanks to @rathena for the base.
+		*Horror Toy Factory - part 2
+			-Ported & enabled scripts.
+		*Added a safe-check in areamonster script command.
+		*Updated MySQL library from 5.5.24 to 5.6.51.
+			-It is compiled using VS2010, so you need to make sure to have the correct redistributable package installed.
+		*Added x64 compilation targets.
+			-They are not working yet and only for testing purposes.
+		*Some cleaning in databases.
+			-Moved some stable items.
+			-Changed some monsters to fit pre-renewal calculations.
+
+08/15/2026
+	r588 [15peaces]
+		*Follow-up: Re-added some checks to prevent levelups over maxlvl.
+		*Fixed a nullpo error in intif_parse_StorageSaved.
+			-Also the function will now mark the correct storage as cleaned...
+		*Removed pcblockmove script command.
+			-You cen use setpcblock(PCBLOCK_MOVE) instead.
+		*Horror Toy Factory - part 1
+			-Added some stuff to prepare the instance release.
+			-Added monsters, skills, items, etc.
+			-Added scripts.
+				--Scripts not yet enabled, needs to be ported...
+			-Thanks to @rathena
+
+08/09/2026
+	r587 [15peaces]
+		*Update of the level up calculations.
+			-Updated to use uint64 for player calculations.
+			-Updated part of caclulations with Hercules as reference.
+			-Thanks to @HerculesWS & @Reilaen for the base.
+		*Some item database updates
+			-Fixed Revolver_Buffalo_Bandit_Card script.
+			-Fixed Marlin trade restrictions.
+
+08/07/2026
+	r586 [15peaces]
+		*Removed wrong and odd parameter passed to skill_check_condition_mob_master_mer_sub.
+			-Thanks to @Reilaen
+		*Updated Nightmare Pyramids card drops.
+
 07/12/2026
 	r585 [15peaces]
 		*Fixed an nullpo error in skill_counter_additional_effect.

@@ -11465,6 +11465,69 @@ BUILDIN_FUNC(getscrate)
 }
 
 /*==========================================
+ * getstatus(<effect type>{,<type>{,<char_id>}});
+ *------------------------------------------*/
+BUILDIN_FUNC(getstatus)
+{
+	int32 id, type;
+	struct map_session_data* sd;
+
+	if (!script_charid2sd(4, sd))
+		return 1;
+
+	id = script_getnum(st, 2);
+	type = script_hasdata(st, 3) ? script_getnum(st, 3) : 0;
+
+	if (id <= SC_NONE || id >= SC_MAX)
+	{// invalid status type given
+		ShowWarning("buildin_getstatus: Invalid status type given (%d).\n", id);
+		return 0;
+	}
+
+	struct status_change_entry* sce = sd->sc.data[id];
+
+	// Check if the status is active
+	if (sce == NULL) {
+		script_pushint(st, 0);
+		return 0;
+	}
+
+	switch (type)
+	{
+		case 1:
+			script_pushint(st, sce->val1);
+			break;
+		case 2:
+			script_pushint(st, sce->val2);
+			break;
+		case 3:
+			script_pushint(st, sce->val3);
+			break;
+		case 4:
+			script_pushint(st, sce->val4);
+			break;
+		case 5:
+			{
+				const struct TimerData* timer = get_timer(sce->timer);
+
+				if (timer)
+				{// return the amount of time remaining
+					script_pushint(st, timer->tick - gettick());
+				}
+				else {
+					script_pushint(st, -1);
+				}
+			}
+			break;
+		default:
+			script_pushint(st, 1);
+			break;
+	}
+
+	return 0;
+}
+
+/*==========================================
  *
  *------------------------------------------*/
 BUILDIN_FUNC(debugmes)
@@ -17405,25 +17468,6 @@ BUILDIN_FUNC(rid2name)
 	return 0;
 }
 
-BUILDIN_FUNC(pcblockmove)
-{
-	int id, flag;
-	TBL_PC *sd = NULL;
-
-	id = script_getnum(st,2);
-	flag = script_getnum(st,3);
-
-	if(id)
-		sd = map_id2sd(id);
-	else
-		sd = script_rid2sd(st);
-
-	if(sd)
-		sd->state.blockedmove = flag > 0;
-
-	return 0;
-}
-
 BUILDIN_FUNC(setpcblock)
 {
 	TBL_PC *sd;
@@ -19879,7 +19923,7 @@ BUILDIN_FUNC(instance_create) {
 				return 1;
 		}
 	}
-	
+
 	script_pushint(st, instance_create(owner_id, script_getstr(st, 2), mode));
 
 	return 0;
@@ -20582,6 +20626,70 @@ BUILDIN_FUNC(progressbar) {
 	clif_progressbar(sd, strtol(color, (char **)NULL, 0), second);
 #endif
     return 0;
+}
+
+/**
+ * Display a progress bar above an NPC
+ * progressbar_npc "<color>",<seconds>{,<"NPC Name">};
+ */
+BUILDIN_FUNC(progressbar_npc) {
+	struct map_session_data* sd = map_id2sd(st->rid);
+	struct npc_data* nd = NULL;
+
+	if (script_hasdata(st, 4)) {
+		const char* name = script_getstr(st, 4);
+
+		nd = npc_name2id(name);
+
+		if (!nd) {
+			ShowError("buildin_progressbar_npc: NPC \"%s\" was not found.\n", name);
+			return 1;
+		}
+	}
+	else {
+		nd = map_id2nd(st->oid);
+	}
+
+	// First call(by function call)
+	if (!nd->progressbar.timeout) {
+		const char* color;
+		int second;
+
+		color = script_getstr(st, 2);
+		second = script_getnum(st, 3);
+
+		if (second < 0) {
+			ShowError("buildin_progressbar_npc: negative amount('%d') of seconds is not supported\n", second);
+			return 1;
+		}
+
+		if (sd) { // Player attached - keep them from doing other things
+			sd->state.workinprogress = WIP_DISABLE_ALL;
+			sd->state.block_action |= (PCBLOCK_MOVE | PCBLOCK_ATTACK | PCBLOCK_SKILL);
+		}
+
+		// sleep for the target amount of time
+		st->state = RERUNLINE;
+		st->sleep.tick = second * 1000;
+		nd->progressbar.timeout = gettick() + second * 1000;
+		nd->progressbar.color = strtol(color, (char**)NULL, 0);
+
+		clif_progressbar_npc_area(nd);
+		// Second call(by timer after sleeping time is over)
+	}
+	else {
+		// Continue the script
+		if (sd) { // Player attached - remove restrictions
+			sd->state.workinprogress = WIP_DISABLE_NONE;
+			sd->state.block_action &= ~(PCBLOCK_MOVE | PCBLOCK_ATTACK | PCBLOCK_SKILL);
+		}
+
+		st->state = RUN;
+		st->sleep.tick = 0;
+		nd->progressbar.timeout = nd->progressbar.color = 0;
+	}
+
+	return 0;
 }
 
 BUILDIN_FUNC(pushpc)
@@ -22760,6 +22868,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF2(sc_start, "sc_start4", "iiiiii???"),
 	BUILDIN_DEF(sc_end,"i?"),
 	BUILDIN_DEF(getscrate,"ii?"),
+	BUILDIN_DEF(getstatus, "i??"),
 	BUILDIN_DEF(debugmes,"s"),
 	BUILDIN_DEF2(catchpet,"pet","i"),
 	BUILDIN_DEF2(birthpet,"bpet",""),
@@ -22947,7 +23056,6 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(rid2name,"i"),
 	BUILDIN_DEF(pcfollow,"ii"),
 	BUILDIN_DEF(pcstopfollow,"i"),
-	BUILDIN_DEF(pcblockmove,"ii"),
 	BUILDIN_DEF(setpcblock, "ii?"),
 	BUILDIN_DEF(getpcblock, "?"),
 	// <--- [zBuffer] List of player cont commands
@@ -23000,6 +23108,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(setfont,"i"),
 	BUILDIN_DEF(areamobuseskill,"siiiiviiiii"),
 	BUILDIN_DEF(progressbar,"si"),
+	BUILDIN_DEF(progressbar_npc, "si?"),
 	BUILDIN_DEF(pushpc,"ii"),
 	BUILDIN_DEF(buyingstore,"i"),
 	BUILDIN_DEF(searchstores,"ii"),

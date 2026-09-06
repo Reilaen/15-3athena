@@ -561,14 +561,26 @@ char storage_guild_storageopen(struct map_session_data* sd)
 	nullpo_ret(sd);
 
 	if(sd->status.guild_id <= 0)
-		return 2;
+		return GSTORAGE_NO_GUILD;
 
-	if(sd->state.storage_flag)
-		return 1; //Can't open both storages at a time.
+	if (!guild_checkskill(sd->guild, GD_GUILD_STORAGE))
+		return GSTORAGE_NO_STORAGE; // Can't open storage if the guild has not learned the skill
+
+	if (sd->state.storage_flag == 2)
+		return GSTORAGE_ALREADY_OPEN; // Guild storage already open.
+	else if (sd->state.storage_flag || sd->state.storage_flag == 3)
+		return GSTORAGE_STORAGE_ALREADY_OPEN; // Can't open both storages at a time.
+
+#if PACKETVER >= 20140205
+	int32 pos;
+
+	if ((pos = guild_getposition(sd)) < 0 || !(sd->guild->position[pos].mode & GUILD_PERM_STORAGE))
+		return GSTORAGE_NO_PERMISSION; // Guild member doesn't have permission
+#endif
 	
 	if( !pc_can_give_items(pc_isGM(sd)) ) { //check is this GM level can open guild storage and store items [Lupus]
 		clif_displaymessage(sd->fd, msg_txt(sd,246));
-		return 1;
+		return GSTORAGE_ALREADY_OPEN;
 	}
 
 	if((gstor = guild2storage2(sd->status.guild_id)) == NULL) {
@@ -576,17 +588,17 @@ char storage_guild_storageopen(struct map_session_data* sd)
 		return 0;
 	}
 	if(gstor->status)
-		return 1;
+		return GSTORAGE_ALREADY_OPEN;
 
 	if( gstor->lock )
- 		return 1;
+ 		return GSTORAGE_ALREADY_OPEN;
 	
 	gstor->status = true;
 	sd->state.storage_flag = 2;
 	storage_sortitem(gstor->u.items_guild, ARRAYLENGTH(gstor->u.items_guild));
 	clif_storagelist(sd, gstor->u.items_guild, ARRAYLENGTH(gstor->u.items_guild), "Guild Storage");
 	clif_updatestorageamount(sd, gstor->amount, MAX_GUILD_STORAGE);
-	return 0;
+	return GSTORAGE_OPEN;
 }
 
 /*==========================================

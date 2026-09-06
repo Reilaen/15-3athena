@@ -85,7 +85,7 @@ int hom_dead(struct homun_data *hd);
 void hom_skillup(struct homun_data *hd,int skill_id);
 int hom_calc_skilltree(struct homun_data *hd,int flag_evolve);
 int hom_checkskill(struct homun_data *hd,int skill_id);
-int hom_gainexp(struct homun_data *hd,int exp);
+int hom_gainexp(struct homun_data *hd, uint64 exp_);
 int hom_levelup(struct homun_data *hd);
 int hom_evolution(struct homun_data *hd) ;
 int merc_hom_mutation(struct homun_data *hd, int class_);

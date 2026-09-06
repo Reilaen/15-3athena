@@ -1,13 +1,25 @@
-/* Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved. 
+/* Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved. 
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 of the License.
+   it under the terms of the GNU General Public License, version 2.0,
+   as published by the Free Software Foundation.
+
+   This program is also distributed with certain software (including
+   but not limited to OpenSSL) that is licensed under separate terms,
+   as designated in a particular file or component or in included license
+   documentation.  The authors of MySQL hereby grant you an additional
+   permission to link the program and your derivative works with the
+   separately licensed software that they have included with MySQL.
+
+   Without limiting anything contained in the foregoing, this file,
+   which is part of C Driver for MySQL (Connector/C), is also subject to the
+   Universal FOSS Exception, version 1.0, a copy of which can be found at
+   http://oss.oracle.com/licenses/universal-foss-exception.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU General Public License, version 2.0, for more details.
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
@@ -39,7 +51,7 @@ struct _db_stack_frame_ {
 };
 
 struct  _db_code_state_;
-extern  my_bool _dbug_on_;
+extern  MYSQL_PLUGIN_IMPORT my_bool _dbug_on_;
 extern  my_bool _db_keyword_(struct _db_code_state_ *, const char *, int);
 extern  int _db_explain_(struct _db_code_state_ *cs, char *buf, size_t len);
 extern  int _db_explain_init_(char *buf, size_t len);
@@ -55,6 +67,7 @@ extern void _db_enter_(const char *_func_, const char *_file_, uint _line_,
                        struct _db_stack_frame_ *_stack_frame_);
 extern  void _db_return_(uint _line_, struct _db_stack_frame_ *_stack_frame_);
 extern  void _db_pargs_(uint _line_,const char *keyword);
+extern  int _db_enabled_();
 extern  void _db_doprnt_(const char *format,...)
   ATTRIBUTE_FORMAT(printf, 1, 2);
 extern  void _db_dump_(uint _line_,const char *keyword,
@@ -80,7 +93,17 @@ extern  const char* _db_get_func_(void);
 #define DBUG_EVALUATE_IF(keyword,a1,a2) \
         (_db_keyword_(0,(keyword), 1) ? (a1) : (a2))
 #define DBUG_PRINT(keyword,arglist) \
-        do {_db_pargs_(__LINE__,keyword); _db_doprnt_ arglist;} while(0)
+        do \
+        {  \
+          if (_dbug_on_) \
+          { \
+            _db_pargs_(__LINE__,keyword); \
+            if (_db_enabled_()) \
+            {  \
+              _db_doprnt_ arglist; \
+            } \
+          } \
+        } while(0)
 #define DBUG_PUSH(a1) _db_push_ (a1)
 #define DBUG_POP() _db_pop_ ()
 #define DBUG_SET(a1) _db_set_ (a1)
@@ -133,6 +156,7 @@ extern  const char* _db_get_func_(void);
 #define DBUG_SUICIDE() DBUG_ABORT()
 #else
 extern void _db_suicide_();
+extern void _db_flush_gcov_();
 #define DBUG_SUICIDE() (_db_flush_(), _db_suicide_())
 #endif
 

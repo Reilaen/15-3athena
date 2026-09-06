@@ -34,6 +34,7 @@ Oninit:
 	// Episode 14.2
 	if(getepisode() >= 142){
 		removemapflag "1@spa",mf_pvp;
+		removemapflag "1@xm_d",mf_pvp;
 	}
 	
 	end;

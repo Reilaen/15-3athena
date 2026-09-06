@@ -551,7 +551,7 @@ int mmo_char_tosql(uint32 char_id, struct mmo_charstatus* p)
 	)
 	{	//Save status
 		if( SQL_ERROR == Sql_Query(sql_handle, "UPDATE `%s` SET `base_level`='%d', `job_level`='%d',"
-			"`base_exp`='%u', `job_exp`='%u', `zeny`='%d',"
+			"`base_exp`='%"PRIu64"', `job_exp`='%"PRIu64"', `zeny`='%d',"
 			"`max_hp`='%d',`hp`='%d',`max_sp`='%d',`sp`='%d',`status_point`='%d',`skill_point`='%d',"
 			"`str`='%d',`agi`='%d',`vit`='%d',`int`='%d',`dex`='%d',`luk`='%d',"
 			"`option`='%d',`party_id`='%d',`guild_id`='%d',`pet_id`='%d',`homun_id`='%d',`elemental_id`='%d',"
@@ -1191,8 +1191,8 @@ int mmo_chars_fromsql(struct char_session_data* sd, uint8* buf)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 3,  SQLDT_SHORT,  &p.class_, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 4,  SQLDT_UINT,   &p.base_level, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 5,  SQLDT_UINT,   &p.job_level, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT,   &p.base_exp, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT,   &p.job_exp, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT64, &p.base_exp, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT64, &p.job_exp, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 8,  SQLDT_INT,    &p.zeny, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 9,  SQLDT_SHORT,  &p.str, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 10, SQLDT_SHORT,  &p.agi, 0, NULL, NULL)
@@ -1296,8 +1296,8 @@ int mmo_chars_fromsql_per_page(int fd, struct char_session_data* sd)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 3, SQLDT_SHORT, &p.class_, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 4, SQLDT_UINT, &p.base_level, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 5, SQLDT_UINT, &p.job_level, 0, NULL, NULL)
-		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 6, SQLDT_UINT, &p.base_exp, 0, NULL, NULL)
-		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 7, SQLDT_UINT, &p.job_exp, 0, NULL, NULL)
+		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 6, SQLDT_UINT64, &p.base_exp, 0, NULL, NULL)
+		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 7, SQLDT_UINT64, &p.job_exp, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 8, SQLDT_INT, &p.zeny, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 9, SQLDT_SHORT, &p.str, 0, NULL, NULL)
 		|| SQL_ERROR == SqlStmt_BindColumn(stmt, 10, SQLDT_SHORT, &p.agi, 0, NULL, NULL)
@@ -1450,8 +1450,8 @@ int mmo_char_fromsql( uint32 char_id, struct mmo_charstatus* p, bool load_everyt
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 4,  SQLDT_SHORT,  &p->class_, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 5,  SQLDT_UINT,   &p->base_level, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 6,  SQLDT_UINT,   &p->job_level, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT,   &p->base_exp, 0, NULL, NULL)
-	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 8,  SQLDT_UINT,   &p->job_exp, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 7,  SQLDT_UINT64, &p->base_exp, 0, NULL, NULL)
+	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 8,  SQLDT_UINT64, &p->job_exp, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 9,  SQLDT_INT,    &p->zeny, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 10, SQLDT_SHORT,  &p->str, 0, NULL, NULL)
 	||	SQL_ERROR == SqlStmt_BindColumn(stmt, 11, SQLDT_SHORT,  &p->agi, 0, NULL, NULL)
@@ -2181,7 +2181,7 @@ int mmo_char_tobuf(uint8* buffer, struct mmo_charstatus* p)
 #if PACKETVER < 20170906
 	WBUFL(buf, 4) = min(p->base_exp, INT32_MAX);
 #else
-	WBUFQ(buf, 4) = u64min((uint64)p->base_exp, INT64_MAX);
+	WBUFQ(buf, 4) = u64min(p->base_exp, UINT64_MAX);
 	offset += 4;
 	buf = WBUFP(buffer, offset);
 #endif
@@ -2189,7 +2189,7 @@ int mmo_char_tobuf(uint8* buffer, struct mmo_charstatus* p)
 #if PACKETVER < 20170906
 	WBUFL(buf, 12) = min(p->job_exp, INT32_MAX);
 #else
-	WBUFQ(buf, 12) = u64min((uint64)p->job_exp, INT64_MAX);
+	WBUFQ(buf, 12) = u64min(p->job_exp, UINT64_MAX);
 	offset += 4;
 	buf = WBUFP(buffer, offset);
 #endif

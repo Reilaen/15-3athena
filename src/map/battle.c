@@ -864,6 +864,9 @@ int64 battle_calc_damage(struct block_list *src,struct block_list *bl,struct Dam
 	if( sc && sc->data[SC_INVINCIBLE] && !sc->data[SC_INVINCIBLEOFF] )
 		return 1;
 
+	if (sc && sc->data[SC_MAXPAIN])
+		return 0;
+
 	if (skill_id == PA_PRESSURE || skill_id == HW_GRAVITATION  || skill_id == SP_SOULEXPLOSION)
 		return damage; //These skills bypass everything else.
 
@@ -1800,7 +1803,6 @@ static int battle_range_type(struct block_list *src, struct block_list *target, 
 	// Forces damage to ranged no matter the set skill range.
 	// Ground targeted skills must be placed here since NK settings don't work with them.
 	if (skill_get_nk(skill_id)&NK_FORCE_RANGED_DAMAGE ||
-		//skill_id == RL_R_TRIP ||// Set to deal ranged damage in official? Is this a bug?
 		skill_id == RL_FIRE_RAIN)
 		return BF_LONG;
 
@@ -3379,7 +3381,10 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
 		break;
 	case WM_SEVERE_RAINSTORM_MELEE:
-		skillratio = (sstatus->agi + sstatus->dex) * skill_lv / 5;
+		//ATK [{(Caster DEX / 300 + AGI / 200)} x Caster Base Level / 100] %
+		skillratio += -100 + 100 * skill_lv + (sstatus->dex / 300 + sstatus->agi / 200);
+		if (wd.miscflag & 4) // Whip/Instrument equipped
+			skillratio += 20 * skill_lv;
 		if (level_effect_bonus == 1)
 			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
 		break;
@@ -3545,13 +3550,21 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 			skillratio = 1700 + 200 * skill_lv;
 		break;
 	case RL_FIREDANCE:
-		skillratio = 200 * skill_lv + 50 * (sd ? pc_checkskill(sd, GS_DESPERADO) : 10);
+		skillratio += 100 + 100 * skill_lv;
+		skillratio += (sd ? pc_checkskill(sd, GS_DESPERADO) * 20 : 0);
+		if (rebel_level_effect == 1)
+			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
 		break;
 	case RL_H_MINE:
 		skillratio = 200 + 200 * skill_lv;
 		break;
 	case RL_R_TRIP:
-		skillratio = 1000 + 300 * skill_lv;
+		skillratio += -100 + 350 * skill_lv;
+		if (rebel_level_effect == 1)
+			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
+		break;
+	case RL_R_TRIP_PLUSATK:
+		skillratio += -100 + 300 + 300 * skill_lv;
 		break;
 	case RL_D_TAIL:
 		if (rebel_level_effect == 1)
@@ -3588,9 +3601,6 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 			skillratio += 100 * (sd ? sd->spiritball_old : 10);
 		else
 			skillratio += 10 * (sd ? sd->spiritball_old : 10);
-		break;
-	case RL_R_TRIP_PLUSATK:// Need to confirm if level 5 is really 2700% and not a typo. [Rytech]
-		skillratio = 500 + 100 * skill_lv;
 		break;
 	}
 	return skillratio;
@@ -4291,7 +4301,12 @@ void battle_do_reflect(int attack_type, struct Damage *wd, struct block_list* sr
 		if (rdamage > 0) {
 			struct block_list *d_bl = battle_check_devotion(src);
 
-			if (attack_type == BF_WEAPON && tsc->data[SC_LG_REFLECTDAMAGE]) // Don't reflect your own damage (Grand Cross)
+			if (tsc->data[SC_MAXPAIN]) {
+				tsc->data[SC_MAXPAIN]->val2 = (int)rdamage;
+				skill_castend_damage_id(target, src, NPC_MAXPAIN_ATK, tsc->data[SC_MAXPAIN]->val1, tick, wd->flag);
+				tsc->data[SC_MAXPAIN]->val2 = 0;
+			}
+			else if (attack_type == BF_WEAPON && tsc->data[SC_LG_REFLECTDAMAGE]) // Don't reflect your own damage (Grand Cross)
 				map_foreachinshootrange(battle_damage_area, target, skill_get_splash(LG_REFLECTDAMAGE, 1), BL_CHAR, tick, target, wd->amotion, sstatus->dmotion, rdamage, status_get_race(target));
 			else if (attack_type == BF_WEAPON || attack_type == BF_MISC) {
 				rdelay = clif_damage(src, (!d_bl) ? src : d_bl, tick, wd->amotion, sstatus->dmotion, rdamage, 1, DMG_ENDURE, 0, false);
@@ -5279,6 +5294,7 @@ struct Damage battle_calc_misc_attack(struct block_list *src,struct block_list *
 	struct status_change *tsc = status_get_sc(target);
 	struct status_data *sstatus = status_get_status_data(src);
 	struct status_data *tstatus = status_get_status_data(target);
+	struct status_change* ssc = status_get_sc(src);
 
 	memset(&md,0,sizeof(md));
 
@@ -5499,6 +5515,12 @@ struct Damage battle_calc_misc_attack(struct block_list *src,struct block_list *
 		// Bug? I think so and im not adding that.
 		if (md.damage < 0)
 			md.damage = 1;
+		break;
+	case NPC_MAXPAIN_ATK:
+		if (ssc && ssc->data[SC_MAXPAIN])
+			md.damage = ssc->data[SC_MAXPAIN]->val2;
+		else
+			md.damage = 0;
 		break;
 
 	case RL_B_TRAP:
@@ -5723,6 +5745,10 @@ int64 battle_calc_return_damage(struct block_list* bl, struct block_list *src, i
 
 	if (sc && sc->data[SC_KYOMU]) // Nullify reflecting ability
 		rdamage = 0;
+
+	if (sc && sc->data[SC_MAXPAIN]) {
+		rdamage = damage * sc->data[SC_MAXPAIN]->val1 * 10 / 100;
+	}
 
 	return cap_value(min(rdamage, max_damage), INT_MIN, INT_MAX);
 }

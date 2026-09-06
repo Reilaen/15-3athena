@@ -494,7 +494,7 @@
 6046,507,100	// Clothing_Dye_Coupon
 6047,507,100	// Clothing_Dye_Coupon2
 6048,499,100 	// Unidentified_Mineral
-6049,507,100 	// Marlin
+6049,503,100 	// Marlin
 6051,499,100	// Gray_Hollow
 6052,507,100	// Ornamental_Hairpin
 6060,499,100	// Moon_Admin_Ticket

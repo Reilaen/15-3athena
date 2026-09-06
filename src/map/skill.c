@@ -370,6 +370,8 @@ int skill_get_range2(struct block_list *bl, uint16 id, uint16 lv, bool isServer)
  **/
 uint16 skill_dummy2skill_id(uint16 skill_id) {
 	switch (skill_id) {
+		case NPC_MAXPAIN_ATK:
+			return NPC_MAXPAIN;
 		case AB_DUPLELIGHT_MELEE:
 		case AB_DUPLELIGHT_MAGIC:
 			return AB_DUPLELIGHT;
@@ -404,8 +406,6 @@ uint16 skill_dummy2skill_id(uint16 skill_id) {
 			return GN_SLINGITEM;
 		case RL_R_TRIP_PLUSATK:
 			return RL_R_TRIP;
-		case NPC_MAXPAIN_ATK:
-			return NPC_MAXPAIN;
 		case SU_CN_METEOR2:
 			return SU_CN_METEOR;
 		case SU_SV_ROOTTWIST_ATK:
@@ -3282,8 +3282,10 @@ int64 skill_attack (int attack_type, struct block_list* src, struct block_list *
 		break;
 	case WM_REVERBERATION_MELEE:
 	case WM_REVERBERATION_MAGIC:
-	case WM_SEVERE_RAINSTORM_MELEE:
 		dmg.dmotion = clif_skill_damage(dsrc,bl,tick,dmg.amotion,dmg.dmotion,damage,dmg.div_,skill_id,65534,6);
+		break;
+	case WM_SEVERE_RAINSTORM_MELEE:
+		dmg.dmotion = clif_skill_damage(dsrc, bl, tick, dmg.amotion, dmg.dmotion, damage, dmg.div_, WM_SEVERE_RAINSTORM, -2, DMG_SPLASH);
 		break;
 	case GN_SPORE_EXPLOSION:
 		if( flag&SD_ANIMATION )// The surrounding targets show no animaion. Only damage.
@@ -3356,6 +3358,10 @@ int64 skill_attack (int attack_type, struct block_list* src, struct block_list *
 		//Sightblaster should never call clif_skill_damage twice
 		dmg.dmotion = clif_skill_damage(src, bl, tick, dmg.amotion, dmg.dmotion, damage, dmg.div_, skill_id, (flag&SD_LEVEL) ? -1 : skill_lv, 5);
 		break;
+	case RL_R_TRIP_PLUSATK:
+	case RL_S_STORM:
+		clif_skill_damage(dsrc, bl, tick, status_get_amotion(src), dmg.dmotion, damage, dmg.div_, skill_id, -1, DMG_SPLASH);
+		break;
 	default:
 		if( flag&SD_ANIMATION && dmg.div_ < 2 ) //Disabling skill animation doesn't works on multi-hit.
 			type = 5;
@@ -3422,70 +3428,29 @@ int64 skill_attack (int attack_type, struct block_list* src, struct block_list *
 					direction = map_calc_dir(bl, skill_area_temp[4], skill_area_temp[5]);
 				break;
 		}
-		if ( skill_id == SR_KNUCKLEARROW )
-		{
-			// Main attack has no flag set which allows the knockback code to be processed.
-			// If a flag is detected, then it means the knockback code was already ran.
-			if ( !flag )
-			{
-				short x = bl->x, y = bl->y;
 
+		// Blown-specific handling
+		switch (skill_id) {
+			case SR_KNUCKLEARROW:
 				// Ignore knockback damage bonus if in WOE (player cannot be knocked in WOE)
-				// Boss & Immune Knockback (mode or from bonus bNoKnockBack) target still remains the damage bonus
+				// Boss & Immune Knockback stay in place and don't get bonus damage
+				// Give knockback damage bonus only hits the wall. (bugreport:9096)
 				if (skill_blown(dsrc, bl, dmg.blewcount, direction, 0x04) < dmg.blewcount)
 					skill_addtimerskill(src, tick + 300 * ((flag & 2) ? 1 : 2), bl->id, 0, 0, skill_id, skill_lv, BF_WEAPON, flag | 4);
-
 				direction = -1;
-
-				// Move attacker to the target position after knocked back
-				if ((bl->x != x || bl->y != y) && skill_check_unit_movepos(5, src, bl->x, bl->y, 1, 1))
-					clif_blown(src);
-			}
-		}
-		/*if (skill_id == LG_OVERBRAND_BRANDISH)
-		{
-			if (skill_blown(dsrc, bl, dmg.blewcount, direction, 0x04|0x08|0x10|0x20))
-			{
-				short dir_x, dir_y;
-				dir_x = dirx[(direction + 4)%8];
-				dir_y = diry[(direction + 4)%8];
-				if (map_getcell(bl->m, bl->x+dir_x, bl->y+dir_y, CELL_CHKNOPASS) != 0)
-					skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, LG_OVERBRAND_PLUSATK, skill_lv, BF_WEAPON, flag);
-			}
-			else
-				skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, LG_OVERBRAND_PLUSATK, skill_lv, BF_WEAPON, flag);
- 		}
-		else*/ if (skill_id == RL_R_TRIP)
-		{
-			struct mob_data* tmd = BL_CAST(BL_MOB, bl);
-			static int dx[] = { 0, 1, 0, -1, -1,  1, 1, -1 };
-			static int dy[] = { -1, 0, 1,  0, -1, -1, 1,  1 };
-			bool wall_damage = true;
-			int i = 0;
-
-			// Knock back the target first if possible before we do a wall check.
-			skill_blown(dsrc, bl, dmg.blewcount, direction, 0);
-
-			// Check if the target will receive wall damage.
-			// Targets that can be knocked back will receive wall damage if pushed next to a wall.
-			// Player's with anti-knockback and boss monsters will always receive wall damage.
-			if (!((tsd && tsd->special_state.no_knockback) || (tmd && status_get_class_(bl) == CLASS_BOSS)))
-			{// Is there a wall next to the target?
-				ARR_FIND(0, 8, i, map_getcell(bl->m, bl->x + dx[i], bl->y + dy[i], CELL_CHKNOPASS) != 0);
-				if (i == 8)// No wall detected.
-					wall_damage = false;
-			}
-
-			if (wall_damage == true)// Deal wall damage if the above check detected a wall or the target has anti-knockback.
-				skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, RL_R_TRIP_PLUSATK, skill_lv, BF_WEAPON, flag);
-		}
-		else {
-			skill_blown(dsrc, bl, dmg.blewcount, direction, 0);
-			if (!dmg.blewcount && bl->type == BL_SKILL && damage > 0) {
-				TBL_SKILL *su = (TBL_SKILL*)bl;
-				if (su->group && su->group->skill_id == HT_BLASTMINE)
-					skill_blown(src, bl, 3, -1, 0);
-			}
+				break;
+			case RL_R_TRIP:
+				if (skill_blown(dsrc, bl, dmg.blewcount, direction, 0) < dmg.blewcount)
+					skill_addtimerskill(src, tick + status_get_amotion(src), bl->id, 0, 0, RL_R_TRIP_PLUSATK, skill_lv, BF_WEAPON, flag | SD_ANIMATION);
+				break;
+			default:
+				skill_blown(dsrc, bl, dmg.blewcount, direction, 0);
+				if (!dmg.blewcount && bl->type == BL_SKILL && damage > 0) {
+					TBL_SKILL* su = (TBL_SKILL*)bl;
+					if (su->group && su->group->skill_id == HT_BLASTMINE)
+						skill_blown(src, bl, 3, -1, 0);
+				}
+				break;
 		}
 	}
 
@@ -3881,7 +3846,7 @@ static int skill_check_condition_mercenary(struct block_list *bl, int skill, int
 
 					// Check to see if any Hornet's, Giant Hornet's, or Luciola Vespa's are currently summoned.
 					for ( mobid=MOBID_S_HORNET; mobid<=MOBID_S_LUCIOLA_VESPA; mobid++ )
-						map_foreachinmap(skill_check_condition_mob_master_mer_sub ,hd->bl.m, BL_MOB, hd->bl.id, mobid, skill, &count);
+						map_foreachinmap(skill_check_condition_mob_master_mer_sub ,hd->bl.m, BL_MOB, hd->bl.id, mobid, &count);
 
 					// If any of the above 3 summons are found, fail the skill.
 					if (count > 0)
@@ -4626,7 +4591,6 @@ int skill_castend_damage_id (struct block_list* src, struct block_list *bl, int 
 	case WM_SEVERE_RAINSTORM_MELEE:
 	case WM_GREAT_ECHO:
 	case GN_SLINGITEM_RANGEMELEEATK:
-	case RL_R_TRIP_PLUSATK:
 	case KO_SETSUDAN:
 	case KO_BAKURETSU:
 	case KO_HUUMARANKA:
@@ -5017,6 +4981,7 @@ int skill_castend_damage_id (struct block_list* src, struct block_list *bl, int 
 	case NPC_PULSESTRIKE:
 	case NPC_HELLJUDGEMENT:
 	case NPC_VAMPIRE_GIFT:
+	case NPC_MAXPAIN_ATK:
 	case RK_IGNITIONBREAK:
 	case RK_HUNDREDSPEAR:
 	case GC_ROLLINGCUTTER:
@@ -6355,7 +6320,7 @@ int skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, in
 			skill_area_temp[0] = 5 - skill_area_temp[0]; // The actual penalty...
 			if (skill_area_temp[0] > 0 && !map[src->m].flag.noexppenalty) { //Apply penalty
 				//If total penalty is 1% => reduced 0.2% penalty per each revived player
-				unsigned int base_penalty = u32min(sd->status.base_exp, (pc_nextbaseexp(sd) * skill_area_temp[0] / 5) / 100);
+				uint64 base_penalty = u64min(sd->status.base_exp, (pc_nextbaseexp(sd) * skill_area_temp[0] / 5) / 100);
 				sd->status.base_exp -= base_penalty;
 				clif_displayexp(sd, base_penalty, SP_BASEEXP, false, true);
 				clif_updatestatus(sd,SP_BASEEXP);
@@ -6402,14 +6367,14 @@ int skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, in
 				clif_skill_nodamage(src,bl,ALL_RESURRECTION,skill_lv,1); //Both Redemptio and Res show this skill-animation.
 				if(sd && dstsd && battle_config.resurrection_exp > 0)
 				{
-					int exp = 0,jexp = 0;
+					uint64 exp = 0,jexp = 0;
 					int lv = dstsd->status.base_level - sd->status.base_level, jlv = dstsd->status.job_level - sd->status.job_level;
 					if(lv > 0 && pc_nextbaseexp(dstsd)) {
-						exp = (int)((double)dstsd->status.base_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
+						exp = (uint64)((double)dstsd->status.base_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
 						if (exp < 1) exp = 1;
 					}
 					if(jlv > 0 && pc_nextjobexp(dstsd)) {
-						jexp = (int)((double)dstsd->status.job_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
+						jexp = (uint64)((double)dstsd->status.job_exp * (double)lv * (double)battle_config.resurrection_exp / 1000000.);
 						if (jexp < 1) jexp = 1;
 					}
 					if(exp > 0 || jexp > 0)
@@ -6863,6 +6828,7 @@ int skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, in
 	case ALL_FULL_THROTTLE:
 	case SU_ARCLOUSEDASH:
 	case SU_FRESHSHRIMP:
+	case NPC_MAXPAIN:
 		clif_skill_nodamage( src, bl, skill_id, skill_lv, status_change_start(src, bl, type, 10000, skill_lv, 0, 0, 0, skill_get_time( skill_id, skill_lv ), 0) );
 		break;
 
@@ -12051,6 +12017,7 @@ int skill_castend_id(int tid, int64 tick, int id, intptr_t data)
 			switch( ud->skill_id )
 			{
 			case GS_DESPERADO:
+			case RL_FIREDANCE:
 				sd->canequip_tick = tick + skill_get_time(ud->skill_id, ud->skill_lv);
 				break;
 			case CR_GRANDCROSS:
@@ -12790,7 +12757,6 @@ int skill_castend_pos2(struct block_list* src, int x, int y, int skill_id, int s
 	case SC_MANHOLE:
 	case SC_DIMENSIONDOOR:
 	case WM_REVERBERATION:
-	case WM_SEVERE_RAINSTORM:
 	case WM_POEMOFNETHERWORLD:
 	case SO_PSYCHIC_WAVE:
 	case SO_VACUUM_EXTREME:
@@ -13231,6 +13197,13 @@ int skill_castend_pos2(struct block_list* src, int x, int y, int skill_id, int s
 			}
 		}
 
+	case WM_SEVERE_RAINSTORM:
+		flag |= 1;
+		if (sd)
+			sd->canequip_tick = tick + skill_get_time(skill_id, skill_lv); // Can't switch equips for the duration of the skill.
+		skill_unitsetting(src, skill_id, skill_lv, x, y, 0);
+		break;
+
 	default:
 		ShowWarning("skill_castend_pos2: Unknown skill used:%d\n",skill_id);
 		return 1;
@@ -13652,6 +13625,11 @@ struct skill_unit_group* skill_unitsetting (struct block_list *src, short skill_
 			target = BCT_ALL;
 	}
 	break;
+
+	case WM_SEVERE_RAINSTORM:
+		if (map_getcell(src->m, x, y, CELL_CHKLANDPROTECTOR))
+			return NULL;
+		break;
 
 	case SA_LANDPROTECTOR:
 	case SA_VOLCANO:
@@ -15978,9 +15956,9 @@ int skill_check_condition_castbegin(struct map_session_data* sd, uint16 skill_id
 		break;
 	case PR_REDEMPTIO:
 		{
-			int exp;
-			if( ((exp = pc_nextbaseexp(sd)) > 0 && get_percentage(sd->status.base_exp, exp) < 1) ||
-				((exp = pc_nextjobexp(sd)) > 0 && get_percentage(sd->status.job_exp, exp) < 1)) {
+			uint64 exp;
+			if (((exp = pc_nextbaseexp(sd)) > 0 && sd->status.base_exp / exp * 100 < 1) ||
+				((exp = pc_nextjobexp(sd)) > 0 && sd->status.job_exp / exp * 100 < 1)) {
 				clif_skill_fail(sd, skill_id,USESKILL_FAIL_LEVEL,0,0); //Not enough exp.
 				return 0;
 			}
@@ -16812,11 +16790,24 @@ int skill_check_condition_castend(struct map_session_data* sd, uint16 skill_id, 
 
 	if( require.ammo )
 	{ //Skill requires stuff equipped in the arrow slot.
+		uint8 extra_ammo = 0;
+
+		switch (skill_id) { // 2016-10-26 kRO update made these skills require an extra ammo to cast
+			case WM_SEVERE_RAINSTORM:
+			case RL_FIREDANCE:
+			case RL_R_TRIP:
+			//case RL_FIRE_RAIN:
+				extra_ammo = 1;
+				break;
+			default:
+				break;
+		}
+
 		if ((i = sd->equip_index[EQI_AMMO]) < 0 || !sd->inventory_data[i]) {
 			clif_arrow_fail(sd, 0);
 			return 0;
 		}
-		else if (sd->inventory.u.items_inventory[i].amount < require.ammo_qty) {
+		else if (sd->inventory.u.items_inventory[i].amount < require.ammo_qty + extra_ammo) {
 			if (require.ammo&(1 << A_BULLET | 1 << A_GRENADE | 1 << A_SHELL)) {
 				clif_skill_fail(sd, skill_id, USESKILL_FAIL_NEED_MORE_BULLET, 0, 0);
 				return 0;

@@ -39,7 +39,7 @@ struct guild *guild_searchname(char *str);
 struct map_session_data *guild_getavailablesd(struct guild *g);
 int guild_getindex(struct guild *g,uint32 account_id,uint32 char_id);
 int guild_getposition(struct map_session_data *sd);
-unsigned int guild_payexp(struct map_session_data* sd, unsigned int exp);
+uint64 guild_payexp(struct map_session_data* sd, uint64 exp);
 
 bool guild_create(struct map_session_data *sd, const char *name);
 void guild_created(uint32 account_id,int guild_id);
