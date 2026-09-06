@@ -8247,7 +8247,10 @@
 20737,C_Kirin_Wings,Costume Kirin Wings,5,0,,0,,,,0,0xFFFFFFFF,63,2,8192,,,,6,{},{},{}
 
 20746,C_Rudra_Wings,Costume Rudra Wings,5,10,,0,,,,0,0xFFFFFFFF,63,2,8192,,1,0,8,{},{},{}
-
+//
+20757,Heavenly_Wings1,Heavenly Wings1,5,0,,0,,1,,1,0xFFFFFFFF,63,2,4,,,,9,{	bonus bAllStats,3; skill "AL_INCAGI",3;},{},{}
+20758,Heavenly_Wings2,Heavenly Wings2,5,0,,0,,1,,1,0xFFFFFFFF,63,2,4,,,,9,{	bonus bAllStats,3; skill "AL_INCAGI",3;},{},{}
+//
 20761,C_Happiness_Wings,Costume Happiness Wings,5,0,,0,,0,,0,0xFFFFFFFF,63,2,8192,,1,0,9,{},{},{}
 //20762,
 20763,C_Amistr_Bag,Costume Amistr Bag,5,0,,0,,,,0,0xFFFFFFFF,63,2,8192,,,,4,{},{},{}
@@ -8302,3 +8305,5 @@
 22784,PC_Bang_Platinum_Box,PC Bang Platinum Box,2,10,,200,,,,,,,,,,,,,{},{},{}
 
 22808,Special_Gift_Box,Special Gift Box,2,10,,100,,,,,,,,,,,,,{},{},{}
+//
+22812,Sealed_Dracula_Scroll,Sealed Dracula Scroll,2,10,,10,,,,0,0xFFFFFFFF,63,2,,,1,,,{ getitem callfunc("F_Rand",6228,6232,22813,19937,17314, 6635),1; },{},{}

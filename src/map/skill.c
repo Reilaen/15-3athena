@@ -3282,8 +3282,10 @@ int64 skill_attack (int attack_type, struct block_list* src, struct block_list *
 		break;
 	case WM_REVERBERATION_MELEE:
 	case WM_REVERBERATION_MAGIC:
-	case WM_SEVERE_RAINSTORM_MELEE:
 		dmg.dmotion = clif_skill_damage(dsrc,bl,tick,dmg.amotion,dmg.dmotion,damage,dmg.div_,skill_id,65534,6);
+		break;
+	case WM_SEVERE_RAINSTORM_MELEE:
+		dmg.dmotion = clif_skill_damage(dsrc, bl, tick, dmg.amotion, dmg.dmotion, damage, dmg.div_, WM_SEVERE_RAINSTORM, -2, DMG_SPLASH);
 		break;
 	case GN_SPORE_EXPLOSION:
 		if( flag&SD_ANIMATION )// The surrounding targets show no animaion. Only damage.
@@ -12755,7 +12757,6 @@ int skill_castend_pos2(struct block_list* src, int x, int y, int skill_id, int s
 	case SC_MANHOLE:
 	case SC_DIMENSIONDOOR:
 	case WM_REVERBERATION:
-	case WM_SEVERE_RAINSTORM:
 	case WM_POEMOFNETHERWORLD:
 	case SO_PSYCHIC_WAVE:
 	case SO_VACUUM_EXTREME:
@@ -13196,6 +13197,13 @@ int skill_castend_pos2(struct block_list* src, int x, int y, int skill_id, int s
 			}
 		}
 
+	case WM_SEVERE_RAINSTORM:
+		flag |= 1;
+		if (sd)
+			sd->canequip_tick = tick + skill_get_time(skill_id, skill_lv); // Can't switch equips for the duration of the skill.
+		skill_unitsetting(src, skill_id, skill_lv, x, y, 0);
+		break;
+
 	default:
 		ShowWarning("skill_castend_pos2: Unknown skill used:%d\n",skill_id);
 		return 1;
@@ -13617,6 +13625,11 @@ struct skill_unit_group* skill_unitsetting (struct block_list *src, short skill_
 			target = BCT_ALL;
 	}
 	break;
+
+	case WM_SEVERE_RAINSTORM:
+		if (map_getcell(src->m, x, y, CELL_CHKLANDPROTECTOR))
+			return NULL;
+		break;
 
 	case SA_LANDPROTECTOR:
 	case SA_VOLCANO:
@@ -16780,7 +16793,7 @@ int skill_check_condition_castend(struct map_session_data* sd, uint16 skill_id, 
 		uint8 extra_ammo = 0;
 
 		switch (skill_id) { // 2016-10-26 kRO update made these skills require an extra ammo to cast
-			//case WM_SEVERE_RAINSTORM:
+			case WM_SEVERE_RAINSTORM:
 			case RL_FIREDANCE:
 			case RL_R_TRIP:
 			//case RL_FIRE_RAIN:

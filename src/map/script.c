@@ -20116,6 +20116,70 @@ BUILDIN_FUNC(progressbar) {
     return 0;
 }
 
+/**
+ * Display a progress bar above an NPC
+ * progressbar_npc "<color>",<seconds>{,<"NPC Name">};
+ */
+BUILDIN_FUNC(progressbar_npc) {
+	struct map_session_data* sd = map_id2sd(st->rid);
+	struct npc_data* nd = NULL;
+
+	if (script_hasdata(st, 4)) {
+		const char* name = script_getstr(st, 4);
+
+		nd = npc_name2id(name);
+
+		if (!nd) {
+			ShowError("buildin_progressbar_npc: NPC \"%s\" was not found.\n", name);
+			return 1;
+		}
+	}
+	else {
+		nd = map_id2nd(st->oid);
+	}
+
+	// First call(by function call)
+	if (!nd->progressbar.timeout) {
+		const char* color;
+		int second;
+
+		color = script_getstr(st, 2);
+		second = script_getnum(st, 3);
+
+		if (second < 0) {
+			ShowError("buildin_progressbar_npc: negative amount('%d') of seconds is not supported\n", second);
+			return 1;
+		}
+
+		if (sd) { // Player attached - keep them from doing other things
+			sd->state.workinprogress = WIP_DISABLE_ALL;
+			sd->state.block_action |= (PCBLOCK_MOVE | PCBLOCK_ATTACK | PCBLOCK_SKILL);
+		}
+
+		// sleep for the target amount of time
+		st->state = RERUNLINE;
+		st->sleep.tick = second * 1000;
+		nd->progressbar.timeout = gettick() + second * 1000;
+		nd->progressbar.color = strtol(color, (char**)NULL, 0);
+
+		clif_progressbar_npc_area(nd);
+		// Second call(by timer after sleeping time is over)
+	}
+	else {
+		// Continue the script
+		if (sd) { // Player attached - remove restrictions
+			sd->state.workinprogress = WIP_DISABLE_NONE;
+			sd->state.block_action &= ~(PCBLOCK_MOVE | PCBLOCK_ATTACK | PCBLOCK_SKILL);
+		}
+
+		st->state = RUN;
+		st->sleep.tick = 0;
+		nd->progressbar.timeout = nd->progressbar.color = 0;
+	}
+
+	return 0;
+}
+
 BUILDIN_FUNC(pushpc)
 {
 	int direction, cells, dx, dy;
@@ -22528,6 +22592,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(setfont,"i"),
 	BUILDIN_DEF(areamobuseskill,"siiiiviiiii"),
 	BUILDIN_DEF(progressbar,"si"),
+	BUILDIN_DEF(progressbar_npc, "si?"),
 	BUILDIN_DEF(pushpc,"ii"),
 	BUILDIN_DEF(buyingstore,"i"),
 	BUILDIN_DEF(searchstores,"ii"),

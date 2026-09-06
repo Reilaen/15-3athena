@@ -110,6 +110,11 @@ struct npc_data {
 
 	struct sc_display_entry **sc_display;
 	unsigned char sc_display_count;
+
+	struct {
+		int64 timeout;
+		unsigned long color;
+	} progressbar;
 };
 
 struct event_data {

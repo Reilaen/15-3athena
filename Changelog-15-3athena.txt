@@ -5,6 +5,24 @@
 // 		- Details.
 //			--More Details.
 //========================================
+09/06/2026
+	r593 [15peaces]
+		*Fixed element bonuses getting cleared in the wrong place.
+			-Thanks to @Reilaen
+		*Fixed the definition for the repairitem packet of version 46.
+			-Thanks to @Reilaen
+		*Added progressbar_npc script command.
+			-Added support for ZC_PROGRESS_ACTOR packet.
+		*WM_SEVERE_RAINSTORM
+			-Updated skill to official 2022 version.
+		*Added some missing items & fixed others.
+		*Banquet for Heroes ep16.1 - part 3
+			-Updated accessory enchants of ep16 according to kRO 2015.02.25
+			-Added & enabled instances.
+		*Added Cat o' Nine Tails Pet.
+			-Also added Nine Tail -> Cat o' Nine Tails evolution.
+		*Added missing Elite Buffalo Bandit drops.
+
 08/31/2026
 	r592 [15peaces]
 		*Added Roween & Eggring Pets.

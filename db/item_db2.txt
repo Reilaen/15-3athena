@@ -73,10 +73,6 @@
 
 //Currently not working / Client Files missing in kRO (renewal versions)
 
-
-20757,Heavenly_Wings1,Heavenly Wings1,5,0,,0,,1,,1,0xFFFFFFFF,63,2,4,,,,9,{	bonus bAllStats,3; skill AL_INCAGI,3;},{},{}
-20758,Heavenly_Wings2,Heavenly Wings2,5,0,,0,,1,,1,0xFFFFFFFF,63,2,4,,,,9,{	bonus bAllStats,3; skill AL_INCAGI,3;},{},{}
-22812,Sealed_Dracula_Scroll,Sealed Dracula Scroll,2,10,,10,,,,,,,,,,,,,{ getitem callfunc("F_Rand",22813,19937,17314, 6635),1; },{},{}
 22813,Bearer's_Shadow_Box,Bearer's Shadow Box,2,10,,10,,,,,,,,,,,,,{ getitem callfunc("F_Rand",24180,24181,24182,28183,24184,24185),1; },{},{}
 
 //LHZ 4 and more (renewal versions)
@@ -608,7 +604,6 @@
 22784,PC_Bang_Platinum_Box,PC Bang Platinum Box,2,10,,200,,,,,,,,,,,,,{/*No Info*/},{},{}
 22802,Safe_to_6_Equipment_Certificate,Safe to 6 Equipment Certificate,3,10,,10,,,,,,,,,,,,,{},{},{}
 22808,Special_Gift_Box,Special Gift Box,2,10,,100,,,,,,,,,,,,,{},{},{}
-22812,Sealed_Dracula_Scroll,Sealed Dracula Scroll,2,10,,10,,,,,,,,,,,,,{ getitem callfunc("F_Rand",6228,6232,22813,19937,17314, 6635),1; },{},{}
 22823,Sealed_Sniper_Scroll,Sealed Sniper Scroll,2,10,,10,,,,,,,,,,,,,{ /*getitem callfunc("F_Rand",4491,6228,6232,24196, Hasty Shadow Armor, 19882, 17474, 6635),1;*/ },{},{}
 // Shadow Equipment - currently unsupported
 //24196,Hasty_Shadow_Shoes,Hasty Shadow Shoes,12,10,,0,,,,0,0xFFFFFFFF,63,2,524288,,1,,,{ bonus bFlee,5+(getrefine()/2); },{},{}
@@ -5718,3 +5713,16 @@
 28242,Calf_Anaconda,Calf Anaconda,4,10,,1400,305,,9,2,0x40000000,63,2,34,4,150,1,20,{ .@r = getrefine(); bonus bSplashRange,1; bonus bMaxSPrate,2; bonus bLongAtkRate,(.@r/2)*5 + (.@r > 8 ? 5 : 0); if(.@r > 6){ bonus2 bSkillAtk,"RL_BANISHING_BUSTER",20; } if(.@r > 11){ bonus2 bSkillUseSPrate,"RL_BANISHING_BUSTER",15; } },{},{}
 28243,Calf_Python,Calf Python,4,10,0,2000,360,,9,2,0x40000000,63,2,34,4,150,1,21,{ .@r = getrefine(); bonus bDex,2; bonus2 bAddClass,Class_All,2; bonus bLongAtkRate,(.@r/2)*5; if(.@r > 6){ bonus bAspdRate,5; } if(.@r > 8){ bonus2 bSkillAtk,"RL_D_TAIL",15 + (.@r > 11 ? 15 : 0); } },{},{}
 28244,Illusion_Gate_Keeper_DD,Illusion Gate Keeper DD,4,0,,1300,240,,9,2,0x40000000,63,2,34,4,120,1,20,{ .@r = getrefine(); bonus bDex,1; bonus bSplashRange,1; .@val = 5*(.@r/2); if (.@r >= 7) { bonus bAspdRate,15; if (.@r >= 9) { .@val += 5; if (.@r >= 11) { bonus5 bAutoSpell,"GS_SPREADATTACK",max(6,getskilllv("GS_SPREADATTACK")),50,BF_LONG|BF_WEAPON,1; } } } bonus bLongAtkRate,.@val; },{},{}
+
+//===================================================================
+// Ninja Fuuma Shurikens (renewal)
+//===================================================================
+13327,Crimson_Huuma_Shuriken,Crimson Huuma Shuriken,4,20,,1000,100,,1,2,0x22000000,63,2,34,3,70,1,22,{ bonus bUnbreakableWeapon,0; .@r = getrefine(); bonus bBaseAtk,(.@r<=15?pow(.@r,2):225); bonus bMatk,(.@r<=15?(pow(.@r,2)/2):225); if(BaseLevel>70) bonus bBaseAtk,(((BaseLevel-70)/10)*5); },{},{}
+13328,Huuma_Shuriken_of_Vicious_Mind,Huuma Shuriken of Vicious Mind,4,20,,1500,150:50,,1,1,0x22000000,63,2,34,4,160,1,22,{ bonus bAtk,pow(min(getrefine(),15),2); bonus bMatk,pow(min(getrefine(),15),2)/2; bonus bUnbreakableWeapon,0; },{},{}
+13329,Unity_Huuma_Shuriken,Unity Huuma Shuriken,4,20,,500,95,,1,1,0x22000000,63,2,34,3,1,1,22,{ bonus bBaseAtk,pow(getrefine(),2)*125/100; },{},{}
+
+//===================================================================
+// New Katars (renewal)
+//===================================================================
+28007,Crimson_Katar,Crimson Katar,4,20,,1300,130,,1,2,0x00001000,63,2,34,3,70,1,16,{ .@r = getrefine(); bonus bBaseAtk,((BaseLevel/10)*5)+(.@r<=15?pow(.@r,2):225); },{},{}
+28008,Katar_of_Vicious_Mind,Katar of Vicious Mind,4,20,,1800,180,,1,1,0x00001000,63,2,34,4,160,1,16,{ bonus bAtk,pow(min(getrefine(),15),2); },{},{}

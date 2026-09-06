@@ -3995,9 +3995,7 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 void status_calc_atk_ele_pc(struct map_session_data *sd, struct status_change *sc) {
 	int i = 0;
 	nullpo_retv(sd);
-	memset(sd->magic_addele, 0, sizeof(sd->magic_addele));
-	memset(sd->right_weapon.addele, 0, sizeof(sd->right_weapon.addele));
-	memset(sd->left_weapon.addele, 0, sizeof(sd->left_weapon.addele));
+
 	if ((i = pc_checkskill(sd, AB_EUCHARISTICA)) > 0) {
 		sd->right_weapon.addele[ELE_DARK] += i;
 		sd->left_weapon.addele[ELE_DARK] += i;

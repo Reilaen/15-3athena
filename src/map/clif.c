@@ -11723,6 +11723,27 @@ void clif_parse_progressbar(int fd, struct map_session_data * sd) {
 	npc_scriptcont(sd, npc_id, closing);
 }
 
+/// Displays cast-like progress bar on a NPC
+/// 09d1 <id>.L <color>.L <time>.L (ZC_PROGRESS_ACTOR)
+void clif_progressbar_npc(struct npc_data* nd, struct map_session_data* sd) {
+#if PACKETVER >= 20130821
+	unsigned char buf[14];
+
+	if (nd->progressbar.timeout > 0) {
+		WBUFW(buf, 0) = 0x9d1;
+		WBUFL(buf, 2) = nd->bl.id;
+		WBUFL(buf, 6) = nd->progressbar.color;
+		WBUFL(buf, 10) = (uint32)((nd->progressbar.timeout - gettick()) / 1000);
+
+		if (sd) {
+			clif_send(buf, packet_len(0x9d1), &sd->bl, SELF);
+		}
+		else {
+			clif_send(buf, packet_len(0x9d1), &nd->bl, AREA);
+		}
+	}
+#endif
+}
 
 /// Request to walk to a certain position on the current map.
 /// 0085 <dest>.3B (CZ_REQUEST_MOVE)
@@ -22802,7 +22823,7 @@ void packetdb_readdb(void)
 		0,  0,  0,  0,  0,  0,  6,  4,  6,  4,  0,  0,  0,  0,  0,  0, 
 //#0x09C0
 		0, 10,  0,  0,  0,  0,  0,  0,  0,  0, 23, 17,  0,  8,102,  0,
-		0,  0,  0,  0,  2,  0, -1, -1,  2,  0,  0, -1, -1, -1,  0,  7,
+		0, 14,  0,  0,  2,  0, -1, -1,  2,  0,  0, -1, -1, -1,  0,  7,
 		0,  0,  0,  0,  0, 18, 22,  3, 11,  0, 11, -1,  0,  3, 11, 11,
 	   -1, 11, 12, 11,  0,  0,  0, 75, -1,143, -1,  0,  6, -1, -1, -1,
 //#0x0A00

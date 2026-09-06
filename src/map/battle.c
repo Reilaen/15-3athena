@@ -3381,7 +3381,10 @@ static int battle_calc_attack_skill_ratio(struct Damage wd, struct block_list *s
 			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
 		break;
 	case WM_SEVERE_RAINSTORM_MELEE:
-		skillratio = (sstatus->agi + sstatus->dex) * skill_lv / 5;
+		//ATK [{(Caster DEX / 300 + AGI / 200)} x Caster Base Level / 100] %
+		skillratio += -100 + 100 * skill_lv + (sstatus->dex / 300 + sstatus->agi / 200);
+		if (wd.miscflag & 4) // Whip/Instrument equipped
+			skillratio += 20 * skill_lv;
 		if (level_effect_bonus == 1)
 			skillratio = skillratio * status_get_base_lv_effect(src) / 100;
 		break;
