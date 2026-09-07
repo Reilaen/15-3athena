@@ -2506,6 +2506,10 @@ void script_hardcoded_constants(void)
 	export_constant(EQP_SHADOW_ACC_R);
 	export_constant(EQP_SHADOW_ACC_L);
 
+	export_constant(ROA_ID);
+	export_constant(ROA_VALUE);
+	export_constant(ROA_PARAM);
+
 	/* refine cost types */
 	export_constant(REFINE_COST_NORMAL);
 	export_constant(REFINE_COST_OVER10);
