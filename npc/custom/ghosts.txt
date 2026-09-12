@@ -1,0 +1,792 @@
+-	script	GHOSTS_OF_THE_PAST	-1,{
+	OnInit:
+		$@gop_currency = 7583;
+
+		.tier_1656 = 1; // Kavach Icarus
+		.tier_1655 = 1; // Errende Ebecee
+		.tier_1657 = 1; // Laurell Weinder
+		.tier_1653 = 1; // Wickebine Tres
+		.tier_1654 = 1; // Armeyer Dinze
+		.tier_1652 = 1; // Egnigem Cenia (regulär)
+		.tier_1638 = 1; // Cecil Damon
+		.tier_1639 = 1; // Kathryne Keyron
+		.tier_1637 = 1; // Margaretha Sorin
+		.tier_1636 = 1; // Howard Alt-Eisen
+		.tier_1635 = 1; // Eremes Guile
+		.tier_1634 = 1; // Seyren Windsor
+
+		.tier_1658 = 2; // Egnigem Cenia (boss_monster)
+		.tier_1641 = 2; // Assassin Cross Eremes
+		.tier_1645 = 2; // High Wizard Kathryne
+		.tier_1640 = 2; // Lord Knight Seyren
+		.tier_1644 = 2; // Sniper Cecil
+		.tier_1642 = 2; // Whitesmith Howard
+		.tier_1643 = 2; // High Priest Margaretha
+
+		.tier_2221 = 1; // Randel
+		.tier_2222 = 1; // Flamel
+		.tier_2223 = 1; // Celia
+		.tier_2224 = 1; // Chen
+		.tier_2225 = 1; // Gertie
+		.tier_2226 = 1; // Alphoccio
+		.tier_2227 = 1; // Trentini
+
+		.tier_2228 = 3; // Paladin Randel
+		.tier_2229 = 3; // Creator Flamel
+		.tier_2230 = 3; // Professor Celia
+		.tier_2231 = 3; // Champion Chen
+		.tier_2232 = 3; // Stalker Gertie
+		.tier_2233 = 3; // Clown Alphoccio
+		.tier_2234 = 3; // Gypsy Trentini
+
+		.tier_1_item_drop = 1;
+		.tier_1_currency_drop = 1000;
+
+		.tier_2_item_drop = 50;
+		.tier_2_currency_drop = 5000;
+
+		.tier_3_item_drop = 100;
+		.tier_3_currency_drop = 10000;
+
+		setarray(.maps$[0], "glast_01", "gef_fild13", "moc_fild12", "prt_fild08", "nif_fild02", "niflheim");
+		setarray($@gop_items[0], 28604, 28705, 13327, 28007, 1839, 1498, 16040, 13127, 1680, 13454, 1443, 2025, 28106, 21015, 1939, 1995, 18130);
+		setarray($@gop_no_element[0], 13127, 1680, 2025, 18130);
+		setarray($@gop_no_indestructible[0], 28106, 16040, 2025, 1680, 13327);
+		setarray($@gop_element_ids[0], RDMOPT_WEAPON_ATTR_WATER, RDMOPT_WEAPON_ATTR_GROUND, RDMOPT_WEAPON_ATTR_FIRE, RDMOPT_WEAPON_ATTR_WIND, RDMOPT_WEAPON_ATTR_SAINT, RDMOPT_WEAPON_ATTR_DARKNESS);
+		setarray(.stat_ids[0], RDMOPT_VAR_STRAMOUNT, RDMOPT_VAR_AGIAMOUNT, RDMOPT_VAR_VITAMOUNT, RDMOPT_VAR_INTAMOUNT, RDMOPT_VAR_DEXAMOUNT, RDMOPT_VAR_LUKAMOUNT);
+		setarray(.option_ids[0],
+		    RDMOPT_VAR_ATKPERCENT, RDMOPT_VAR_MAGICATKPERCENT, RDMOPT_VAR_ATTPOWER, RDMOPT_VAR_ATTMPOWER,
+		    RDMOPT_VAR_PLUSASPD, RDMOPT_VAR_PLUSASPDPERCENT, RDMOPT_VAR_HITSUCCESSVALUE,
+		    RDMOPT_RANGE_ATTACK_DAMAGE_TARGET, RDMOPT_DAMAGE_CRI_TARGET,
+		    RDMOPT_VAR_CRITICALSUCCESSVALUE, RDMOPT_DAMAGE_SIZE_PERFECT,
+		    RDMOPT_WEAPON_INDESTRUCTIBLE,
+
+		    RDMOPT_CLASS_DAMAGE_BOSS_TARGET, RDMOPT_CLASS_DAMAGE_NORMAL_TARGET,
+		    RDMOPT_CLASS_MDAMAGE_NORMAL, RDMOPT_CLASS_MDAMAGE_BOSS,
+
+		    RDMOPT_RACE_DAMAGE_NOTHING, RDMOPT_RACE_DAMAGE_ANIMAL,
+		    RDMOPT_RACE_DAMAGE_PLANT, RDMOPT_RACE_DAMAGE_INSECT, RDMOPT_RACE_DAMAGE_FISHS,
+		    RDMOPT_RACE_DAMAGE_DEVIL, RDMOPT_RACE_DAMAGE_HUMAN, RDMOPT_RACE_DAMAGE_ANGEL, RDMOPT_RACE_DAMAGE_DRAGON,
+
+		    RDMOPT_RACE_MDAMAGE_NOTHING, RDMOPT_RACE_MDAMAGE_UNDEAD, RDMOPT_RACE_MDAMAGE_ANIMAL,
+		    RDMOPT_RACE_MDAMAGE_PLANT, RDMOPT_RACE_MDAMAGE_INSECT, RDMOPT_RACE_MDAMAGE_FISHS,
+		    RDMOPT_RACE_MDAMAGE_DEVIL, RDMOPT_RACE_MDAMAGE_HUMAN, RDMOPT_RACE_MDAMAGE_ANGEL, RDMOPT_RACE_MDAMAGE_DRAGON,
+
+		    RDMOPT_RACE_CRI_PERCENT_NOTHING, RDMOPT_RACE_CRI_PERCENT_UNDEAD, RDMOPT_RACE_CRI_PERCENT_ANIMAL,
+		    RDMOPT_RACE_CRI_PERCENT_PLANT, RDMOPT_RACE_CRI_PERCENT_INSECT, RDMOPT_RACE_CRI_PERCENT_FISHS,
+		    RDMOPT_RACE_CRI_PERCENT_DEVIL, RDMOPT_RACE_CRI_PERCENT_HUMAN, RDMOPT_RACE_CRI_PERCENT_ANGEL, RDMOPT_RACE_CRI_PERCENT_DRAGON,
+
+		    RDMOPT_DAMAGE_SIZE_SMALL_TARGET, RDMOPT_DAMAGE_SIZE_MIDIUM_TARGET, RDMOPT_DAMAGE_SIZE_LARGE_TARGET,
+		    RDMOPT_MDAMAGE_SIZE_SMALL_TARGET, RDMOPT_MDAMAGE_SIZE_MIDIUM_TARGET, RDMOPT_MDAMAGE_SIZE_LARGE_TARGET,
+
+		    RDMOPT_CLASS_IGNORE_DEF_PERCENT_BOSS, RDMOPT_CLASS_IGNORE_DEF_PERCENT_NORMAL,
+		    RDMOPT_CLASS_IGNORE_MDEF_PERCENT_BOSS, RDMOPT_CLASS_IGNORE_MDEF_PERCENT_NORMAL,
+
+			RDMOPT_RACE_IGNORE_DEF_PERCENT_NOTHING, RDMOPT_RACE_IGNORE_DEF_PERCENT_UNDEAD, RDMOPT_RACE_IGNORE_DEF_PERCENT_ANIMAL,
+		    RDMOPT_RACE_IGNORE_DEF_PERCENT_PLANT, RDMOPT_RACE_IGNORE_DEF_PERCENT_INSECT, RDMOPT_RACE_IGNORE_DEF_PERCENT_FISHS,
+		    RDMOPT_RACE_IGNORE_DEF_PERCENT_DEVIL, RDMOPT_RACE_IGNORE_DEF_PERCENT_HUMAN, RDMOPT_RACE_IGNORE_DEF_PERCENT_ANGEL, RDMOPT_RACE_IGNORE_DEF_PERCENT_DRAGON,
+
+			RDMOPT_RACE_IGNORE_MDEF_PERCENT_NOTHING, RDMOPT_RACE_IGNORE_MDEF_PERCENT_UNDEAD, RDMOPT_RACE_IGNORE_MDEF_PERCENT_ANIMAL,
+		    RDMOPT_RACE_IGNORE_MDEF_PERCENT_PLANT, RDMOPT_RACE_IGNORE_MDEF_PERCENT_INSECT, RDMOPT_RACE_IGNORE_MDEF_PERCENT_FISHS,
+		    RDMOPT_RACE_IGNORE_MDEF_PERCENT_DEVIL, RDMOPT_RACE_IGNORE_MDEF_PERCENT_HUMAN, RDMOPT_RACE_IGNORE_MDEF_PERCENT_ANGEL, RDMOPT_RACE_IGNORE_MDEF_PERCENT_DRAGON
+		);
+		end;
+
+	OnNPCKillEvent:
+		getmapxy(.@map$, .@x, .@y, 0);
+
+		.@tier = getd(".tier_" + killedrid);
+		if(.@tier == 0 || inarray(.maps$[0], .@map$) == -1) end;
+
+		if(rand(10000) < getd(".tier_" + .@tier + "_currency_drop"))
+			getitem($@gop_currency, 1);
+
+		if(rand(10000) >= getd(".tier_" + .@tier + "_item_drop")) end;
+
+		.picked_item = $@gop_items[rand(getarraysize($@gop_items))];
+
+		.@roll = rand(100);
+		if (.@roll < 80)      .@target_count = 1; // 80%
+		else if (.@roll < 90) .@target_count = 2; // 10%
+		else if (.@roll < 95) .@target_count = 3; // 5%
+		else if (.@roll < 99) .@target_count = 4; // 4%
+		else                  .@target_count = 5; // 1%
+
+		while(.@i < .@target_count) {
+			switch(rand(3)) {
+				case 0:
+					if(.@has_element || inarray($@gop_no_element[0], .picked_item) != -1) continue;
+
+					.@candidate = $@gop_element_ids[rand(getarraysize($@gop_element_ids))];
+					if (inarray(.@OptID[0], .@candidate) != -1) continue;
+
+					.@OptID[.@i] = .@candidate;
+					.@OptVal[.@i] = 0;
+					.@OptParam[.@i] = 0;
+
+					.@has_element = 1;
+					break;
+				case 1:
+					.@candidate = .stat_ids[rand(getarraysize(.stat_ids))];
+					if (inarray(.@OptID[0], .@candidate) != -1) continue;
+
+					.@OptID[.@i] = .@candidate;
+					.@OptVal[.@i] = rand(1, 5);
+					.@OptParam[.@i] = 0;
+					break;
+				case 2:
+					.@candidate = .option_ids[rand(getarraysize(.option_ids))];
+					if (.@candidate == RDMOPT_WEAPON_INDESTRUCTIBLE && inarray($@gop_no_indestructible[0], .picked_item) != -1) continue;
+					if (inarray(.@OptID[0], .@candidate) != -1) continue;
+
+					.@OptID[.@i] = .@candidate;
+					.@OptVal[.@i] = rand(1, 10);
+					.@OptParam[.@i] = 0;
+					break;
+			}
+
+			.@i++;
+		}
+
+		getitem3(.picked_item, 1, 1, 0, 0, 0, 0, 0, 0, .@OptID, .@OptVal, .@OptParam);
+}
+
+prontera,154,173,4	script	Shin	615,{
+	mes("[Shin]");
+	mes("The Spirits of the fallen are roaming the world of the living again.");
+	mes("I offer my services to those that prove they brought peace to them, by bringing me the " + getitemname($@gop_currency) + " they left behind.");
+	mes("Do you have something that you need from me?");
+	next;
+
+	menu("Transfer essence between crimson weapons.", Transfer, "Show me the things you trade.", Shop, "What do you offer?", Explanation, "No.", Cancel);
+
+	Shop:
+		mes("[Shin]");
+		mes("Here take a look.");
+		close2;
+		callshop("GHOSTS_OF_THE_PAST_SHOP",1);
+		end;
+
+	Transfer:
+		getinventorylist();
+
+		.@right_item = getequipisequiped(EQI_HAND_R) ? getequipid(EQI_HAND_R) : 0;
+		.@left_item  = getequipisequiped(EQI_HAND_L) ? getequipid(EQI_HAND_L) : 0;
+
+		.@right_valid = (.@right_item != 0 && inarray($@gop_items[0], .@right_item) != -1);
+		.@left_valid  = (.@left_item  != 0 && inarray($@gop_items[0], .@left_item)  != -1);
+
+		if (!.@right_valid && !.@left_valid) {
+			mes("[Shin]");
+			mes("You need to equip the weapon you want to infuse with the essence of another first.");
+			close;
+		}
+
+		if (.@right_valid && .@left_valid && .@right_item != .@left_item) {
+			.@hand_pick = select("Right Hand (" + getitemname(.@right_item) + " +" + getequiprefinerycnt(EQI_HAND_R) + "):Left Hand (" + getitemname(.@left_item) + " +" + getequiprefinerycnt(EQI_HAND_L) + "):I changed my mind.");
+			if (.@hand_pick == 3) {
+				goto(Cancel);
+			}
+
+			if (.@hand_pick == 1) {
+				.@dst_eqi = EQI_HAND_R;
+				.@dst_eqp = EQP_HAND_R;
+				.@dst_item = .@right_item;
+			} else {
+				.@dst_eqi = EQI_HAND_L;
+				.@dst_eqp = EQP_HAND_L;
+				.@dst_item = .@left_item;
+			}
+		} else if (.@right_valid) {
+			.@dst_eqi = EQI_HAND_R;
+			.@dst_eqp = EQP_HAND_R;
+			.@dst_item = .@right_item;
+		} else {
+			.@dst_eqi = EQI_HAND_L;
+			.@dst_eqp = EQP_HAND_L;
+			.@dst_item = .@left_item;
+		}
+
+		.@dst_inv_idx = -1;
+		for (.@i = 0; .@i < @inventorylist_count; .@i++) {
+			if (@inventorylist_id[.@i] == .@dst_item && (@inventorylist_equip[.@i] & .@dst_eqp)) {
+				.@dst_inv_idx = .@i;
+				break;
+			}
+		}
+
+		.@src_count = 0;
+		for (.@i = 0; .@i < @inventorylist_count; .@i++) {
+			if (.@i == .@dst_inv_idx) continue;
+			if (inarray($@gop_items[0], @inventorylist_id[.@i]) != -1) {
+				.@src_idx[.@src_count] = .@i;
+				.@src_count++;
+			}
+		}
+
+		if (.@src_count == 0) {
+			mes("[Shin]");
+			mes("You need to own another crimson weapon that i can use as source for essence.");
+			close;
+		}
+
+		.@menu$ = "";
+		for (.@i = 0; .@i < .@src_count; .@i++) {
+			.@idx = .@src_idx[.@i];
+			.@menu$ += getitemname(@inventorylist_id[.@idx]) + " (+" + @inventorylist_refine[.@idx] + ")" + ":";
+		}
+		.@menu$ += "I changed my mind.";
+
+		mes("[Shin]");
+		mes("Which crimson weapon do you want to use, as source for the essence transfer?");
+		next;
+
+		.@pick_src = select(.@menu$) - 1;
+		if (.@pick_src >= .@src_count) {
+			goto(Cancel);
+		}
+
+		.@src = .@src_idx[.@pick_src];
+		.@src_item = @inventorylist_id[.@src];
+
+		.@menu$ = "";
+		for (.@s = 0; .@s < 5; .@s++) {
+			.@o_id = getd("@inventorylist_option_id" + (.@s+1) + "[" + .@src + "]");
+			if (.@o_id == 0) continue;
+
+			.@slot_map[.@src_slot_count] = .@s;
+			.@o_val = getd("@inventorylist_option_value" + (.@s+1) + "[" + .@src + "]");
+			.@menu$ += callsub(S_GetOptionName, .@o_id, .@o_val) + ":";
+			.@src_slot_count++;
+		}
+		.@menu$ += "I changed my mind.";
+
+		if (.@src_slot_count == 0) {
+			mes("[Shin]");
+			mes("This crimson weapon doesn't have any essence.");
+			close;
+		}
+
+		mes("[Shin]");
+		mes("Which essence do you want to transfer?");
+		next;
+
+		.@pick_slot = select(.@menu$) - 1;
+		if (.@pick_slot >= .@src_slot_count) {
+			goto(Cancel);
+		}
+
+		.@src_slot = .@slot_map[.@pick_slot];
+		.@opt_id    = getd("@inventorylist_option_id"       + (.@src_slot+1) + "[" + .@src + "]");
+		.@opt_val   = getd("@inventorylist_option_value"     + (.@src_slot+1) + "[" + .@src + "]");
+		.@opt_param = getd("@inventorylist_option_parameter" + (.@src_slot+1) + "[" + .@src + "]");
+
+		.@is_element        = (inarray($@gop_element_ids[0], .@opt_id) != -1);
+		.@is_indestructible = (.@opt_id == RDMOPT_WEAPON_INDESTRUCTIBLE);
+
+		if (.@is_element && inarray($@gop_no_element[0], .@dst_item) != -1) {
+			mes("[Shin]");
+			mes("Bows, Revolvers and Staves can not have elemental essence.");
+			close;
+		}
+
+		if (.@is_indestructible && inarray($@gop_no_indestructible[0], .@dst_item) != -1) {
+			mes("[Shin]");
+			mes("A weapon that is indestructible by nature can't be infused with the essence of indestructibility.");
+			close;
+		}
+
+		.@dst_slot = -1;
+		for (.@s = 0; .@s < 5; .@s++) {
+			.@d_id = getequiprandomoption(.@dst_eqi, .@s, ROA_ID);
+			if (.@d_id == 0) {
+				.@dst_slot = .@s;
+				break;
+			}
+
+			.@dst_slot_count++;
+		}
+
+		if (.@dst_slot == -1) {
+			.@menu$ = "";
+			for (.@s = 0; .@s < 5; .@s++) {
+				.@d_id  = getequiprandomoption(.@dst_eqi, .@s, ROA_ID);
+				.@menu$ += callsub(S_GetOptionName, .@d_id, .@d_val) + ":";
+			}
+			.@menu$ += "I changed my mind.";
+
+			mes("[Shin]");
+			mes("All slots are full. Which essence do you want to overwrite?");
+			next;
+
+			.@pick_dst_slot = select(.@menu$) - 1;
+			if(.@pick_dst_slot >= 5) {
+				goto(Cancel);
+			}
+
+			.@dst_slot = .@pick_dst_slot;
+		}
+
+		for (.@s = 0; .@s < 5; .@s++) {
+			if (.@s == .@dst_slot) continue;
+
+			.@check_id = getequiprandomoption(.@dst_eqi, .@s, ROA_ID);
+			if (.@check_id == 0) continue;
+
+			if (.@check_id == .@opt_id) {
+				mes("[Shin]");
+				mes("This weapon already has this type of essence.");
+				close;
+			}
+
+			if (.@is_element && inarray($@gop_element_ids[0], .@check_id) != -1) {
+				mes("[Shin]");
+				mes("This weapon already has a type of elemental essence. It can't have two at the same time.");
+				close;
+			}
+		}
+
+		.@destroy_chance = .src_destroy_chance[.@src_slot_count - 1];
+
+		.@src_opt_name$ = callsub(S_GetOptionName, .@opt_id, .@opt_val);
+
+		.@dst_cur_id  = getequiprandomoption(.@dst_eqi, .@dst_slot, ROA_ID);
+		if (.@dst_cur_id == 0) {
+			.@dst_slot_desc$ = "Empty slot";
+		} else {
+			.@dst_cur_val = getequiprandomoption(.@dst_eqi, .@dst_slot, ROA_VALUE);
+			.@dst_slot_desc$ = callsub(S_GetOptionName, .@dst_cur_id, .@dst_cur_val);
+		}
+
+		.@item_price = .item_prices[.@dst_slot_count-1];
+		.@zeny_price = .zeny_prices[.@dst_slot_count-1];
+
+		mes("[Shin]");
+		mes("From: " + .@src_opt_name$ + " (" + getitemname(.@src_item) + ")");
+		mes("To: " + .@dst_slot_desc$ + " (" + getitemname(.@dst_item) + ")");
+		if (.@dst_cur_id != 0) {
+			mes("Warning: The previous bonus will be overwritten!");
+		}
+		mes("The source weapon currently holds " + callfunc("F_InsertPlural",.@src_slot_count, "essence") + ". Risk of getting destroyed: " + (.@destroy_chance/100) + "%.");
+		mes("Price: ");
+		mes(.@item_price + " x " + getitemname($@gop_currency) + ".");
+		mes(.@zeny_price + " x Zeny. Continue?");
+		next;
+
+		if (select("Yes.:No.") == 2) {
+			goto(Cancel);
+		}
+
+		if (countitem($@gop_currency) < .@item_price) {
+			mes("[Shin]");
+			mes("You don't have enough " + getitemname($@gop_currency) + ".");
+			close;
+		}
+
+		delitem($@gop_currency, 100);
+		setrandomoption(.@dst_eqi, .@dst_slot, .@opt_id, .@opt_val, .@opt_param);
+
+		if (rand(10000) < .@destroy_chance) {
+			delitem2(.@src_item, 1, 1,
+				@inventorylist_refine[.@src],
+				@inventorylist_attribute[.@src],
+				@inventorylist_card0[.@src],
+				@inventorylist_card1[.@src],
+				@inventorylist_card2[.@src],
+				@inventorylist_card3[.@src]);
+
+			mes("[Shin]");
+			mes("The essence was transferred, but the source weapon got destroyed in the process.");
+		} else {
+			for (.@k = 0; .@k < 5; .@k++) {
+				.@keep_id[.@k]    = (.@k == .@src_slot) ? 0 : getd("@inventorylist_option_id"       + (.@k+1) + "[" + .@src + "]");
+				.@keep_val[.@k]   = (.@k == .@src_slot) ? 0 : getd("@inventorylist_option_value"     + (.@k+1) + "[" + .@src + "]");
+				.@keep_param[.@k] = (.@k == .@src_slot) ? 0 : getd("@inventorylist_option_parameter" + (.@k+1) + "[" + .@src + "]");
+			}
+
+			delitem2(.@src_item, 1, 1,
+				@inventorylist_refine[.@src],
+				@inventorylist_attribute[.@src],
+				@inventorylist_card0[.@src],
+				@inventorylist_card1[.@src],
+				@inventorylist_card2[.@src],
+				@inventorylist_card3[.@src]);
+
+			getitem3(.@src_item, 1, 1,
+				@inventorylist_refine[.@src],
+				@inventorylist_attribute[.@src],
+				@inventorylist_card0[.@src],
+				@inventorylist_card1[.@src],
+				@inventorylist_card2[.@src],
+				@inventorylist_card3[.@src],
+				.@keep_id, .@keep_val, .@keep_param);
+
+			mes("[Shin]");
+			mes("The essence was transferred successfully.");
+		}
+		close;
+
+	Explanation:
+		mes("[Shin]");
+		mes("Besides " + getitemname($@gop_currency) + ", spirits sometimes drop crimson weapons. Those are infused with essences, which grant them more power.");
+		next;
+		mes("[Shin]");
+		mes("I can transfer those from one crimson weapon to another. For the right price of course.");
+		next;
+		mes("[Shin]");
+		mes("My prices rises the more essences a crimson weapon already has, since the more one has, the harder it is to add another. The absolute limit is 5.");
+		next;
+		mes("[Shin]");
+		mes("Another thing you should know is, that the more essences you remove from a weapon, the weaker it gets and the more risk rises, that it might get destroyed.");
+		next;
+		mes("[Shin]");
+		mes("This means you need to really think about which weapon you want to use as source.");
+		next;
+		mes("[Shin]");
+		mes("I think that is basically everything you need to know. So if you happen to find a crimson weapon and some " + getitemname($@gop_currency) + " i might help you out.");
+		close;
+
+	Cancel:
+		mes("[Shin]");
+		mes("Mhm.");
+		close;
+
+	S_GetOptionName:
+		.@opt_id = getarg(0);
+		.@opt_val = getarg(1, 0);
+
+		switch (.@opt_id) {
+			case RDMOPT_WEAPON_ATTR_WATER: return "Water";
+			case RDMOPT_WEAPON_ATTR_GROUND: return "Earth";
+			case RDMOPT_WEAPON_ATTR_FIRE: return "Fire";
+			case RDMOPT_WEAPON_ATTR_WIND: return "Wind";
+			case RDMOPT_WEAPON_ATTR_SAINT: return "Holy";
+			case RDMOPT_WEAPON_ATTR_DARKNESS: return "Shadow";
+
+			case RDMOPT_VAR_STRAMOUNT: return "STR +" + .@opt_val;
+			case RDMOPT_VAR_AGIAMOUNT: return "AGI +" + .@opt_val;
+			case RDMOPT_VAR_VITAMOUNT: return "VIT +" + .@opt_val;
+			case RDMOPT_VAR_INTAMOUNT: return "INT +" + .@opt_val;
+			case RDMOPT_VAR_DEXAMOUNT: return "DEX +" + .@opt_val;
+			case RDMOPT_VAR_LUKAMOUNT: return "LUK +" + .@opt_val;
+
+			case RDMOPT_VAR_ATKPERCENT: return "ATK +" + .@opt_val + "%";
+			case RDMOPT_VAR_MAGICATKPERCENT: return "MATK +" + .@opt_val + "%";
+			case RDMOPT_VAR_ATTPOWER: return "ATK +" + .@opt_val;
+			case RDMOPT_VAR_ATTMPOWER: return "MATK +" + .@opt_val;
+			case RDMOPT_VAR_PLUSASPD: return "ASPD +" + .@opt_val;
+			case RDMOPT_VAR_PLUSASPDPERCENT: return "ASPD +" + .@opt_val + "%";
+			case RDMOPT_VAR_HITSUCCESSVALUE: return "Treffer +" + .@opt_val;
+			case RDMOPT_RANGE_ATTACK_DAMAGE_TARGET: return "Ranged Attack +" + .@opt_val + "%";
+			case RDMOPT_DAMAGE_CRI_TARGET: return "Crit +" + .@opt_val + "%";
+			case RDMOPT_VAR_CRITICALSUCCESSVALUE: return "Critical Hit +" + .@opt_val;
+			case RDMOPT_DAMAGE_SIZE_PERFECT: return "Damage against all sizes +" + .@opt_val + "%";
+			case RDMOPT_WEAPON_INDESTRUCTIBLE: return "Indestructible";
+
+			case RDMOPT_CLASS_DAMAGE_BOSS_TARGET: return "Damage against boss mobs +" + .@opt_val + "%";
+			case RDMOPT_CLASS_DAMAGE_NORMAL_TARGET: return "Damage against normal mobs +" + .@opt_val + "%";
+			case RDMOPT_CLASS_MDAMAGE_BOSS: return "Magic damage against boss mobs +" + .@opt_val + "%";
+			case RDMOPT_CLASS_MDAMAGE_NORMAL: return "Magic damage against normal mobs +" + .@opt_val + "%";
+
+			case RDMOPT_RACE_DAMAGE_NOTHING: return "Damage against formless mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_UNDEAD: return "Damage against undead mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_ANIMAL: return "Damage against brute mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_PLANT: return "Damage against plant mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_INSECT: return "Damage against insects mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_FISHS: return "Damage against fish mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_DEVIL: return "Damage against devil mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_HUMAN: return "Damage against demi-human mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_ANGEL: return "Damage against angel mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_DAMAGE_DRAGON: return "Damage against dragon mobs +" + .@opt_val + "%";
+
+			case RDMOPT_RACE_MDAMAGE_NOTHING: return "Magic damage against formless mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_UNDEAD: return "Magic damage against undead mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_ANIMAL: return "Magic damage against brute mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_PLANT: return "Magic damage against plant mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_INSECT: return "Magic damage against insects mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_FISHS: return "Magic damage against fish mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_DEVIL: return "Magic damage against devil mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_HUMAN: return "Magic damage against demi-human mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_ANGEL: return "Magic damage against angel mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_MDAMAGE_DRAGON: return "Magic damage against dragon mobs +" + .@opt_val + "%";
+
+			case RDMOPT_RACE_CRI_PERCENT_NOTHING: return "Crit Hit chance against formless mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_UNDEAD: return "Crit Hit chance against undead mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_ANIMAL: return "Crit Hit chance against brute mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_PLANT: return "Crit Hit chance against plant mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_INSECT: return "Crit Hit chance against insects mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_FISHS: return "Crit Hit chance against fish mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_DEVIL: return "Crit Hit chance against devil mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_HUMAN: return "Crit Hit chance against demi-human mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_ANGEL: return "Crit Hit chance against angel mobs +" + .@opt_val + "%";
+			case RDMOPT_RACE_CRI_PERCENT_DRAGON: return "Crit Hit chance against dragon mobs +" + .@opt_val + "%";
+
+			case RDMOPT_DAMAGE_SIZE_SMALL_TARGET: return "Damage against small targets +" + .@opt_val + "%";
+			case RDMOPT_DAMAGE_SIZE_MIDIUM_TARGET: return "Damage against medium targets +" + .@opt_val + "%";
+			case RDMOPT_DAMAGE_SIZE_LARGE_TARGET: return "Damage against large targets +" + .@opt_val + "%";
+
+			case RDMOPT_MDAMAGE_SIZE_SMALL_TARGET: return "Magic damage against small targets +" + .@opt_val + "%";
+			case RDMOPT_MDAMAGE_SIZE_MIDIUM_TARGET: return "Magic damage against medium targets +" + .@opt_val + "%";
+			case RDMOPT_MDAMAGE_SIZE_LARGE_TARGET: return "Magic damage against large targets +" + .@opt_val + "%";
+
+			case RDMOPT_CLASS_IGNORE_DEF_PERCENT_BOSS: return "Ignore DEF of boss mobs by " + .@opt_val + "%";
+			case RDMOPT_CLASS_IGNORE_DEF_PERCENT_NORMAL: return "Ignore DEF of normal mobs by " + .@opt_val + "%";
+			case RDMOPT_CLASS_IGNORE_MDEF_PERCENT_BOSS: return "Ignore MDEF of boss mobs by " + .@opt_val + "%";
+			case RDMOPT_CLASS_IGNORE_MDEF_PERCENT_NORMAL: return "Ignore MDEF of normal mobs by " + .@opt_val + "%";
+
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_NOTHING: return "Ignore DEF of formless mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_UNDEAD: return "Ignore DEF of undead mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_ANIMAL: return "Ignore DEF of brute mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_PLANT: return "Ignore DEF of plant mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_INSECT: return "Ignore DEF of insect mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_FISHS: return "Ignore DEF of fish mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_DEVIL: return "Ignore DEF of devil mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_HUMAN: return "Ignore DEF of demi-human mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_ANGEL: return "Ignore DEF of angel mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_DEF_PERCENT_DRAGON: return "Ignore DEF of dragon mobs by " + .@opt_val + "%";
+
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_NOTHING: return "Ignore MDEF of formless mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_UNDEAD: return "Ignore MDEF of undead mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_ANIMAL: return "Ignore MDEF of brute mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_PLANT: return "Ignore MDEF of plant mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_INSECT: return "Ignore MDEF of insect mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_FISHS: return "Ignore MDEF of fish mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_DEVIL: return "Ignore MDEF of devil mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_HUMAN: return "Ignore MDEF of demi-human mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_ANGEL: return "Ignore MDEF of angel mobs by " + .@opt_val + "%";
+			case RDMOPT_RACE_IGNORE_MDEF_PERCENT_DRAGON: return "Ignore MDEF of dragon mobs by " + .@opt_val + "%";
+
+			default:
+				return "Unknown option (ID " + .@opt_id + ")";
+		}
+
+	OnInit:
+		setarray(.zeny_prices[0], 10000, 25000, 50000, 75000, 100000);
+		setarray(.item_prices[0], 200, 400, 600, 800, 1000);
+		setarray(.src_destroy_chance[0], 10000, 9000, 7000, 5000, 0);
+		end;
+}
+
+-	itemshop	GHOSTS_OF_THE_PAST_SHOP	-1,7583:0,14232:1000,12922:1000,13711:1000,105530:1000,12412:1000
+
+glast_01,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+glast_01,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+glast_01,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+glast_01,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+glast_01,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+glast_01,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+glast_01,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+glast_01,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+glast_01,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+glast_01,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+glast_01,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+glast_01,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+glast_01,0,0,0,0	boss_monster	Egnigem Cenia	1658,1,7200000,600000,0
+glast_01,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+glast_01,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+glast_01,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+glast_01,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+glast_01,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+glast_01,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+glast_01,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+glast_01,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+glast_01,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+glast_01,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+glast_01,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+glast_01,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+glast_01,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+glast_01,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+gef_fild13,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+gef_fild13,0,0,0,0	boss_monster	Egnigem Cenia	1658,1,7200000,600000,0
+gef_fild13,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+gef_fild13,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+gef_fild13,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+gef_fild13,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+gef_fild13,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+gef_fild13,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+gef_fild13,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+gef_fild13,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+moc_fild12,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+moc_fild12,0,0,0,0	boss_monster	Egnigem Cenia	1658,1,7200000,600000,0
+moc_fild12,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+moc_fild12,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+moc_fild12,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+moc_fild12,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+moc_fild12,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+moc_fild12,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+moc_fild12,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+moc_fild12,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+prt_fild08,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+prt_fild08,0,0,0,0	boss_monster	Egnigem Cenia	1658,1,7200000,600000,0
+prt_fild08,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+prt_fild08,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+prt_fild08,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+prt_fild08,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+prt_fild08,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+prt_fild08,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+prt_fild08,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+prt_fild08,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+niflheim,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+niflheim,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+niflheim,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+niflheim,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+niflheim,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+niflheim,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+niflheim,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+niflheim,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+niflheim,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+niflheim,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+niflheim,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+niflheim,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+niflheim,0,0,0,0	boss_monster	Egnigem Cenia	1658,1,7200000,600000,0
+niflheim,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+niflheim,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+niflheim,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+niflheim,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+niflheim,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+niflheim,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+niflheim,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+niflheim,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+niflheim,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+niflheim,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+niflheim,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+niflheim,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+niflheim,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+niflheim,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+nif_fild02,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+nif_fild02,0,0,0,0	boss_monster	Egnigem Cenia	1658,1,7200000,600000,0
+nif_fild02,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+nif_fild02,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+nif_fild02,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+nif_fild02,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+nif_fild02,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+nif_fild02,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+nif_fild02,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+nif_fild02,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
