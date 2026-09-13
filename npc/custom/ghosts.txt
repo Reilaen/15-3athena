@@ -152,6 +152,8 @@
 }
 
 prontera,154,173,4	script	Shin	615,{
+	disable_items;
+
 	mes("[Shin]");
 	mes("The Spirits of the fallen are roaming the world of the living again.");
 	mes("I offer my services to those that prove they brought peace to them, by bringing me the " + getitemname($@gop_currency) + " they left behind.");
