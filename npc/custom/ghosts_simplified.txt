@@ -1,0 +1,401 @@
+-	script	GHOSTS_OF_THE_PAST	-1,{
+	OnInit:
+		$@gop_currency = 7583;
+
+		.tier_1656 = 1; // Kavach Icarus
+		.tier_1655 = 1; // Errende Ebecee
+		.tier_1657 = 1; // Laurell Weinder
+		.tier_1653 = 1; // Wickebine Tres
+		.tier_1654 = 1; // Armeyer Dinze
+		.tier_1652 = 1; // Egnigem Cenia
+		.tier_1638 = 1; // Cecil Damon
+		.tier_1639 = 1; // Kathryne Keyron
+		.tier_1637 = 1; // Margaretha Sorin
+		.tier_1636 = 1; // Howard Alt-Eisen
+		.tier_1635 = 1; // Eremes Guile
+		.tier_1634 = 1; // Seyren Windsor
+
+		.tier_1641 = 2; // Assassin Cross Eremes
+		.tier_1645 = 2; // High Wizard Kathryne
+		.tier_1640 = 2; // Lord Knight Seyren
+		.tier_1644 = 2; // Sniper Cecil
+		.tier_1642 = 2; // Whitesmith Howard
+		.tier_1643 = 2; // High Priest Margaretha
+
+		.tier_2221 = 1; // Randel
+		.tier_2222 = 1; // Flamel
+		.tier_2223 = 1; // Celia
+		.tier_2224 = 1; // Chen
+		.tier_2225 = 1; // Gertie
+		.tier_2226 = 1; // Alphoccio
+		.tier_2227 = 1; // Trentini
+
+		.tier_2228 = 3; // Paladin Randel
+		.tier_2229 = 3; // Creator Flamel
+		.tier_2230 = 3; // Professor Celia
+		.tier_2231 = 3; // Champion Chen
+		.tier_2232 = 3; // Stalker Gertie
+		.tier_2233 = 3; // Clown Alphoccio
+		.tier_2234 = 3; // Gypsy Trentini
+
+		.tier_1_item_drop = 1;
+		.tier_1_currency_drop = 1000;
+
+		.tier_2_item_drop = 50;
+		.tier_2_currency_drop = 5000;
+
+		.tier_3_item_drop = 100;
+		.tier_3_currency_drop = 10000;
+
+		setarray(.maps$[0], "glast_01", "gef_fild13", "moc_fild12", "prt_fild08", "nif_fild02", "niflheim");
+		setarray($@gop_items[0], 28604, 28705, 13327, 28007, 1839, 1498, 16040, 13127, 1680, 13454, 1443, 2025, 28106, 21015, 1939, 1995, 18130);
+		setarray($@gop_no_element[0], 13127, 1680, 2025, 18130);
+		setarray($@gop_element_ids[0], RDMOPT_WEAPON_ATTR_WATER, RDMOPT_WEAPON_ATTR_GROUND, RDMOPT_WEAPON_ATTR_FIRE, RDMOPT_WEAPON_ATTR_WIND, RDMOPT_WEAPON_ATTR_SAINT, RDMOPT_WEAPON_ATTR_DARKNESS);
+		end;
+
+	OnNPCKillEvent:
+		getmapxy(.@map$, .@x, .@y, 0);
+
+		.@tier = getd(".tier_" + killedrid);
+		if(.@tier == 0 || inarray(.maps$[0], .@map$) == -1) end;
+
+		if(rand(10000) < getd(".tier_" + .@tier + "_currency_drop"))
+			getitem($@gop_currency, 1);
+
+		if(rand(10000) >= getd(".tier_" + .@tier + "_item_drop")) end;
+
+		.picked_item = $@gop_items[rand(getarraysize($@gop_items))];
+		getitem(.picked_item, 1);
+}
+
+prontera,154,173,4	script	Shin	615,{
+	mes("[Shin]");
+	mes("The Spirits of the fallen are roaming the world of the living again.");
+	mes("I offer my services to those that prove they brought peace to them, by bringing me the <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM> they left behind.");
+	mes("Do you have something that you need from me?");
+	next;
+
+	menu("I have a crimson weapon i want to awaken.", Awaken, "Show me the things you trade.", Shop, "What do you offer?", Explanation, "No.", Cancel);
+
+	Awaken:
+		.@right_item = getequipisequiped(EQI_HAND_R) ? getequipid(EQI_HAND_R) : 0;
+		.@left_item  = getequipisequiped(EQI_HAND_L) ? getequipid(EQI_HAND_L) : 0;
+
+		.@right_valid = (.@right_item != 0 && inarray($@gop_items[0], .@right_item) != -1);
+		.@left_valid  = (.@left_item  != 0 && inarray($@gop_items[0], .@left_item)  != -1);
+
+		if (!.@right_valid && !.@left_valid) {
+			mes("[Shin]");
+			mes("You need to equip the crimson weapon first.");
+			close;
+		}
+
+		if (.@right_valid && .@left_valid && .@right_item != .@left_item) {
+			mes("[Shin]");
+			mes("The weapon in which hand do you want to awaken?");
+			next;
+			.@hand_pick = select("Right Hand (" + getitemname(.@right_item) + " +" + getequiprefinerycnt(EQI_HAND_R) + "):Left Hand (" + getitemname(.@left_item) + " +" + getequiprefinerycnt(EQI_HAND_L) + "):I changed my mind.");
+			if (.@hand_pick == 3) {
+				goto(Cancel);
+			}
+
+			if (.@hand_pick == 1) {
+				.@item = .@right_item;
+				.@eqi = EQI_HAND_R;
+			} else {
+				.@item = .@left_item;
+				.@eqi = EQI_HAND_L;
+			}
+		} else if (.@right_valid) {
+			.@item = .@right_item;
+			.@eqi = EQI_HAND_R;
+		} else {
+			.@item = .@left_item;
+			.@eqi = EQI_HAND_L;
+		}
+
+		if(inarray($@gop_no_element, .@item) != -1) {
+			mes("[Shin]");
+			mes("This weapon does not posess elemental essence.");
+			close;
+		}
+
+		if(inarray($@gop_element_ids, getequiprandomoption(.@eqi, 0, 0)) != -1) {
+			mes("[Shin]");
+			mes("The weapons elemental powers are already awakened, there is nothing for me left to do.");
+			close;
+		}
+
+		mes("[Shin]");
+		mes("Awakening the elemental essence of your <ITEM>" + getitemname(.@item) + "<INFO>" + .@item + "</INFO></ITEM> will cost you " + callfunc("F_InsertComma", .zeny_price) + " ^0000FFZeny^000000 and " + callfunc("F_InsertComma", .item_price) + " <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>.");
+		mes("Shall I proceed?");
+		next;
+
+		if(select("Yes, awaken it.:No, never mind.") == 2) {
+			goto(Cancel);
+		}
+
+		if(Zeny < .zeny_price || countitem($@gop_currency) < .item_price) {
+			mes("[Shin]");
+			mes("You don't have enough ^0000FFZeny^000000 or <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM> for this.");
+			close;
+		}
+
+		Zeny -= .zeny_price;
+		delitem($@gop_currency, .item_price);
+
+		setrandomoption(.@eqi, 0, $@gop_element_ids[rand(getarraysize($@gop_element_ids))], 0, 0);
+
+		mes("[Shin]");
+		mes("It is done. Your <ITEM>" + getitemname(.@item) + "<INFO>" + .@item + "</INFO></ITEM> now uses it's full potential.");
+		close;
+
+	Shop:
+		mes("[Shin]");
+		mes("Here take a look.");
+		close2;
+		callshop("GHOSTS_OF_THE_PAST_SHOP",1);
+		end;
+
+	Explanation:
+		mes("[Shin]");
+		mes("Besides <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>, spirits sometimes drop crimson weapons. Those are infused with elemental essences, which grant them more power.");
+		next;
+		mes("[Shin]");
+		mes("I can awaken the elemental power of a crimson weapon. For the right price of course. Not all crimson weapons have elemental essence though.");
+		next;
+		mes("[Shin]");
+		mes("Bows, Staves and Guns do not have elemental essence, therefore i can't awake them.");
+		next;
+		mes("[Shin]");
+		mes("So if you happen to find a crimson weapon and some <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM> i might help you out.");
+		close;
+
+	Cancel:
+		mes("[Shin]");
+		mes("Mhm.");
+		close;
+
+	OnInit:
+		.zeny_price = 100000;
+		.item_price = 1000;
+		end;
+}
+
+-	itemshop	GHOSTS_OF_THE_PAST_SHOP	-1,7583:0,14232:1000,12922:1000,13711:1000,105530:1000,12412:1000
+
+glast_01,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+glast_01,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+glast_01,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+glast_01,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+glast_01,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+glast_01,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+glast_01,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+glast_01,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+glast_01,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+glast_01,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+glast_01,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+glast_01,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+glast_01,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+glast_01,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+glast_01,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+glast_01,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+glast_01,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+glast_01,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+glast_01,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+glast_01,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+glast_01,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+glast_01,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+glast_01,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+glast_01,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+glast_01,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+glast_01,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+glast_01,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+gef_fild13,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+gef_fild13,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+gef_fild13,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+gef_fild13,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+gef_fild13,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+gef_fild13,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+gef_fild13,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+gef_fild13,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+gef_fild13,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+gef_fild13,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+gef_fild13,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+gef_fild13,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+gef_fild13,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+moc_fild12,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+moc_fild12,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+moc_fild12,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+moc_fild12,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+moc_fild12,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+moc_fild12,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+moc_fild12,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+moc_fild12,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+moc_fild12,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+moc_fild12,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+moc_fild12,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+moc_fild12,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+moc_fild12,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+prt_fild08,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+prt_fild08,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+prt_fild08,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+prt_fild08,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+prt_fild08,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+prt_fild08,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+prt_fild08,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+prt_fild08,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+prt_fild08,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+prt_fild08,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+prt_fild08,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+prt_fild08,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+prt_fild08,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+niflheim,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+niflheim,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+niflheim,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+niflheim,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+niflheim,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+niflheim,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+niflheim,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+niflheim,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+niflheim,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+niflheim,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+niflheim,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+niflheim,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+niflheim,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+niflheim,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+niflheim,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+niflheim,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+niflheim,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+niflheim,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+niflheim,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+niflheim,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+niflheim,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+niflheim,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+niflheim,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+niflheim,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+niflheim,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+niflheim,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+niflheim,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
+
+nif_fild02,0,0,0,0	monster	Kavach Icarus	1656,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Errende Ebecee	1655,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Laurell Weinder	1657,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Wickebine Tres	1653,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Armeyer Dinze	1654,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Egnigem Cenia	1652,20,5000,8000,0
+nif_fild02,0,0,0,0	monster	Cecil Damon	1638,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Kathryne Keyron	1639,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Margaretha Sorin	1637,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Howard Alt-Eisen	1636,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Eremes Guile	1635,10,60000,90000,0
+nif_fild02,0,0,0,0	monster	Seyren Windsor	1634,10,60000,90000,0
+
+nif_fild02,0,0,0,0	monster	Assassin Cross Eremes	1641,1,2580000,2340000,0
+nif_fild02,0,0,0,0	monster	High Wizard Kathryne	1645,1,2580000,2460000,0
+nif_fild02,0,0,0,0	monster	Lord Knight Seyren	1640,1,2700000,2400000,0
+nif_fild02,0,0,0,0	monster	Sniper Cecil	1644,1,2700000,2500000,0
+nif_fild02,0,0,0,0	monster	Whitesmith Howard	1642,1,3000000,2700000,0
+nif_fild02,0,0,0,0	monster	High Priest Margaretha	1643,1,3300000,3000000,0
+
+nif_fild02,0,0,0,0	monster	Randel	2221,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Flamel	2222,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Celia	2223,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Chen	2224,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Gertie	2225,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Alphoccio	2226,15,5000,8000,0
+nif_fild02,0,0,0,0	monster	Trentini	2227,15,5000,8000,0
+
+nif_fild02,0,0,0,0	monster	Paladin Randel	2228,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Creator Flamel	2229,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Professor Celia	2230,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Champion Chen	2231,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Stalker Gertie	2232,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Clown Alphoccio	2233,1,3300000,3000000,0
+nif_fild02,0,0,0,0	monster	Gypsy Trentini	2234,1,3300000,3000000,0
