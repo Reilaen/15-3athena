@@ -39,7 +39,7 @@
 		.tier_2234 = 3; // Gypsy Trentini
 
 		.tier_1_item_drop = 1;
-		.tier_1_currency_drop = 1000;
+		.tier_1_currency_drop = 1;
 
 		.tier_2_item_drop = 50;
 		.tier_2_currency_drop = 5000;
@@ -71,12 +71,12 @@
 prt_fild08,189,306,4	script	Shin	605,{
 	disable_items;
 
-	mes("^0000FF[Shin]^000000");
+	mes("[Shin]");
 	mes((#lang) ? "Hallo mein Freund": "Hello my Friend");
 	mes((#lang) ? "Lange schon jage ich den Seelen hinterher." : "I am chasing after the souls.");
-	mes((#lang) ? "Ich bin überrascht das sie sich hier nieder gelassen haben." : "I am surprised that you have settled here.");
+	mes((#lang) ? "Ich bin überrascht das sie sich hier nieder gelassen haben." : "I am surprised that they have settled here.");
 	mes((#lang) ? "Hast du schon einige dieser Seelen gesehen und bekämpft?" : "Have you seen and fought some of these souls?");
-	mes((#lang) ? "Die <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>, die Essenz ihrer Existenz... bringe sie mir und ich belohne dich." : "The <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>, the essence of their existence... bring them to me and I reward you.");
+	mes((#lang) ? "Die <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>, die Essenz ihrer Existenz... bringe sie mir und ich belohne dich." : "The <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>, the essence of their existence... bring them to me and I reward you.");
 	next;
 
 	menu((#lang) ? "Ja ich habe bereits welche." : "Yes, I already have some.", Trade,
@@ -86,7 +86,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 	(#lang) ? "Abbruch" : "Cancel", Cancel);
 
 	Trade:
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang) ? "Sehr gut mein Freund. Was willst du mit ihnen machen?" : "Very good my friend. What do you want to do with them?");
 		next;
 		switch(select((#lang) ?
@@ -97,16 +97,16 @@ prt_fild08,189,306,4	script	Shin	605,{
 				.@left_item = getequipisequiped(EQI_HAND_L) ? getequipid(EQI_HAND_L) : 0;
 
 				.@right_valid = (.@right_item != 0 && inarray($@gop_items[0], .@right_item) != -1);
-				.@left_valid = (.@left_item  != 0 && inarray($@gop_items[0], .@left_item)  != -1);
+				.@left_valid = (.@left_item != 0 && inarray($@gop_items[0], .@left_item) != -1);
 
 				if (!.@right_valid && !.@left_valid) {
-					mes("^0000FF[Shin]^000000");
+					mes("[Shin]");
 					mes((#lang) ? "Du musst zuerst die Crimson-Waffe ausrüsten." : "You need to equip the crimson weapon first.");
 					close;
 				}
 
 				if (.@right_valid && .@left_valid && .@right_item != .@left_item) {
-					mes("^0000FF[Shin]^000000");
+					mes("[Shin]");
 					mes((#lang) ? "Welche Waffe in welcher Hand möchtest du erwecken?" : "The weapon in which hand do you want to awaken?");
 					next;
 					.@hand_pick = select(
@@ -134,21 +134,21 @@ prt_fild08,189,306,4	script	Shin	605,{
 				}
 
 				if(inarray($@gop_no_element[0], .@item) != -1) {
-					mes("^0000FF[Shin]^000000");
+					mes("[Shin]");
 					mes((#lang) ? "Diese Waffe besitzt keine elementare Essenz." : "This weapon does not possess elemental essence.");
 					close;
 				}
 
 				if(inarray($@gop_element_ids[0], getequiprandomoption(.@eqi, 0, 0)) != -1) {
-					mes("^0000FF[Shin]^000000");
+					mes("[Shin]");
 					mes((#lang) ? "Die elementaren Kräfte der Waffe sind bereits erweckt, hier gibt es für mich nichts mehr zu tun." : "The weapons elemental powers are already awakened, there is nothing for me left to do.");
 					close;
 				}
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes(((#lang) ? "Die elementare Essenz deiner <ITEM>" : "Awakening the elemental essence of your <ITEM>") + getitemname(.@item) + "<INFO>" + .@item + "</INFO></ITEM>" +
 					((#lang) ? " zu erwecken kostet dich " : " will cost you ") + callfunc("F_InsertComma", .zeny_price) + " ^0000FFZeny^000000 " +
-					((#lang) ? "und " : "and ") + callfunc("F_InsertComma", .item_price) + " <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>.");
+					((#lang) ? "und " : "and ") + callfunc("F_InsertComma", .item_price) + " <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>.");
 				mes((#lang) ? "Soll ich fortfahren?" : "Shall I proceed?");
 				next;
 
@@ -157,9 +157,9 @@ prt_fild08,189,306,4	script	Shin	605,{
 				}
 
 				if(Zeny < .zeny_price || countitem($@gop_currency) < .item_price) {
-					mes("^0000FF[Shin]^000000");
-					mes(((#lang) ? "Du hast nicht genug ^0000FFZeny^000000 oder <ITEM>" : "You don't have enough ^0000FFZeny^000000 or <ITEM>") +
-						callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>" +
+					mes("[Shin]");
+					mes(((#lang) ? "Du hast nicht genug ^0000FFZeny^000000 oder" : "You don't have enough ^0000FFZeny^000000 or") +
+						" <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>" +
 						((#lang) ? " dafür." : " for this."));
 					close;
 				}
@@ -169,15 +169,15 @@ prt_fild08,189,306,4	script	Shin	605,{
 
 				setrandomoption(.@eqi, 0, $@gop_element_ids[rand(getarraysize($@gop_element_ids))], 0, 0);
 
-				mes("^0000FF[Shin]^000000");
-				mes(((#lang) ? "Erledigt. Deine <ITEM>" : "It is done. Your <ITEM>") + getitemname(.@item) + "<INFO>" + .@item + "</INFO></ITEM>" +
+				mes("[Shin]");
+				mes(((#lang) ? "Erledigt. Deine " : "It is done. Your ") + "<ITEM>" + getitemname(.@item) + "<INFO>" + .@item + "</INFO></ITEM>" +
 					((#lang) ? " nutzt nun ihr volles Potenzial." : " now uses its full potential."));
 				close;
 
 			case 2:
 				if (countitem($@gop_currency) < 5) goto(NotEnough);
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Wunderbar hier mein Freund" : "Wonderful here my friend.");
 				mes((#lang) ? "Das hier wird dir helfen." : "This will help you.");
 
@@ -205,7 +205,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 			case 3:
 				if (countitem($@gop_currency) < 15) goto(NotEnough);
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Wunderbar hier mein Freund" : "Wonderful here my friend");
 				mes((#lang) ? "Das hier wird dir helfen." : "This will help you.");
 
@@ -248,7 +248,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 			case 4:
 				if (countitem($@gop_currency) < 20) goto(NotEnough);
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Wunderbar hier mein Freund" : "Wonderful here my friend");
 				mes((#lang) ? "Das hier wird dir helfen." : "This will help you.");
 
@@ -279,7 +279,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 			case 5:
 				if (countitem($@gop_currency) < 50) goto(NotEnough);
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Wunderbar hier mein Freund" : "Wonderful here my friend");
 				mes((#lang) ? "Das hier wird dir helfen." : "This will help you.");
 
@@ -310,7 +310,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 			case 6:
 				if (countitem($@gop_currency) < 100) goto(NotEnough);
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Wunderbar hier mein Freund" : "Wonderful here my friend");
 				mes((#lang) ? "Das hier wird dir helfen." : "This will help you.");
 
@@ -332,7 +332,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 			case 7:
 				if (countitem($@gop_currency) < 1000) goto(NotEnough);
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Du bist großartig, ein Richtiger Seelenfänger." : "You are great, a true soul-catcher.");
 				mes((#lang) ? "Hiermit verleihe ich dir für 7 Tage die macht über ein Mount." : "I hereby give you the power over a mount for 7 days.");
 
@@ -340,7 +340,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 				getitem(16682,1); // Halter Lead 7 Day Box
 				next;
 
-				mes("^0000FF[Shin]^000000");
+				mes("[Shin]");
 				mes((#lang) ? "Wenn du mir 3 dieser Boxen bringen kannst," : "If you can bring me 3 of these boxes,");
 				mes((#lang) ? "dann kann dieser Zauber auf Ewig bestehen." : "then this spell can last forever.");
 				mes((#lang) ? "Hast du vielleicht jetzt 3 Stück?" : "Do you have 3 pieces now?");
@@ -350,7 +350,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 						goto(MountExchange);
 
 					case 2:
-						mes("^0000FF[Shin]^000000");
+						mes("[Shin]");
 						mes((#lang) ? "Schade, aber keine Sorge." : "But do not worry.");
 						mes((#lang) ? "Ich bin noch bis Anfang November da, vielleicht schaffst du das." : "I'll be there until the beginning of November, maybe you can do it.");
 						mes((#lang) ? "Es ist jedenfalls eine enorme Leistung." : "It's an enormous achievement anyway.");
@@ -371,7 +371,7 @@ prt_fild08,189,306,4	script	Shin	605,{
 
 	MountExchange:
 		if (countitem(16682) < 3) {
-			mes("^0000FF[Shin]^000000");
+			mes("[Shin]");
 			mes((#lang) ? "Es reicht leider noch nicht mein Freund." : "Unfortunately, that is not enough, my friend.");
 			mes((#lang) ? "Aber keine Sorge ich bin noch bis Anfang November hier." : "But do not worry, I'm here until the beginning of November.");
 			close;
@@ -383,62 +383,77 @@ prt_fild08,189,306,4	script	Shin	605,{
 		close;
 
 	NoInterest:
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang) ? "Ich kann dich verstehen." : "I can understand you.");
 		mes((#lang) ? "Es ist kein einfacher Job." : "It is not an easy job.");
 		close;
 
 	Explanation:
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang) ? "Die Seelen der damaligen EuRO Spielerschaft laufen in einigen Gebieten herum." : "The souls of the former EuRO players run around in some areas.");
-		mes((#lang) ? "Du findest sie hier ^FF0000auf dieser Map, in Nifelheim und auf nif_fild02, prt_fild08 so wie auf moc_fild12 und gef_fild13 ^000000." : "You can find them here ^FF0000 on this map, in Nifelheim and on nif_fild02, prt_fild08 as well as on moc_fild12 and gef_fild13 ^000000.");
-		mes((#lang) ? "Auch in der ehemaligen Hauptstadt ^FF0000Glastheim^000000 kannst du sie finden" : "You can also find them in the former capital, ^FF0000Glastheim ^000000");
+		mes((#lang) ? "Du findest sie hier ^0000FFauf dieser Map^000000, in ^0000FFNifelheim^000000 und auf ^0000FFnif_fild02^000000, ^0000FFprt_fild08^000000 so wie auf ^0000FFmoc_fild12^000000 und ^0000FFgef_fild13^000000." : "You can find them here ^0000FFon this map^000000, in ^0000FFNifelheim^000000 and on ^0000FFnif_fild02^000000, ^0000FFprt_fild08^000000 as well as on ^0000FFmoc_fild12^000000 and ^0000FFgef_fild13^000000.");
+		mes((#lang) ? "Auch in der ehemaligen Hauptstadt ^0000FFGlastheim^000000 kannst du sie finden." : "You can also find them in the former capital, ^0000FFGlastheim^000000.");
 		close;
 
 	RewardExplanation:
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang) ? "Verschiedenes kannst du bekommen." : "You can get different things.");
-		mes((#lang) ? "Für 5 Evil Minds bekommst du ^FF0000Soul Crystals oder einfache Foods^000000." : "For 5 Evil Minds you get ^FF0000Soul Crystals or simple Foods ^000000.");
-		mes((#lang) ? "Für 15 Evil Minds bekommst du ^FF0000eine von 9 ehemalige Headgear Boxen^000000, welche auf EuRO payItems waren." : "For 15 Evil Minds you get ^FF0000 one of 9 former Headgear Boxes ^000000 that were on EuRO payItems.");
+		mes((#lang) ? "Für 5 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> bekommst du:" : "For 5 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> you get:");
+		mes((#lang) ? "<ITEM>" + getitemname(7849) + "s<INFO>7849</INFO></ITEM> oder ^0000FFeinfache Foods^000000." : "<ITEM>" + getitemname(7849) + "s<INFO>7849</INFO></ITEM> or ^0000FFsimple Foods^000000.");
 		next;
-		mes("^0000FF[Shin]^000000");
-		mes((#lang) ? "Für 20 Evil Minds bekommst du ^FF0000Bar Cookie Boxen^000000." : "For 20 Evil Minds you get ^FF0000Bar Cookie Boxes");
-		mes((#lang) ? "Für 50 Evil Minds bekommst du ^FF0000verschiedene und nützliche Ballons oder Kostüme^000000." : "For 50 Evil Minds you get ^FF0000 different and useful balloons or costumes ^000000.");
-		mes((#lang) ? "Für 100 Evil Minds bekommst du ^FF0000Advanced Weapons Box, Bravery Badge oder Valor Badge^000000." : "For 100 Evil Minds you get ^FF0000Advanced Weapons Box, Bravery Badge or Valor Badge");
+		mes("[Shin]");
+		mes((#lang) ? "Für 15 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> bekommst du:" : "For 15 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> you get:");
+	 	mes((#lang) ? "Eine von 9 ehemaligen ^0000FFHeadgear Boxen^000000, welche auf EuRO Payitems waren." : "One of 9 former ^0000FFHeadgear Boxes^000000 that were Payitems on EuRO.");
 		next;
-		mes("^0000FF[Shin]^000000");
-		mes((#lang) ? "Für 1000 Evil Minds bekommst du ^FF0000ein Mount für 7 Tage^000000." : "For 1000 Evil Minds you get ^FF0000A mount for 7 days ^000000.");
-		mes((#lang) ? "Und wenn du 3 von diesen Boarding Halter Box 7Day sammelst und nicht öffnest, kannst du ein ^FF0000dauerhaftes Mount^000000 bekommen." : "And if you collect 3 of these boarding holder box 7Day and do not open it, you can get a ^FF0000 permanent mount ^000000.");
+		mes("[Shin]");
+		mes((#lang) ? "Für 20 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> bekommst du:" : "For 20 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> you get:");
+	 	mes((#lang) ? "^0000FFBar Cookie Boxen^000000." :  "^0000FFBar Cookie Boxes^000000");
 		next;
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
+		mes((#lang) ? "Für 50 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> bekommst du:" : "For 50 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> you get:");
+		mes((#lang) ? "^0000FFVerschiedene und nützliche Ballons oder Kostüme^000000." : "^0000FFDifferent and useful balloons or costumes^000000.");
+		next;
+		mes("[Shin]");
+		mes((#lang) ? "Für 100 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> bekommst du" : "For 100 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> you get:");
+	 	mes("<ITEM>" + getitemname(12623) + "<INFO>12623</INFO></ITEM>,");
+		mes("<ITEM>" + getitemname(7828) + "s<INFO>7828</INFO></ITEM>");
+		mes((#lang) ? "oder" : "or" + " <ITEM>" + getitemname(7829) + "s<INFO>7829</INFO></ITEM>.");
+		next;
+		mes("[Shin]");
+		mes((#lang) ? "Für 1,000 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> bekommst du:":"For 1,000 <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> you get:");
+	 	mes((#lang) ? "^0000FFEin Mount für 7 Tage^000000." : "^0000FFA mount for 7 days^000000.");
+		mes((#lang) ? "Und wenn du 3" : "And if you collect 3");
+		mes((#lang) ? " <ITEM>" + getitemname(16682) + "<INFO>16682</INFO></ITEM> sammelst und nicht öffnest, kannst du ein ^0000FFdauerhaftes Mount^000000 bekommen." : "<ITEM>" + getitemname(16682) + "<INFO>16682</INFO></ITEM> and do not open them, you can get a ^0000FFpermanent mount^000000.");
+		next;
+		mes("[Shin]");
 		mes((#lang)
-			? "Neben <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM> lassen Geister manchmal Crimson-Waffen fallen. Diese sind von elementaren Essenzen durchdrungen, die ihnen zusätzliche Macht verleihen."
-			: "Besides <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM>, spirits sometimes drop crimson weapons. Those are infused with elemental essences, which grant them more power.");
+			? "Neben <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "s</INFO></ITEM> lassen Geister manchmal Crimson-Waffen fallen. Diese sind von elementaren Essenzen durchdrungen, die ihnen zusätzliche Macht verleihen."
+			: "Besides <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "s</INFO></ITEM>, spirits sometimes drop crimson weapons. Those are infused with elemental essences, which grant them more power.");
 		next;
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang)
 			? "Ich kann die Elementarkraft einer Crimson-Waffe erwecken – natürlich nur für den richtigen Preis. Allerdings besitzen nicht alle Crimson-Waffen eine elementare Essenz."
 			: "I can awaken the elemental power of a crimson weapon. For the right price of course. Not all crimson weapons have elemental essence though.");
 		next;
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang)
 			? "Bögen, Stäbe und Schusswaffen besitzen keine elementare Essenz, daher kann ich sie nicht erwecken."
 			: "Bows, Staves and Guns do not have elemental essence, therefore i can't awake them.");
 		next;
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang)
-			? "Wenn du also zufällig eine Crimson-Waffe und ein paar <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM> findest, kann ich dir vielleicht weiterhelfen."
-			: "So if you happen to find a crimson weapon and some <ITEM>" + callfunc("F_GetPlural", getitemname($@gop_currency)) + "<INFO>" + $@gop_currency + "</INFO></ITEM> i might help you out.");
+			? "Wenn du also zufällig eine Crimson-Waffe und ein paar <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> findest, kann ich dir vielleicht weiterhelfen."
+			: "So if you happen to find a crimson weapon and some <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM> i might help you out.");
 		close;
 
 	NotEnough:
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes((#lang) ? "Das sind nicht genug." : "That's not enough.");
 		mes((#lang) ? "So kann ich dich nicht belohnen." : "So I can not reward you.");
 		close;
 
 	Cancel:
-		mes("^0000FF[Shin]^000000");
+		mes("[Shin]");
 		mes("Mhm.");
 		close;
 
