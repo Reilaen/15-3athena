@@ -2461,6 +2461,15 @@ void script_hardcoded_constants(void)
 	script_set_constant("MAX_DORAM_HAIR_STYLE", MAX_DORAM_HAIR_STYLE, false);
 	script_set_constant("MAX_DORAM_CLOTH_COLOR", MAX_DORAM_CLOTH_COLOR, false);
 
+	/* auto trigger flags */
+	export_constant(ATF_SELF);
+	export_constant(ATF_TARGET);
+	export_constant(ATF_SHORT);
+	export_constant(ATF_LONG);
+	export_constant(ATF_WEAPON);
+	export_constant(ATF_MAGIC);
+	export_constant(ATF_MISC);
+
 	/* equip positions */
 	export_constant(EQI_HEAD_TOP);
 	export_constant(EQI_ARMOR);
@@ -2499,7 +2508,7 @@ void script_hardcoded_constants(void)
 	export_constant(EQP_COSTUME_HEAD_TOP);
 	export_constant(EQP_COSTUME_GARMENT);
 	export_constant(EQP_AMMO);
-	export_constant(EQP_SHADOW_ARMOR );
+	export_constant(EQP_SHADOW_ARMOR);
 	export_constant(EQP_SHADOW_WEAPON);
 	export_constant(EQP_SHADOW_SHIELD);
 	export_constant(EQP_SHADOW_SHOES);
@@ -3401,22 +3410,23 @@ const char* get_val2_str(struct script_state* st, int64 uid, DBMap** ref) {
 	return value;
 }
 
-int64 get_val2_num( struct script_state* st, int64 uid, DBMap **ref){
-	push_val2( st->stack, C_NAME, uid, ref );
+int64 get_val2_num(struct script_state* st, int64 uid, DBMap** ref) {
+	push_val2(st->stack, C_NAME, uid, ref);
 
-	struct script_data* data = script_getdatatop( st, -1 );
+	struct script_data* data = script_getdatatop(st, -1);
 
-	get_val( st, data );
+	get_val(st, data);
 
 	int64 value = 0;
 
-	if( data->type == C_INT ){
+	if (data->type == C_INT) {
 		value = data->u.num;
-	}else{
-		ShowError( "get_val2_num: Invalid call. Variable %s is not a numeric type.\n", reference_getname( data ) );
+	}
+	else {
+		ShowError("get_val2_num: Invalid call. Variable %s is not a numeric type.\n", reference_getname(data));
 	}
 
-	script_removetop( st, -1, 0 );
+	script_removetop(st, -1, 0);
 
 	return value;
 }
@@ -6204,15 +6214,15 @@ BUILDIN_FUNC(inarray) {
 		for(uint32 i = 0; i < array_size; ++i){
 			const char* temp = get_val2_str( st, reference_uid(id, i), ref);
 
-			if( !strcmp( temp, value ) ){
+			if (!strcmp(temp, value)) {
 				// Remove stack entry from get_val2_str
-				script_removetop( st, -1, 0 );
-				script_pushint( st, i );
+				script_removetop(st, -1, 0);
+				script_pushint(st, i);
 				return 0;
 			}
 
 			// Remove stack entry from get_val2_str
-			script_removetop( st, -1, 0 );
+			script_removetop(st, -1, 0);
 		}
 	} else  {
 		const int64 value = script_getnum(st, 3);
@@ -6300,14 +6310,14 @@ BUILDIN_FUNC(countinarray) {
 				}
 
 				// Remove stack entry from get_val2_str
-				script_removetop( st, -1, 0 );
+				script_removetop(st, -1, 0);
 			}
 
 			// Remove stack entry from get_val2_str
-			script_removetop( st, -1, 0 );
+			script_removetop(st, -1, 0);
 		}
 	} else if(!is_string_variable(name1) && !is_string_variable(name2)){
-		for(; i < array_size1; ++i){
+		for (; i < array_size1; ++i) {
 			const int64 temp1 = get_val2_num(st, reference_uid(id1, i), ref1);
 
 			for(j = reference_getindex(data2); j < array_size2; j++){
@@ -6416,24 +6426,24 @@ BUILDIN_FUNC(viewpoint)
  * @param funcname Function name
  * @param x First position of random option id array from the script
  **/
-static bool script_getitem_randomoption(struct script_state *st, struct map_session_data* sd, struct item *it, const char *funcname, int32 x) {
-	const struct script_data *opt_id = script_getdata(st,x);
-	const struct script_data *opt_val = script_getdata(st,x+1);
-	const struct script_data *opt_param = script_getdata(st,x+2);
-	const char *opt_id_var = reference_getname(opt_id);
-	const char *opt_val_var = reference_getname(opt_val);
-	const char *opt_param_var = reference_getname(opt_param);
+static bool script_getitem_randomoption(struct script_state* st, struct map_session_data* sd, struct item* it, const char* funcname, int32 x) {
+	const struct script_data* opt_id = script_getdata(st, x);
+	const struct script_data* opt_val = script_getdata(st, x + 1);
+	const struct script_data* opt_param = script_getdata(st, x + 2);
+	const char* opt_id_var = reference_getname(opt_id);
+	const char* opt_val_var = reference_getname(opt_val);
+	const char* opt_param_var = reference_getname(opt_param);
 
 	// Check if the variable requires a player
-	if(not_server_variable(opt_id_var[0]) && sd == NULL) {
+	if (not_server_variable(opt_id_var[0]) && sd == NULL) {
 		// If no player is attached
-		if(!script_rid2sd(st)) {
+		if (!script_rid2sd(st)) {
 			ShowError("buildin_%s: variable \"%s\" was not a server variable, but no player was attached.\n", funcname, opt_id_var);
 			return false;
 		}
 	}
 
-	if(!data_isreference(opt_id) || not_array_variable(*opt_id_var)) {
+	if (!data_isreference(opt_id) || not_array_variable(*opt_id_var)) {
 		ShowError("buildin_%s: The option id parameter is not an array.\n", funcname);
 		return false;
 	}
@@ -6444,15 +6454,15 @@ static bool script_getitem_randomoption(struct script_state *st, struct map_sess
 	}
 
 	// Check if the variable requires a player
-	if(not_server_variable(opt_val_var[0]) && sd == NULL) {
+	if (not_server_variable(opt_val_var[0]) && sd == NULL) {
 		// If no player is attached
-		if(!script_rid2sd(st)){
+		if (!script_rid2sd(st)) {
 			ShowError("buildin_%s: variable \"%s\" was not a server variable, but no player was attached.\n", funcname, opt_val_var);
 			return false;
 		}
 	}
 
-	if(!data_isreference(opt_val) || not_array_variable(*opt_val_var)) {
+	if (!data_isreference(opt_val) || not_array_variable(*opt_val_var)) {
 		ShowError("buildin_%s: The option value parameter is not an array.\n", funcname);
 		return false;
 	}
@@ -6463,16 +6473,16 @@ static bool script_getitem_randomoption(struct script_state *st, struct map_sess
 	}
 
 	// Check if the variable requires a player
-	if(not_server_variable(opt_param_var[0]) && sd == NULL){
+	if (not_server_variable(opt_param_var[0]) && sd == NULL) {
 		// If no player is attached
-		if(!script_rid2sd(st)) {
+		if (!script_rid2sd(st)) {
 			ShowError("buildin_%s: variable \"%s\" was not a server variable, but no player was attached.\n", funcname, opt_param_var);
 			return false;
 		}
 	}
 
-	if(!data_isreference(opt_param) || not_array_variable(*opt_param_var)){
-		ShowError( "buildin_%s: The option param parameter is not an array.\n", funcname );
+	if (!data_isreference(opt_param) || not_array_variable(*opt_param_var)) {
+		ShowError("buildin_%s: The option param parameter is not an array.\n", funcname);
 		return false;
 	}
 
@@ -6481,9 +6491,9 @@ static bool script_getitem_randomoption(struct script_state *st, struct map_sess
 		return false;
 	}
 
-	DBMap **opt_id_ref = reference_getref(opt_id);
-	DBMap **opt_val_ref = reference_getref(opt_val);
-	DBMap **opt_param_ref = reference_getref(opt_param);
+	DBMap** opt_id_ref = reference_getref(opt_id);
+	DBMap** opt_val_ref = reference_getref(opt_val);
+	DBMap** opt_param_ref = reference_getref(opt_param);
 
 	const int32 opt_id_n = getarraysize(st, reference_getid(opt_id), reference_getindex(opt_id), is_string_variable(opt_id_var), opt_id_ref);
 
@@ -6496,21 +6506,22 @@ static bool script_getitem_randomoption(struct script_state *st, struct map_sess
 	const int32 opt_param_idx = reference_getindex(opt_param);
 
 	for (int32 i = 0; i < opt_id_n && i < MAX_ITEM_RDM_OPT; i++) {
-		it->option[i].id = (int16)get_val2_num( st, reference_uid(opt_id_id, opt_id_idx + i), opt_id_ref);
-		it->option[i].value = (int16)get_val2_num( st, reference_uid(opt_val_id, opt_val_idx + i), opt_val_ref);
-		it->option[i].param = (char)get_val2_num( st, reference_uid(opt_param_id, opt_param_idx + i), opt_param_ref);
+		it->option[i].id = (int16)get_val2_num(st, reference_uid(opt_id_id, opt_id_idx + i), opt_id_ref);
+		it->option[i].value = (int16)get_val2_num(st, reference_uid(opt_val_id, opt_val_idx + i), opt_val_ref);
+		it->option[i].param = (char)get_val2_num(st, reference_uid(opt_param_id, opt_param_idx + i), opt_param_ref);
 	}
 
 	return true;
 }
 
 /// Returns number of items in inventory/cart/storage
-/// countitem <nameID>{,<accountID>});
-/// countitem2 <nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>{,<accountID>}) [Lupus]
-/// cartcountitem <nameID>{,<accountID>});
-/// cartcountitem2 <nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>{,<accountID>})
-/// storagecountitem <nameID>{,<accountID>});
-/// storagecountitem2 <nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>{,<accountID>})
+/// countitem (<nameID>{,<accountID>});
+/// countitem2 (<nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>{,<accountID>}) [Lupus]
+/// countitem3 (<nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>,<option_ids[]>,<option_values[]>,<option_parameters[]>{,<accountID>})
+/// cartcountitem (<nameID>{,<accountID>});
+/// cartcountitem2 (<nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>{,<accountID>})
+/// storagecountitem (<nameID>{,<accountID>});
+/// storagecountitem2 (<nameID>,<Identified>,<Refine>,<Attribute>,<Card0>,<Card1>,<Card2>,<Card3>{,<accountID>})
 BUILDIN_FUNC(countitem)
 {
 	int i = 0, aid = 3;
@@ -6618,7 +6629,7 @@ BUILDIN_FUNC(countitem)
 		it.card[2] = script_getnum(st,8);
 		it.card[3] = script_getnum(st,9);
 
-		if (command[strlen(command)-1] == '3') {
+		if (command[strlen(command) - 1] == '3') {
 			const int res = script_getitem_randomoption(st, sd, &it, command, 10);
 			if (res != 0)
 				return 1;
@@ -6934,14 +6945,16 @@ BUILDIN_FUNC(getitem) {
 	return 0;
 }
 
-
-
 /*==========================================
  * getitem2 <item id>,<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>{,<account ID>};
  * getitem2 "<item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>{,<account ID>};
+ * getitem3 <item id>,<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<option_ids[]>,<option_values[]>,<option_parameters[]>{,<account ID>};
+ * getitem3 "<item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<option_ids[]>,<option_values[]>,<option_parameters[]>{,<account ID>};
  *
  * getitembound2 <item id>,<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<bound type>{,<account ID>};
  * getitembound2 "<item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<bound type>{,<account ID>};
+ * getitembound3 <item id>,<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<bound type>,<option_ids[]>,<option_values[]>,<option_parameters[]>{,<account ID>};
+ * getitembound3 "<item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<bound type>,<option_ids[]>,<option_values[]>,<option_parameters[]>{,<account ID>};
  * Type:
  *	0 - No bound
  *	1 - Account Bound
@@ -7301,6 +7314,7 @@ BUILDIN_FUNC(makeitem)
 /**
 * makeitem2 <item id>,<amount>,"<map name>",<X>,<Y>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>;
 * makeitem2 "<item name>",<amount>,"<map name>",<X>,<Y>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>;
+* makeitem3 "<item name>",<amount>,"<map name>",<X>,<Y>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<option_ids[]>,<option_values[]>,<option_parameters[]>;
 */
 BUILDIN_FUNC(makeitem2) {
 	t_itemid nameid;
@@ -7311,7 +7325,7 @@ BUILDIN_FUNC(makeitem2) {
 
 	if (script_isstring(st, 2)) {
 		const char *name = script_getstr(st, 2);
-		const struct item_data *item_data = itemdb_searchname(name);
+		const struct item_data* item_data = itemdb_searchname(name);
 
 		if (item_data){
 			nameid = item_data->nameid;
@@ -7329,12 +7343,12 @@ BUILDIN_FUNC(makeitem2) {
 	}
 
 	const uint16 amount = script_getnum(st, 3);
-	const char *mapname = script_getstr(st, 4);
+	const char* mapname = script_getstr(st, 4);
 	const uint16 x = script_getnum(st, 5);
 	const uint16 y = script_getnum(st, 6);
 
 	if (strcmp(mapname, "this") == 0) {
-		TBL_PC *sd = script_rid2sd(st);
+		TBL_PC* sd = script_rid2sd(st);
 		if (!sd) return 0; //Failed...
 
 		m = sd->bl.m;
@@ -7349,9 +7363,9 @@ BUILDIN_FUNC(makeitem2) {
 	memset(&item_tmp, 0, sizeof(item_tmp));
 	item_tmp.nameid = nameid;
 
-	char iden = (char) script_getnum(st, 7);
-	char ref = (char) script_getnum(st, 8);
-	char attr = (char) script_getnum(st, 9);
+	char iden = (char)script_getnum(st, 7);
+	char ref = (char)script_getnum(st, 8);
+	char attr = (char)script_getnum(st, 9);
 
 	if (id->type == IT_WEAPON || id->type == IT_ARMOR) {
 		if (ref > MAX_REFINE) ref = MAX_REFINE;
@@ -7377,7 +7391,6 @@ BUILDIN_FUNC(makeitem2) {
 	}
 
 	map_addflooritem(&item_tmp, amount, m, x, y, 0, 0, 0, 4, 0, false);
-
 	return 0;
 }
 
@@ -15988,14 +16001,14 @@ BUILDIN_FUNC(implode) {
 
 		//build output
 		output = (char*)aMalloc(total_len + 1);
-		for( i = 0, k = 0; i < array_size; ++i ) {
+		for (i = 0, k = 0; i < array_size; ++i) {
 			if (is_string) {
 				memcpy(&output[k], str[i], len[i]);
 			} else {
 				sprintf(&output[k], "%d", int_vals[i]);
 			}
 			k += len[i];
-			if( glue_len > 0 && i < array_size - 1 ) {
+			if(glue_len > 0 && i < array_size - 1) {
 				memcpy(&output[k], glue, glue_len);
 				k += glue_len;
 			}
@@ -18861,7 +18874,7 @@ BUILDIN_FUNC(mail) {
 	const char *sender = script_getstr(st, 3);
 
 	if(strlen(sender) > NAME_LENGTH) {
-		ShowError( "buildin_mail: sender name can not be longer than %d characters.\n", NAME_LENGTH );
+		ShowError("buildin_mail: sender name can not be longer than %d characters.\n", NAME_LENGTH );
 		return 1;
 	}
 
@@ -18869,8 +18882,8 @@ BUILDIN_FUNC(mail) {
 
 	const char *title = script_getstr(st, 4);
 
-	if(strlen(title) > MAIL_TITLE_LENGTH) {
-		ShowError( "buildin_mail: title can not be longer than %d characters.\n", MAIL_TITLE_LENGTH );
+	if (strlen(title) > MAIL_TITLE_LENGTH) {
+		ShowError("buildin_mail: title can not be longer than %d characters.\n", MAIL_TITLE_LENGTH);
 		return 1;
 	}
 
@@ -18878,23 +18891,23 @@ BUILDIN_FUNC(mail) {
 
 	const char *body = script_getstr(st, 5);
 
-	if(strlen(body) > MAIL_BODY_LENGTH) {
-		ShowError( "buildin_mail: body can not be longer than %d characters.\n", MAIL_BODY_LENGTH );
+	if (strlen(body) > MAIL_BODY_LENGTH) {
+		ShowError("buildin_mail: body can not be longer than %d characters.\n", MAIL_BODY_LENGTH);
 		return 1;
 	}
 
 	safestrncpy(msg.body, body, MAIL_BODY_LENGTH);
 
-	if(script_hasdata(st,6)) {
+	if (script_hasdata(st, 6)) {
 		int32 zeny = script_getnum(st, 6);
 
-		if(zeny < 0){
-			ShowError( "buildin_mail: a negative amount of zeny can not be sent.\n" );
+		if (zeny < 0) {
+			ShowError("buildin_mail: a negative amount of zeny can not be sent.\n");
 			return 1;
 		}
 
-		if(zeny > MAX_ZENY){
-			ShowError( "buildin_mail: amount of zeny %u is exceeding maximum of %u. Capping...\n", zeny, MAX_ZENY );
+		if (zeny > MAX_ZENY) {
+			ShowError("buildin_mail: amount of zeny %u is exceeding maximum of %u. Capping...\n", zeny, MAX_ZENY);
 			zeny = MAX_ZENY;
 		}
 
@@ -23212,14 +23225,10 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF(setinstancevar,"rv?"),
 	BUILDIN_DEF(openlapineddukddakboxui, "i"),
 	BUILDIN_DEF(openlapineupgradeui, "i"),
-
 	// Item Random Option Extension
-	BUILDIN_DEF2(getitem2,"getitem3","viiiiiiiirrr?"),
-	BUILDIN_DEF2(getitem2,"getitembound3","viiiiiiiiirrr?"),
-	//BUILDIN_DEF2(rentitem2,"rentitem3","viiiiiiiirrr?"),
-	BUILDIN_DEF2(makeitem2,"makeitem3","visiiiiiiiiirrr?"),
-	//BUILDIN_DEF2(delitem2,"delitem3","viiiiiiiirrr?"),
-	BUILDIN_DEF2(countitem,"countitem3","viiiiiiirrr?"),
-
+	BUILDIN_DEF2(getitem2, "getitem3", "viiiiiiiirrr?"),
+	BUILDIN_DEF2(getitem2, "getitembound3", "viiiiiiiiirrr?"),
+	BUILDIN_DEF2(makeitem2, "makeitem3", "visiiiiiiiiirrr?"),
+	BUILDIN_DEF2(countitem, "countitem3", "viiiiiiirrr?"),
 	{NULL,NULL,NULL},
 };
