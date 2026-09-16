@@ -74,7 +74,7 @@
 		getitem(.@picked_item, 1);
 }
 
-prt_fild08,189,306,4	script	Shin	605,{
+prt_fild08,189,306,1	script	Shin	605,{
 	disable_items;
 
 	mes("[Shin]");
