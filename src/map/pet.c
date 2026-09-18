@@ -419,7 +419,7 @@ int pet_data_init(struct map_session_data *sd, struct s_pet *pet)
 	}
 	if (sd->status.pet_id != pet->pet_id) {
 		if (sd->status.pet_id) {
-			//Wrong pet?? Set incuvate to no and send it back for saving.
+			//Wrong pet?? Set incubate to no and send it back for saving.
 			pet->incubate = 1;
 			intif_save_petdata(sd->status.account_id,pet);
 			sd->status.pet_id = 0;

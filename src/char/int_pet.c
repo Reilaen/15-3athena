@@ -221,7 +221,7 @@ int mapif_delete_pet_ack(int fd,int flag)
 }
 
 int mapif_create_pet(int fd,uint32 account_id,uint32 char_id,short pet_class,short pet_lv,short pet_egg_id,
-	short pet_equip,short intimate,short hungry,char rename_flag,char incuvate,char *pet_name)
+	short pet_equip,short intimate,short hungry,char rename_flag,char incubate,char *pet_name)
 {
 	struct s_pet *p;
 	p= (struct s_pet *) aCalloc(1, sizeof(struct s_pet));
@@ -233,7 +233,7 @@ int mapif_create_pet(int fd,uint32 account_id,uint32 char_id,short pet_class,sho
 //	memset(p,0,sizeof(struct s_pet)); unnecessary after aCalloc [Skotlex]
 	p->pet_id = pet_newid++;
 	memcpy(p->name,pet_name,NAME_LENGTH);
-	if(incuvate == 1)
+	if(incubate == 1)
 		p->account_id = p->char_id = 0;
 	else {
 		p->account_id = account_id;
@@ -246,7 +246,7 @@ int mapif_create_pet(int fd,uint32 account_id,uint32 char_id,short pet_class,sho
 	p->intimate = intimate;
 	p->hungry = hungry;
 	p->rename_flag = rename_flag;
-	p->incubate = incuvate;
+	p->incubate = incubate;
 
 	if(p->hungry < 0)
 		p->hungry = 0;
@@ -355,11 +355,11 @@ int mapif_parse_DeletePet(int fd)
 	return 0;
 }
 
-// map server ‚©‚ç‚Ì’ÊM
-// E‚PƒpƒPƒbƒg‚Ì‚İ‰ğÍ‚·‚é‚±‚Æ
-// EƒpƒPƒbƒg’·ƒf[ƒ^‚Íinter.c‚ÉƒZƒbƒg‚µ‚Ä‚¨‚­‚±‚Æ
-// EƒpƒPƒbƒg’·ƒ`ƒFƒbƒN‚âARFIFOSKIP‚ÍŒÄ‚Ño‚µŒ³‚Ås‚í‚ê‚é‚Ì‚Ås‚Á‚Ä‚Í‚È‚ç‚È‚¢
-// EƒGƒ‰[‚È‚ç0(false)A‚»‚¤‚Å‚È‚¢‚È‚ç1(true)‚ğ‚©‚¦‚³‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+// map server ï¿½ï¿½ï¿½ï¿½Ì’ÊM
+// ï¿½Eï¿½Pï¿½pï¿½Pï¿½bï¿½gï¿½Ì‚İ‰ï¿½Í‚ï¿½ï¿½é‚±ï¿½ï¿½
+// ï¿½Eï¿½pï¿½Pï¿½bï¿½gï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½ï¿½inter.cï¿½ÉƒZï¿½bï¿½gï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ï¿½Eï¿½pï¿½Pï¿½bï¿½gï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ARFIFOSKIPï¿½ÍŒÄ‚Ñoï¿½ï¿½ï¿½ï¿½ï¿½Åsï¿½ï¿½ï¿½ï¿½Ì‚Åsï¿½ï¿½ï¿½Ä‚Í‚È‚ï¿½È‚ï¿½
+// ï¿½Eï¿½Gï¿½ï¿½ï¿½[ï¿½È‚ï¿½0(false)ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Å‚È‚ï¿½ï¿½È‚ï¿½1(true)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½Î‚È‚ï¿½È‚ï¿½
 int inter_pet_parse_frommap(int fd)
 {
 	switch(RFIFOW(fd,0)){
