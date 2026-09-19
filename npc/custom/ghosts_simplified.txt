@@ -93,11 +93,11 @@ prt_fild08,189,306,1	script	Shin	605,{
 
 	Trade:
 		mes("[Shin]");
-		mes((#lang) ? "Sehr gut mein Freund. Was willst du mit ihnen machen?" : "Very good my friend. What do you want to do with them?");
+		mes((#lang) ? "Wie kann ich dir helfen" : "How can i help you?");
 		next;
 		switch(select((#lang) ?
-			"Ein Crimson Weapon erwecken:5 Evil Minds eintauschen:15 Evil Minds eintauschen:20 Evil Minds eintauschen:50 Evil Minds eintauschen:100 Evil Minds eintauschen:1000 Evil Minds eintauschen:3 Halter Lead eintauschen:Abbruch" :
-			"Awaken a Crimson Weapon:Exchange 5 Evil Minds:Exchange 15 Evil Minds:Exchange 20 Evil Minds:Exchange 50 Evil Minds:Exchange 100 Evil Minds:Exchange 1000 Evil Minds:Exchange 3 Halter Lead:Cancel")) {
+			"Ein Crimson Waffe erwecken:Eine Crimson Waffe umschmieden:5 Evil Minds eintauschen:15 Evil Minds eintauschen:20 Evil Minds eintauschen:50 Evil Minds eintauschen:100 Evil Minds eintauschen:1000 Evil Minds eintauschen:3 Halter Lead eintauschen:Abbruch" :
+			"Awaken a Crimson Weapon:Reforge a Crimson Weapon:Exchange 5 Evil Minds:Exchange 15 Evil Minds:Exchange 20 Evil Minds:Exchange 50 Evil Minds:Exchange 100 Evil Minds:Exchange 1000 Evil Minds:Exchange 3 Halter Lead:Cancel")) {
 			case 1:
 				.@right_item = getequipisequiped(EQI_HAND_R) ? getequipid(EQI_HAND_R) : 0;
 				.@left_item = getequipisequiped(EQI_HAND_L) ? getequipid(EQI_HAND_L) : 0;
@@ -154,7 +154,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 				mes("[Shin]");
 				mes(((#lang) ? "Die elementare Essenz deiner <ITEM>" : "Awakening the elemental essence of your <ITEM>") + getitemname(.@item) + "<INFO>" + .@item + "</INFO></ITEM>" +
 					((#lang) ? " zu erwecken kostet dich " : " will cost you ") + callfunc("F_InsertComma", .zeny_price) + " ^0000FFZeny^000000 " +
-					((#lang) ? "und " : "and ") + callfunc("F_InsertComma", .item_price) + " <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>.");
+					((#lang) ? "und " : "and ") + callfunc("F_InsertComma", .awakening_item_price) + " <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>.");
 				mes((#lang) ? "Soll ich fortfahren?" : "Shall I proceed?");
 				next;
 
@@ -162,7 +162,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 					goto(Cancel);
 				}
 
-				if(Zeny < .zeny_price || countitem($@gop_currency) < .item_price) {
+				if(Zeny < .zeny_price || countitem($@gop_currency) < .awakening_item_price) {
 					mes("[Shin]");
 					mes(((#lang) ? "Du hast nicht genug ^0000FFZeny^000000 oder" : "You don't have enough ^0000FFZeny^000000 or") +
 						" <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>" +
@@ -171,7 +171,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 
 				Zeny -= .zeny_price;
-				delitem($@gop_currency, .item_price);
+				delitem($@gop_currency, .awakening_item_price);
 
 				setrandomoption(.@eqi, 0, $@gop_element_ids[rand(getarraysize($@gop_element_ids))], 0, 0);
 
@@ -181,6 +181,113 @@ prt_fild08,189,306,1	script	Shin	605,{
 				close;
 
 			case 2:
+				getinventorylist();
+
+				for (.@inv_idx = 0; .@inv_idx < @inventorylist_count; .@inv_idx++) {
+					if (inarray($@gop_items[0], @inventorylist_id[.@inv_idx]) == -1 || @inventorylist_attribute[.@inv_idx] == 1) continue;
+
+					.@menu$ += getitemname(@inventorylist_id[.@inv_idx]) + " (+" + @inventorylist_refine[.@inv_idx] + ")" + ":";
+					.@src_idx[.@menu_idx] = .@inv_idx;
+					.@menu_idx++;
+				}
+
+				if(.@menu_idx == 0) {
+					mes("[Shin]");
+					mes((#lang) ? "Du hast garkeine Crimson Waffe bei dir.." : "You do not have a Crimson Weapon with you..");
+					close;
+				}
+
+				mes("[Shin]");
+				mes((#lang) ? "Welche Crimson Waffe soll ich für dich umschmieden?" : "Which Crimson Weapon do you want me to reforge?");
+				next;
+
+				.@selected_src_idx = .@src_idx[select(.@menu$) - 1];
+
+				.@src_id = @inventorylist_id[.@selected_src_idx];
+				.@src_refine = @inventorylist_refine[.@selected_src_idx];
+
+				for (.@i = 1; .@i <= 4; .@i++) {
+					setd(".@src_card" + .@i, getd("@inventorylist_card" + .@i + "[" + .@selected_src_idx + "]"));
+				}
+
+				for (.@i = 1; .@i <= 5; .@i++) {
+					.@src_opt_id[.@i - 1]    = getd("@inventorylist_option_id" + .@i + "[" + .@selected_src_idx + "]");
+					.@src_opt_val[.@i - 1]   = getd("@inventorylist_option_value" + .@i + "[" + .@selected_src_idx + "]");
+					.@src_opt_param[.@i - 1] = getd("@inventorylist_option_parameter" + .@i + "[" + .@selected_src_idx + "]");
+				}
+
+				.@src_has_element = (.@src_opt_id[0] != 0);
+
+				mes("[Shin]");
+				mes((#lang) ? "Zu welcher anderen Crimson Waffe soll ich es umschmieden?" : "To which other Crimson Weapon do you want me to reforge it?");
+				next;
+
+				.@menu$ = "";
+				for(.@i = 0; .@i < getarraysize($@gop_items); .@i++) {
+					if(.@src_id == $@gop_items[.@i]) continue;
+
+					.@menu$ += getitemname($@gop_items[.@i]) + ":";
+				}
+
+				.@selected_target_id = $@gop_items[select(.@menu$) - 1];
+				.@target_no_element = (inarray($@gop_no_element[0], .@selected_target_id) != -1);
+
+				mes("[Shin]");
+				mes((#lang) ? "Ich werde deine" : "I will reforge your");
+				mes("<ITEM>" + getitemname(.@src_id) + " (+" + .@src_refine + ")<INFO>" + .@src_id + "</INFO></ITEM>");
+				mes((#lang) ? "umschmieden zu einer" : "into a");
+				mes("<ITEM>" + getitemname(.@selected_target_id) + "<INFO>" + .@selected_target_id + "</INFO></ITEM>.");
+				mes((#lang) ? "Refines und Cards gehen nicht verloren." : "Refines and Cards will not be lost.");
+				mes(" ");
+				mes((#lang) ? "Kosten:" : "Cost:");
+				mes(callfunc("F_InsertComma", .zeny_price) + " ^0000FFZeny^000000, " + .reforging_item_price + " x <ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>");
+				if (.@src_has_element && .@target_no_element) {
+					next;
+					mes("[Shin]");
+					mes("^FF0000" + ((#lang) ? "Achtung: Diese Waffe hat ein Element, aber" : "Warning: This weapon has an element, but"));
+					mes("<ITEM>" + getitemname(.@selected_target_id) + "<INFO>" + .@selected_target_id + "</INFO></ITEM>");
+					mes((#lang)
+						? "kann kein Element tragen. Das Element geht beim Umschmieden verloren!^000000"
+						: "cannot carry an element. The element will be lost when reforging!^000000");
+				}
+				mes((#lang) ? "Soll ich fortfahren?" : "Do you want me to proceed?");
+				next;
+
+				if (select((#lang) ? "Ja:Nein" : "Yes:No") == 2) {
+					goto(Cancel);
+				}
+
+				if (Zeny < .zeny_price) {
+					mes("[Shin]");
+					mes((#lang) ? "Du hast nicht genug Zeny." : "You do not have enough Zeny.");
+					close;
+				}
+
+				if (countitem($@gop_currency) < .reforging_item_price) {
+					mes("[Shin]");
+					mes((#lang) ? "Du hast nicht genug" : "You do not have enough");
+					mes("<ITEM>" + getitemname($@gop_currency) + "s<INFO>" + $@gop_currency + "</INFO></ITEM>.");
+					close;
+				}
+
+				Zeny -= .zeny_price;
+				delitem($@gop_currency, .reforging_item_price);
+
+				delitem3(.@src_id, 1, 1, .@src_refine, 0, .@src_card1, .@src_card2, .@src_card3, .@src_card4, .@src_opt_id, .@src_opt_val, .@src_opt_param);
+
+				if (.@src_has_element && .@target_no_element) {
+					.@src_opt_id[0]    = 0;
+					.@src_opt_val[0]   = 0;
+					.@src_opt_param[0] = 0;
+				}
+
+				getitem3(.@selected_target_id, 1, 1, .@src_refine, 0, .@src_card1, .@src_card2, .@src_card3, .@src_card4, .@src_opt_id, .@src_opt_val, .@src_opt_param);
+
+				mes("[Shin]");
+				mes((#lang) ? "Fertig! Hier ist deine neue Waffe." : "Done! Here is your new weapon.");
+				close;
+
+			case 3:
 				if (countitem($@gop_currency) < 5) goto(NotEnough);
 
 				mes("[Shin]");
@@ -208,7 +315,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 				close;
 
-			case 3:
+			case 4:
 				if (countitem($@gop_currency) < 15) goto(NotEnough);
 
 				mes("[Shin]");
@@ -251,7 +358,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 				close;
 
-			case 4:
+			case 5:
 				if (countitem($@gop_currency) < 20) goto(NotEnough);
 
 				mes("[Shin]");
@@ -282,7 +389,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 				close;
 
-			case 5:
+			case 6:
 				if (countitem($@gop_currency) < 50) goto(NotEnough);
 
 				mes("[Shin]");
@@ -313,7 +420,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 				close;
 
-			case 6:
+			case 7:
 				if (countitem($@gop_currency) < 100) goto(NotEnough);
 
 				mes("[Shin]");
@@ -335,11 +442,11 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 				close;
 
-			case 7:
+			case 8:
 				if (countitem($@gop_currency) < 1000) goto(NotEnough);
 
 				mes("[Shin]");
-				mes((#lang) ? "Du bist großartig, ein Richtiger Seelenfänger." : "You are great, a true soul-catcher.");
+				mes((#lang) ? "Du bist großartig, ein richtiger Seelenfänger." : "You are great, a true soul-catcher.");
 				mes((#lang) ? "Hiermit verleihe ich dir für 7 Tage die macht über ein Mount." : "I hereby give you the power over a mount for 7 days.");
 
 				delitem($@gop_currency,1000);
@@ -367,10 +474,10 @@ prt_fild08,189,306,1	script	Shin	605,{
 				}
 				break;
 
-			case 8:
+			case 9:
 				goto(MountExchange);
 
-			case 9:
+			case 10:
 				goto(Cancel);
 		}
 	end;
@@ -378,7 +485,7 @@ prt_fild08,189,306,1	script	Shin	605,{
 	MountExchange:
 		if (countitem(16682) < 3) {
 			mes("[Shin]");
-			mes((#lang) ? "Es reicht leider noch nicht mein Freund." : "Unfortunately, that is not enough, my friend.");
+			mes((#lang) ? "Es reicht leider noch nicht." : "Unfortunately, that is not enough.");
 			mes((#lang) ? "Aber keine Sorge ich bin noch bis Anfang November hier." : "But do not worry, I'm here until the beginning of November.");
 			close;
 		}
@@ -465,7 +572,8 @@ prt_fild08,189,306,1	script	Shin	605,{
 
 	OnInit:
 		.zeny_price = 100000;
-		.item_price = 1000;
+		.reforging_item_price = 500;
+		.awakening_item_price = 1000;
 		end;
 }
 
