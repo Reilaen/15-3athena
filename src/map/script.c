@@ -7557,20 +7557,22 @@ static void buildin_delitem_delete(struct map_session_data* sd, int idx, int* am
 /// Searches for item(s) and checks, if there is enough of them.
 /// Used by delitem and delitem2
 /// Relies on all input data being already fully valid.
+/// @param sd
+/// @param it
 /// @param exact_match will also match item attributes and cards, not just name id
+/// @param loc
 /// @return true when all items could be deleted, false when there were not enough items to delete
-static bool buildin_delitem_search(struct map_session_data* sd, struct item* it, bool exact_match, uint8 loc)
+static bool buildin_delitem_search(struct map_session_data* sd, struct item* it, const uint8 exact_match, const uint8 loc)
 {
 	bool delete_items = false;
-	int i, amount, important, size;
-	struct item *items;
+	int i, amount, size;
+	struct item* items = NULL;
 
 	// prefer always non-equipped items
 	it->equip = 0;
 
 	// when searching for nameid only, prefer additionally
-	if( !exact_match )
-	{
+	if(!exact_match) {
 		// non-refined items
 		it->refine = 0;
 		// card-less items
@@ -7586,13 +7588,12 @@ static bool buildin_delitem_search(struct map_session_data* sd, struct item* it,
 			size = MAX_STORAGE;
 			items = sd->storage.u.items_storage;
 			break;
-		case TABLE_GUILD_STORAGE:
-		{
-			struct s_storage *gstor = guild2storage2(sd->status.guild_id);
+		case TABLE_GUILD_STORAGE: {
+				struct s_storage *gstor = guild2storage2(sd->status.guild_id);
 
-			size = MAX_GUILD_STORAGE;
-			items = gstor->u.items_guild;
-		}
+				size = MAX_GUILD_STORAGE;
+				items = gstor->u.items_guild;
+			}
 			break;
 		default: // TABLE_INVENTORY
 			size = MAX_INVENTORY;
@@ -7600,45 +7601,48 @@ static bool buildin_delitem_search(struct map_session_data* sd, struct item* it,
 			break;
 	}
 
-	for(;;)
-	{
+	for(;;) {
 		amount = it->amount;
-		important = 0;
+		int important = 0;
 
 		// 1st pass -- less important items / exact match
-		for( i = 0; amount && i < size; i++ )
-		{
-			struct item *itm = NULL;
+		for(i = 0; amount && i < size; i++) {
+			const struct item* itm = NULL;
 
-			if( !&items[i] || !(itm = &items[i])->nameid || itm->nameid != it->nameid )
-			{// wrong/invalid item
+			if(!&items[i] || !(itm = &items[i])->nameid || itm->nameid != it->nameid) {
+				// wrong/invalid item
 				continue;
 			}
 
-			if( itm->equip != it->equip || itm->refine != it->refine )
-			{// not matching attributes
+			if(itm->equip != it->equip || itm->refine != it->refine) {
+				// no matching attributes
 				important++;
 				continue;
 			}
 
-			if( exact_match )
-			{
-				if( itm->identify != it->identify || itm->attribute != it->attribute || memcmp(itm->card, it->card, sizeof(itm->card)) )
-				{// not matching exact attributes
+			if(exact_match) {
+				if(exact_match & 0x1 && (itm->identify != it->identify || itm->attribute != it->attribute || memcmp(itm->card, it->card, sizeof(itm->card)) != 0))	{
+					// no matching exact attributes
 					continue;
 				}
-			}
-			else
-			{
-				if( itemdb_type(itm->nameid) == IT_PETEGG )
-				{
-					if( itm->card[0] == CARD0_PET && CheckForCharServer() )
-					{// pet which cannot be deleted
+
+				if (exact_match & 0x2) {
+					uint8 j;
+					for (j = 0; j < MAX_ITEM_RDM_OPT; j++) {
+						if (itm->option[j].id != it->option[j].id || itm->option[j].value != it->option[j].value || itm->option[j].param != it->option[j].param)
+							break;
+					}
+					if (j != MAX_ITEM_RDM_OPT)
+						continue;
+				}
+			} else {
+				if(itemdb_type(itm->nameid) == IT_PETEGG) {
+					if( itm->card[0] == CARD0_PET && CheckForCharServer() ) {
+						// pet which cannot be deleted
 						continue;
 					}
-				}
-				else if( memcmp(itm->card, it->card, sizeof(itm->card)) )
-				{// named/carded item
+				} else if(memcmp(itm->card, it->card, sizeof(itm->card)) != 0) {
+					// named/carded item
 					important++;
 					continue;
 				}
@@ -7648,49 +7652,55 @@ static bool buildin_delitem_search(struct map_session_data* sd, struct item* it,
 			buildin_delitem_delete(sd, i, &amount, loc, delete_items);
 		}
 
-		// 2nd pass -- any matching item
-		if( amount == 0 || important == 0 )
-		{// either everything was already consumed or no items were skipped
-			;
-		}
-		else for( i = 0; amount && i < size; i++ )
-		{
-			struct item *itm = NULL;
+		// 2nd pass -- only needed if items remain AND something was skipped in pass 1
+		if(amount != 0 && important != 0) {
+			for(i = 0; amount && i < size; i++) {
+				const struct item* itm = NULL;
 
-			if( !&items[i] || !(itm = &items[i])->nameid || itm->nameid != it->nameid )
-			{// wrong/invalid item
-				continue;
-			}
-
-			if( itemdb_type(itm->nameid) == IT_PETEGG && itm->card[0] == CARD0_PET && CheckForCharServer() )
-			{// pet which cannot be deleted
-				continue;
-			}
-
-			if( exact_match )
-			{
-				if( itm->refine != it->refine || itm->identify != it->identify || itm->attribute != it->attribute || memcmp(itm->card, it->card, sizeof(itm->card)) )
-				{// not matching attributes
+				if(!&items[i] || !(itm = &items[i])->nameid || itm->nameid != it->nameid) {
+					// wrong/invalid item
 					continue;
 				}
-			}
 
-			// count / delete item
-			buildin_delitem_delete(sd, i, &amount, loc, delete_items);
+				if(itemdb_type(itm->nameid) == IT_PETEGG && itm->card[0] == CARD0_PET && CheckForCharServer()) {
+					// pet which cannot be deleted
+					continue;
+				}
+
+				if(exact_match) {
+					if(exact_match & 0x1 && ( itm->refine != it->refine || itm->identify != it->identify || itm->attribute != it->attribute || memcmp(itm->card, it->card, sizeof(itm->card))  != 0)) {
+						// no matching attributes
+						continue;
+					}
+
+					if (exact_match & 0x2) {
+						uint8 j;
+						for (j = 0; j < MAX_ITEM_RDM_OPT; j++) {
+							if (itm->option[j].id != it->option[j].id || itm->option[j].value != it->option[j].value || itm->option[j].param != it->option[j].param)
+								break;
+						}
+						if (j != MAX_ITEM_RDM_OPT)
+							continue;
+					}
+				}
+
+				// count / delete item
+				buildin_delitem_delete(sd, i, &amount, loc, delete_items);
+			}
 		}
 
-		if( amount )
-		{// not enough items
+		if(amount) {
+			// not enough items
 			return false;
 		}
-		else if( delete_items )
-		{// we are done with the work
+
+		if(delete_items) {
+			// we are done with the work
 			return true;
 		}
-		else
-		{// get rid of the items now
-			delete_items = true;
-		}
+
+		// get rid of the items now
+		delete_items = true;
 	}
 }
 
@@ -7801,12 +7811,14 @@ BUILDIN_FUNC(delitem)
 /// cartdelitem2 "<Item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>{,<account ID>}
 /// storagedelitem2 <item id>,<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>{,<account ID>}
 /// storagedelitem2 "<Item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>{,<account ID>}
-BUILDIN_FUNC(delitem2)
-{
+/// delitem3 <item id>,<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<RandomIDArray>,<RandomValueArray>,<RandomParamArray>{,<account ID>};
+/// delitem3 "<item name>",<amount>,<identify>,<refine>,<attribute>,<card1>,<card2>,<card3>,<card4>,<RandomIDArray>,<RandomValueArray>,<RandomParamArray>{,<account ID>};
+BUILDIN_FUNC(delitem2) {
 	TBL_PC *sd;
-	struct item it;
+	struct item it = {};
 	uint8 loc = 0;
-	char* command = (char*)script_getfuncname(st);
+	char* command = script_getfuncname(st);
+	int32 aid_pos = 11;
 
 	if(!strncmp(command, "cart", 4))
 		loc = TABLE_CART;
@@ -7815,21 +7827,21 @@ BUILDIN_FUNC(delitem2)
 	else if(!strncmp(command, "guildstorage", 12))
 		loc = TABLE_GUILD_STORAGE;
 
-	if( script_hasdata(st,11) )
-	{
-		uint32 account_id = script_getnum(st,11);
+	if (command[strlen(command)-1] == '3')
+		aid_pos = 14;
+
+	if(script_hasdata(st,aid_pos)) {
+		const int account_id = script_getnum(st, aid_pos);
 		sd = map_id2sd(account_id); // <account id>
-		if( sd == NULL )
-		{
+
+		if(sd == NULL) {
 			ShowError("buildin_%s: player not found (AID=%d).\n", command, account_id);
 			st->state = END;
 			return 1;
 		}
-	}
-	else
-	{
+	} else {
 		sd = script_rid2sd(st);// attached player
-		if( sd == NULL )
+		if(sd == NULL)
 			return 0;
 	}
 
@@ -7849,20 +7861,18 @@ BUILDIN_FUNC(delitem2)
 
 	struct script_data *data = script_getdata(st, 2);
 	get_val(st,data);
-	if( data_isstring(data) )
-	{
+	if(data_isstring(data)) {
 		const char* item_name = conv_str(st,data);
-		struct item_data* id = itemdb_searchname(item_name);
-		if( id == NULL )
-		{
+		const struct item_data* id = itemdb_searchname(item_name);
+
+		if(id == NULL) {
 			ShowError("buildin_%s: unknown item \"%s\".\n", command, item_name);
 			st->state = END;
 			return 1;
 		}
+
 		it.nameid = id->nameid;// "<item name>"
-	}
-	else
-	{
+	} else {
 		it.nameid = conv_num(st,data);// <item id>
 		if( !itemdb_exists( it.nameid ) )
 		{
@@ -7881,11 +7891,19 @@ BUILDIN_FUNC(delitem2)
 	it.card[2]=script_getnum(st,9);
 	it.card[3]=script_getnum(st,10);
 
-	if( it.amount <= 0 )
+	if(it.amount <= 0)
 		return 0;// nothing to do
 
-	if( buildin_delitem_search(sd, &it, true, loc) )
-	{// success
+	uint8 flag = 0x1;
+
+	if (command[strlen(command)-1] == '3') {
+		if (!script_getitem_randomoption(st, sd, &it, command, 11))
+			return 1;
+
+		flag |= 0x2;
+	}
+
+	if(buildin_delitem_search(sd, &it, flag, loc)) {// success
 		return 0;
 	}
 
@@ -23229,6 +23247,7 @@ struct script_function buildin_func[] = {
 	BUILDIN_DEF2(getitem2, "getitem3", "viiiiiiiirrr?"),
 	BUILDIN_DEF2(getitem2, "getitembound3", "viiiiiiiiirrr?"),
 	BUILDIN_DEF2(makeitem2, "makeitem3", "visiiiiiiiiirrr?"),
+	BUILDIN_DEF2(delitem2,"delitem3","viiiiiiiirrr?"),
 	BUILDIN_DEF2(countitem, "countitem3", "viiiiiiirrr?"),
 	{NULL,NULL,NULL},
 };
