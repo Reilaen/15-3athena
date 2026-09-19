@@ -40,13 +40,13 @@
 		.tier_2234 = 5; // Gypsy Trentini
 
 		.tier_1_item_drop = 2; // 0,02% - pro 5.000
-		.tier_1_currency_drop = 100; // 1% - pro 100
+		.tier_1_currency_drop = 200; // 2% - pro 50
 
 		.tier_2_item_drop = 10; // 0,1% - pro 1.000
-		.tier_2_currency_drop = 200; // 2% - pro 50
+		.tier_2_currency_drop = 400; // 4% - pro 25
 
 		.tier_3_item_drop = 100; // 1% - pro 100
-		.tier_3_currency_drop = 2500; // 25% - pro 4
+		.tier_3_currency_drop = 5000; // 50% - jedes zweite.
 
 		.tier_4_item_drop = 2500; // 25% - pro 4
 		.tier_4_currency_drop = 7500; // 75% - 3 von 4
