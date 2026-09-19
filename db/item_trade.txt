@@ -2195,6 +2195,7 @@
 28703,507,100	// Infinity_Dagger
 31140,507,100	// C_Cowboy_Hat_
 31141,507,100	// C_Rose_Corsage_
+6635,265,100	// Blacksmith_Blessing
 22829,475,100  // Sealed_Card
 23719,475,100  // Sealed_Card2
 7849,475,100  // Soul_Crystal
