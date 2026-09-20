@@ -1593,7 +1593,7 @@
 6610,Glast_Horrendous_Mouth,Glast Horrendous Mouth,3,390,,10,,,,,,,,,,,,,{},{},{}
 6612,Gold_Coin_Basket,Gold Coin Basket,3,300000,,200,,,,,,,,,,,,,{},{},{}
 6613,Flashy_Brooch,Flashy Brooch,3,20,,10,,,,,,,,,,,,,{},{},{}
-6635,Blacksmith_Blessing,Blacksmith Blessing,2,20,10,,,,,,0xFFFFFFFF,63,2,,,,,,{},{},{}
+6635,Blacksmith_Blessing,Blacksmith Blessing,3,20,10,,,,,,0xFFFFFFFF,63,2,,,,,,{},{},{}
 6698,Wooden_Axe,Wooden Axe,3,10,,1000,,,,,,,,,,,,,{},{},{}
 6699,Faith_Silence,Faith Silence,3,10,,0,,,,,,,,,,,,,{},{},{}
 6700,White_Snake_Scale,White Snake Scale,3,10,,0,,,,,,,,,,,,,{},{},{}
