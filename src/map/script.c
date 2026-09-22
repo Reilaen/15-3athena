@@ -16550,34 +16550,26 @@ BUILDIN_FUNC(pow)
 	return 0;
 }
 
-BUILDIN_FUNC(min)
-{
-	int i, min;
-
-	min = script_getnum(st, 2);
-	for (i = 3; script_hasdata(st, i); i++) {
-		int next = script_getnum(st, i);
+BUILDIN_FUNC(min) {
+	int min = script_getnum(st, 2);
+	for (int i = 3; script_hasdata(st, i); i++) {
+		const int next = script_getnum(st, i);
 		if (next < min)
 			min = next;
 	}
 	script_pushint(st, min);
-
-	return true;
+	return 0;
 }
 
-BUILDIN_FUNC(max)
-{
-	int i, max;
-
-	max = script_getnum(st, 2);
-	for (i = 3; script_hasdata(st, i); i++) {
-		int next = script_getnum(st, i);
+BUILDIN_FUNC(max) {
+	int max = script_getnum(st, 2);
+	for (int i = 3; script_hasdata(st, i); i++) {
+		const int next = script_getnum(st, i);
 		if (next > max)
 			max = next;
 	}
 	script_pushint(st, max);
-
-	return true;
+	return 0;
 }
 
 BUILDIN_FUNC(distance)
