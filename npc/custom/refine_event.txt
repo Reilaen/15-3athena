@@ -1,0 +1,266 @@
+prontera,159,175,5	script	Smith Modsognir	813,{
+	.@today$ = gettimestr("%Y%m%d", 10);
+	if (#re_reset_date$ != .@today$) {
+		#re_daily_blessings = 0;
+	    #re_reset_date$ = .@today$;
+	}
+
+	mes("[Modsognir]");
+	mes("Greetings Adventurer, Monsters stole my stock of ^0000FF" + getitemname(.currency_item) + "^000000. Maybe you found some of them? If you return some, I will give you ^0000FF" + getitemname(.reward) + "^000000 in return.");
+	next;
+	menu("I have some I could give you.", Trade, "How can I find the thieves?", Explanation, "I don't have any.", Cancel, "I am not interested.", Cancel);
+
+	Trade:
+		if(#re_daily_blessings == .reward_limit) {
+			mes("[Modsognir]");
+			mes("I am out of ^0000FF" + getitemname(.reward) + "^000000 for today, but don't worry there are other nice things, that I can give you. Do you want to continue?");
+			next;
+			if(select("Yes, thats fine.:No, thank you") == 2) goto(Cancel);
+		}
+
+		.ownedAmt = countitem(.currency_item);
+		if(.ownedAmt == 0) {
+			mes("[Modsognir]");
+			mes("You don't have any ^0000FF" + getitemname(.currency_item) + "^000000. Did you lose them on the way?");
+			close;
+		}
+
+		.@selected_amt = 1;
+		if(.ownedAmt > 1) {
+			SelectAmt:
+			mes("[Modsognir]");
+			mes("How many ^0000FF" + getitemname(.currency_item) + "^000000 do you want to trade?");
+			next;
+			.@validation = input(.@selected_amt, 1, 200);
+			if(.@validation != 0) {
+				mes("[Modsognir]");
+				mes((.@validation > 0) ? "That is too much to process for me at once.." : "That does not make sense. Did you really mean that?");
+				next;
+				goto(SelectAmt);
+			}
+		}
+
+		.@left_today = .reward_limit - #re_daily_blessings;
+		.@primary_amt = min(.@selected_amt, .@left_today);
+		.@secondary_amt = .@selected_amt - .@primary_amt;
+
+		if (.@secondary_amt > 0 && .@left_today > 0) {
+			mes("[Modsognir]");
+			mes("That is quite an amount! However, I only have ^0000FF" + .@left_today + " " + getitemname(.reward) + "^000000 left in stock today.");
+			mes("For the remaining " + .@secondary_amt + " items, I will give you other useful materials from my supplies instead. Is that alright with you?");
+			next;
+			if(select("Yes, that sounds fair.:No, let's cancel.") == 2) goto(Cancel);
+		}
+
+		if(.@primary_amt > 0) {
+			if(!checkweight(.reward, .@primary_amt)) {
+				goto(NotEnoughSpace);
+			}
+
+			getitem(.reward, .@primary_amt);
+			delitem(.currency_item, .@primary_amt);
+			#re_daily_blessings += .@primary_amt;
+		}
+
+		for(.@i = 0; .@i < .@secondary_amt; .@i++) {
+			.@rnd_idx = rand(1, .seconday_reward_count);
+			.@reward_var$ = ".reward_ids_" + .@rnd_idx;
+			.@reward_amt_var$ = ".reward_amt_" + .@rnd_idx;
+
+			if(!checkweight2(getd(.@reward_var$), getd(.@reward_amt_var$))) {
+				goto(NotEnoughSpace);
+			}
+
+			for(.@y = 0; .@y < getarraysize(getd(.@reward_var$)); .@y++) {
+				getitem(getd(.@reward_var$ + "[" + .@y + "]"), getd(.@reward_amt_var$ + "[" + .@y + "]"));
+			}
+			delitem(.currency_item, 1);
+		}
+
+		mes("[Modsognir]");
+		mes("Enjoy! You have really earned it.");
+		close;
+
+	Explanation:
+		mes("[Modsognir]");
+		mes("That is not an easy task. They are perfect at blending in with the environment they hide in.");
+		mes("But I heard that some of them were spotted here:");
+
+		.@current_interval = gettimetick(2) / 300;
+
+		if (.hint_interval != .@current_interval) {
+			.hint_interval = .@current_interval;
+			deletearray(.hint_maps$[0], getarraysize(.hint_maps$));
+			copyarray(.@temp_mobs[0], .mobs[0], getarraysize(.mobs));
+
+			for (.@i = 0; .@i < 5; .@i++) {
+				.@size = getarraysize(.@temp_mobs);
+				.@rand = rand(.@size);
+
+				.hint_mob_ids[.@i] = .@temp_mobs[.@rand];
+
+				deletearray(.@temp_mobs[.@rand], 1);
+			}
+		}
+
+		for(.@i = 0; .@i < getarraysize(.hint_mob_ids); .@i++) {
+			mes("^0000FF- " + getd(".mob_map_" + .hint_mob_ids[.@i] + "$") + "^000000");
+		}
+		mes("But I think there are more hiding all over Rune Midgard.");
+		close;
+
+	NotEnoughSpace:
+		mes("[Modsognir]");
+		mes("You can't carry more things. Please make more space and come back.");
+		close;
+
+	Cancel:
+		mes("[Modsognir]");
+		mes("Alright, come back any time.");
+		close;
+
+	OnInit:
+		// Repair Weapon Scroll
+		setarray(.reward_ids_1[0], 14521);
+		setarray(.reward_amt_1[0], 1);
+
+		// Elemental Converters
+		setarray(.reward_ids_2[0], 12114);
+		setarray(.reward_amt_2[0], 1);
+
+		setarray(.reward_ids_3[0], 12115);
+		setarray(.reward_amt_3[0], 1);
+
+		setarray(.reward_ids_4[0], 12116);
+		setarray(.reward_amt_4[0], 1);
+
+		setarray(.reward_ids_5[0], 12117);
+		setarray(.reward_amt_5[0], 1);
+
+		// Chemical Protection + Glistening Coat
+		setarray(.reward_ids_6[0], 14517, 7139);
+		setarray(.reward_amt_6[0], 1, 1);
+
+		setarray(.reward_ids_7[0], 14518, 7139);
+		setarray(.reward_amt_7[0], 1, 1);
+
+		setarray(.reward_ids_8[0], 14519, 7139);
+		setarray(.reward_amt_8[0], 1, 1);
+
+		setarray(.reward_ids_9[0], 14520, 7139);
+		setarray(.reward_amt_9[0], 1, 1);
+
+		.seconday_reward_count = 9;
+
+		.reward = 6635;
+		.min_reward = 1;
+		.max_reward = 3;
+
+		.reward_limit = 5;
+
+		.currency_item = 7807;
+
+		setarray(.mobs[0], 1002, 1180, 1504, 1005, 1376, 1292, 1026, 1012, 1401, 1056, 1014, 1015, 1275, 1095, 1099, 1987, 1009, 1106, 1403, 1119, 1369, 1035, 1139, 1264, 1191, 1023, 1616, 1782, 1831, 1037, 1622, 1010, 1024, 1057);
+		setarray(.maps_1002$[0], "prt_fild08", "prt_fild06", "prt_fild01", "pay_fild04", "pay_fild03", "pay_fild01", "gef_fild07", "gef_fild00");
+		setarray(.maps_1180$[0], "pay_dun02", "pay_dun03", "pay_dun04");
+		setarray(.maps_1504$[0], "niflheim", "nif_fild02", "nif_fild01");
+		setarray(.maps_1005$[0], "anthell01", "anthell02", "mjo_dun01", "moc_pryd01", "orcsdun01", "pay_dun00", "prt_sewb1", "prt_sewb2", "prt_sewb3");
+		setarray(.maps_1376$[0], "yuno_fild02", "yuno_fild03", "yuno_fild04", "yuno_fild07");
+		setarray(.maps_1292$[0], "gefenia01", "gefenia02", "gefenia03", "gefenia04", "gld_dun04");
+		setarray(.maps_1026$[0], "pay_dun02", "lou_dun02", "pay_dun03");
+		setarray(.maps_1012$[0], "gef_fild01", "gef_fild09", "prt_fild00", "prt_fild04", "treasure_n1");
+		setarray(.maps_1401$[0], "ama_dun01", "ama_dun02", "ama_dun03");
+		setarray(.maps_1056$[0], "ayo_fild01", "gef_fild05", "mjolnir_06", "prt_maze01");
+		setarray(.maps_1014$[0], "pay_fild02", "pay_fild06", "pay_fild08", "prt_sewb2", "treasure_n1");
+		setarray(.maps_1015$[0], "gef_dun01", "pay_dun00", "treasure_n1", "treasure_n2");
+		setarray(.maps_1275$[0], "gl_cas01", "gl_cas02", "gl_cas02_", "gl_in01", "gl_knt01", "gl_knt02", "kh_dun01", "tha_t01", "tha_t02");
+		setarray(.maps_1095$[0], "anthell01", "anthell02", "cmd_fild08", "cmd_fild09");
+		setarray(.maps_1099$[0], "dew_fild01", "mjolnir_05", "mjolnir_11", "mosk_fild02", "prt_maze01");
+		setarray(.maps_1987$[0], "dic_fild01", "dic_fild02", "man_fild01", "man_fild02", "man_fild03");
+		setarray(.maps_1009$[0], "moc_fild11", "moc_fild12", "moc_fild18");
+		setarray(.maps_1106$[0], "ra_fild01", "ra_fild04");
+		setarray(.maps_1403$[0], "ama_dun01", "ama_dun02", "ama_dun03");
+		setarray(.maps_1119$[0], "moc_fild16", "moc_fild17");
+		setarray(.maps_1369$[0], "yuno_fild02", "yuno_fild07", "yuno_fild08", "yuno_fild09");
+		setarray(.maps_1035$[0], "gef_dun00", "gef_dun02", "gl_chyard", "gl_prison", "mjolnir_12", "prt_maze01", "prt_maze03", "prt_q");
+		setarray(.maps_1139$[0], "gef_fild06", "gef_fild08", "lou_fild01", "mjolnir_03", "mjolnir_04", "mjolnir_05", "mjolnir_12", "mosk_dun01", "mosk_fild02", "prt_maze01", "prt_maze03", "yuno_fild01", "yuno_fild12");
+		setarray(.maps_1264$[0], "beach_dun", "iz_dun02", "iz_dun03", "iz_dun04");
+		setarray(.maps_1191$[0], "abyss_01", "abyss_02", "abyss_03", "ama_dun03", "c_tower2", "c_tower3", "c_tower4", "gl_cas02", "gl_church", "gl_chyard", "gl_step", "in_sphinx3", "in_sphinx4", "in_sphinx5", "lou_dun02", "moc_pryd03", "moc_pryd04", "moc_pryd06", "tha_t01", "tha_t02", "tha_t03", "tha_t04", "treasure02");
+		setarray(.maps_1023$[0], "gef_fild03", "gef_fild10");
+		setarray(.maps_1616$[0], "ein_dun01", "ein_fild03", "ein_fild04", "ein_fild05");
+		setarray(.maps_1782$[0], "ice_dun01", "ra_fild01", "ra_fild03", "ra_fild04", "ra_fild08", "ra_fild12");
+		setarray(.maps_1831$[0], "thor_v01", "thor_v02", "thor_v03");
+		setarray(.maps_1037$[0], "gef_fild06", "gon_fild01", "in_sphinx5", "lou_dun01", "mjolnir_03", "mjolnir_04", "mosk_fild02", "prt_maze01", "prt_maze03");
+		setarray(.maps_1622$[0], "ein_dun02", "ein_fild03", "ein_fild04", "ein_fild05");
+		setarray(.maps_1010$[0], "mjolnir_09", "pay_fild01", "pay_fild03");
+		setarray(.maps_1024$[0], "pay_fild02", "pay_fild06", "pay_fild08");
+		setarray(.maps_1057$[0], "ayo_fild01", "ayo_fild02", "mjolnir_02", "prt_fild03", "prt_maze01");
+
+		bindatcmd("findthief", strnpcinfo(0) + "::OnFindThief", 50);
+
+		for(.@i = 0; .@i < getarraysize(.mobs); .@i++)
+			callsub(OnSpawnMob, .mobs[.@i]);
+		end;
+
+		OnFindThief:
+			.@mobid = atoi(.@atcmd_parameters$[0]);
+
+			if (.@mobid == 0) {
+				dispbottom("Usage: @findthief <MobID> (z.B. @findthief 1002)");
+				end;
+			}
+
+			.@gid = getd(".mob_gids_" + .@mobid);
+			if (!unitexists(.@gid)) {
+				dispbottom("Error: No Mineral Thief with the ID " + .@mobid + " currently exists.");
+				end;
+			}
+
+			.@map$ = getd(".mob_map_" + .@mobid + "$");
+			.@mob = getunitdata(.@gid, .@mob);
+			.@x = .@mob[UMOB_X];
+			.@y = .@mob[UMOB_Y];
+
+			.@hp = .@mob[UMOB_HP];
+			.@maxhp = .@mob[UMOB_MAXHP];
+
+			dispbottom("--- Mineral Thief Tracker ---");
+			dispbottom("Mob ID: " + .@mobid);
+			dispbottom("Position: " + .@map$ + " (" + .@x + " / " + .@y + ")");
+			end;
+
+		OnSpawnMob:
+			.@mobid = getarg(0);
+			.@idx   = rand(getarraysize(getd(".maps_" + .@mobid + "$")));
+			.@map$  = getd(".maps_" + .@mobid + "$[" + .@idx + "]");
+
+			setd(".mob_map_" + .@mobid + "$", .@map$);
+			monster(.@map$, -1, -1, "Mineral Thief", .@mobid, 1, strnpcinfo(0) + "::OnThiefDead");
+			setd(".mob_gids_" + .@mobid, $@mobid[0]);
+			return;
+
+		OnThiefDead:
+			getitem(.currency_item, rand(.min_reward, .max_reward));
+			dispbottom("The Mineral Thief escaped to somewhere else..");
+			callsub(OnSpawnMob, killedrid);
+			end;
+
+		OnMinute00:
+		OnMinute30:
+			for(.@i = 0; .@i < getarraysize(.mobs); .@i++) {
+				.@mobid = .mobs[.@i];
+                .@gid = getd(".mob_gids_" + .@mobid);
+
+				if (unitexists(.@gid)) {
+					 getunitdata(.@gid, .@mob);
+					.@hp = .@mob[UMOB_HP];
+					.@maxhp = .@mob[UMOB_MAXHP];
+
+					if (.@hp == .@maxhp) {
+						killmonster(getd(".mob_map_" + .@mobid + "$"), strnpcinfo(0) + "::OnThiefDead");
+						callsub(OnSpawnMob, .@mobid);
+					}
+				}
+			}
+			end;
+}
