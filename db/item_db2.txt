@@ -5726,3 +5726,18 @@
 6926,Midgards_Histories,Rune-Midgarts History Book,3,10,,0,,,,,,,,,,,,,{},{},{}
 6927,Stone_That_Contained_Sea,Stone That Contained Sea,3,10,,0,,,,,,,,,,,,,{},{},{}
 6928,Poring_Scourer,Poring Scourer,3,10,,0,,,,,,,,,,,,,{},{},{}
+
+//===================================================================
+// Sky Fortress Invasion (renewal)
+//===================================================================
+1400,Sinister_Spear,Vicious Mind Spear,4,20,10,1400,140,0,3,1,0x00004082,63,2,2,4,160,1,4,{ bonus bBaseAtk,pow(min(getrefine(),15),2); },{},{}
+1450,Sinister_Lance,Vicious Mind Lance,4,20,10,2250,225,0,3,1,0x00004082,63,2,34,4,160,1,5,{ bonus bBaseAtk,pow(min(getrefine(),15),2); },{},{}
+1600,Sinister_Rod,Vicious Mind Rod,4,20,10,600,60,0,1,1,0x00818315,63,2,2,4,160,1,10,{ bonus bMatk,pow(min(getrefine(),15),2); bonus bInt,5; bonus bUnbreakableWeapon,0; },{},{}
+1800,Sinister_Fist,Vicious Mind Knuckle,4,20,10,1500,150,0,1,1,0x00008100,63,2,34,4,160,1,12,{ bonus bBaseAtk,pow(min(getrefine(),15),2); },{},{}
+1900,Sinister_Violin,Vicious Mind Violin,4,20,10,1300,130,0,1,1,0x00080000,63,1,2,4,160,1,13,{ bonus bBaseAtk,pow(min(getrefine(),15),2); bonus bMatk,pow(min(getrefine(),15),2)/2; },{},{}
+6960,Air_Stronghold_Key,Sky Fortress Key,3,10,5,10,0,0,0,0,0,0,0,0,0,0,0,0,{},{},{}
+21018,Two_Hand_Spear_170,Lindy Hop,4,20,10,3400,340,0,1,2,0x00004080,56,2,34,4,170,1,3,{ .@r = getrefine(); bonus2 bAddClass,Class_All,.@r/2; bonus bAspdRate,.@r; bonus bUnbreakableWeapon,0; },{},{}
+28010,Katar_170,Juliette D. Rachel,4,20,10,2500,300,0,1,2,0x00001000,56,2,34,4,170,1,16,{ .@r = getrefine(); bonus2 bAddClass,Class_All,(.@r/2); bonus bAspdRate,.@r; bonus bUnbreakableWeapon,01; },{},{}
+31024,As_Bdy_Knight_Card,Immortal Cursed Knight Card,6,20,10,10,0,0,0,0,0,0,0,2,0,0,0,0,{ bonus bAtkRate,10; bonus5 bAutoSpell,"RK_IGNITIONBREAK",5,20,BF_WEAPON,1; },{},{}
+31025,As_Wind_Ghost_Card,Immortal Wind Ghost Card,6,20,10,10,0,0,0,0,0,0,0,2,0,0,0,0,{ bonus bMatkRate,10; bonus5 bAutoSpell,"SO_CLOUD_KILL",5,10,BF_MAGIC,1; },{},{}
+31026,As_Ragged_Golem_Card,Stephane Jack Earnest Wolf Card,6,20,10,10,0,0,0,0,0,0,0,64,0,0,0,0,{ bonus5 bAutoSpellWhenHit,"SO_FIREWALK",5,35,BF_WEAPON,0; bonus5 bAutoSpellWhenHit,"SO_ELECTRICWALK",5,80,BF_MAGIC,0; autobonus "{ bonus bFlee,200; }",30,10000,BF_WEAPON,"{ specialeffect2 EF_TEIHIT1; }"; autobonus "{ bonus bSpeedRate,25; }",25,10000,BF_MAGIC,"{ specialeffect2 EF_POTION_BERSERK; }"; },{},{}
