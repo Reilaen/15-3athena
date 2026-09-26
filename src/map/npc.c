@@ -223,7 +223,7 @@ bool npc_enable(struct npc_data* nd, int flag)
 }
 
 /*==========================================
- * NPC‚ğ–¼‘O‚Å’T‚·
+ * NPCï¿½ğ–¼‘Oï¿½Å’Tï¿½ï¿½
  *------------------------------------------*/
 struct npc_data* npc_name2id(const char* name)
 {
@@ -231,7 +231,7 @@ struct npc_data* npc_name2id(const char* name)
 }
 
 /*==========================================
- * ƒCƒxƒ“ƒgƒLƒ…[‚ÌƒCƒxƒ“ƒgˆ—
+ * ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½Lï¿½ï¿½ï¿½[ï¿½ÌƒCï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int npc_event_dequeue(struct map_session_data* sd)
 {
@@ -296,7 +296,7 @@ static int npc_event_export(struct npc_data *nd, int i)
 
 int npc_event_sub(struct map_session_data* sd, struct event_data* ev, const char* eventname); //[Lance]
 /*==========================================
- * ‘S‚Ä‚ÌNPC‚ÌOn*ƒCƒxƒ“ƒgÀs
+ * ï¿½Sï¿½Ä‚ï¿½NPCï¿½ï¿½On*ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½s
  *------------------------------------------*/
 int npc_event_doall_sub(DBKey key, DBData *data, va_list ap)
 {
@@ -372,7 +372,7 @@ int npc_event_doall_id(const char* name, int rid)
 }
 
 /*==========================================
- * ŒvƒCƒxƒ“ƒgÀs
+ * ï¿½ï¿½ï¿½vï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½s
  *------------------------------------------*/
 int npc_event_do_clock(int tid, int64 tick, int id, intptr_t data)
 {
@@ -420,7 +420,7 @@ int npc_event_do_clock(int tid, int64 tick, int id, intptr_t data)
 }
 
 /*==========================================
- * OnInitƒCƒxƒ“ƒgÀs(&ŒvƒCƒxƒ“ƒgŠJn)
+ * OnInitï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½s(&ï¿½ï¿½ï¿½vï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½Jï¿½n)
  *------------------------------------------*/
 void npc_event_do_oninit(void)
 {
@@ -430,7 +430,7 @@ void npc_event_do_oninit(void)
 }
 
 /*==========================================
- * ƒ^ƒCƒ}[ƒCƒxƒ“ƒg—pƒ‰ƒxƒ‹‚Ìæ‚è‚İ
+ * ï¿½^ï¿½Cï¿½}ï¿½[ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Ìï¿½èï¿½ï¿½
  * called from npc_parse_script
  *------------------------------------------*/
 int npc_timerevent_export(struct npc_data *nd, int i)
@@ -772,7 +772,7 @@ int npc_event_sub(struct map_session_data* sd, struct event_data* ev, const char
 }
 
 /*==========================================
- * ƒCƒxƒ“ƒgŒ^‚ÌNPCˆ—
+ * ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½^ï¿½ï¿½NPCï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int npc_event(struct map_session_data* sd, const char* eventname, int ontouch)
 {
@@ -1085,7 +1085,7 @@ struct npc_data* npc_checknear(struct map_session_data* sd, struct block_list* b
 }
 
 /*==========================================
- * NPC‚ÌƒI[ƒvƒ“ƒ`ƒƒƒbƒg”­Œ¾
+ * NPCï¿½ÌƒIï¿½[ï¿½vï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½bï¿½gï¿½ï¿½ï¿½ï¿½
  *------------------------------------------*/
 int npc_globalmessage(const char* name, const char* mes)
 {
@@ -2754,7 +2754,7 @@ bool npc_shop_discount(enum npc_subtype type, bool discount) {
 }
 
 /*==========================================
- * NPC‚Ìƒ‰ƒxƒ‹ƒf[ƒ^ƒRƒ“ƒo[ƒg
+ * NPCï¿½Ìƒï¿½ï¿½xï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½Rï¿½ï¿½ï¿½oï¿½[ï¿½g
  *------------------------------------------*/
 int npc_convertlabel_db(DBKey key, DBData *data, va_list ap)
 {
@@ -3019,17 +3019,9 @@ const char* npc_parse_duplicate(char* w1, char* w2, char* w3, char* w4, const ch
 	int x, y, dir, m, xs = -1, ys = -1, class_ = 0, episode_ident = 0, min_episode = 0, max_episode = 0;
 	char mapname[32];
 	char srcname[128];
-	int i;
-	const char* end;
-	size_t length;
 
-	int src_id;
-	int type;
-	struct npc_data* nd;
-	struct npc_data* dnd;
-
-	end = strchr(start,'\n');
-	length = strlen(w2);
+	const char *end = strchr(start, '\n');
+	const size_t length = strlen(w2);
 
 	// get the npc being duplicated
 	if( w2[length-1] != ')' || length <= 11 || length-11 >= sizeof(srcname) )
@@ -3052,13 +3044,13 @@ const char* npc_parse_duplicate(char* w1, char* w2, char* w3, char* w4, const ch
 	else
 		return end;// next line, try to continue
 
-	dnd = npc_name2id(srcname);
+	const struct npc_data *dnd = npc_name2id(srcname);
 	if( dnd == NULL) {
 		ShowError("npc_parse_script: original npc not found for duplicate in file '%s', line '%d' : %s\n", filepath, strline(buffer,start-buffer), srcname);
 		return end;// next line, try to continue
 	}
-	src_id = dnd->bl.id;
-	type = dnd->subtype;
+	const int src_id = dnd->bl.id;
+	const int type = dnd->subtype;
 
 	// get placement
 	if( (type==NPCTYPE_SHOP || type==NPCTYPE_CASHSHOP || type == NPCTYPE_ITEMSHOP || type == NPCTYPE_POINTSHOP || type==NPCTYPE_SCRIPT) && strcmp(w1, "-") == 0 )
@@ -3076,7 +3068,7 @@ const char* npc_parse_duplicate(char* w1, char* w2, char* w3, char* w4, const ch
 		m = map_mapname2mapid(mapname);
 	}
 
-	nd = npc_create_npc(m, x, y);
+	struct npc_data *nd = npc_create_npc(m, x, y);
 
 	nd->u.scr.ep_min = 0;
 	nd->u.scr.ep_max = 0;
@@ -3167,7 +3159,7 @@ const char* npc_parse_duplicate(char* w1, char* w2, char* w3, char* w4, const ch
 
 	//-----------------------------------------
 	// Loop through labels to export them as necessary
-	for (i = 0; i < nd->u.scr.label_list_num; i++) {
+	for (int i = 0; i < nd->u.scr.label_list_num; i++) {
 		if (npc_event_export(nd, i)) {
 			ShowWarning("npc_parse_duplicate : duplicate event %s::%s (%s)\n",
 				nd->exname, nd->u.scr.label_list[i].name, filepath);
@@ -3180,8 +3172,7 @@ const char* npc_parse_duplicate(char* w1, char* w2, char* w3, char* w4, const ch
 	return end;
 }
 
-int npc_duplicate4instance(struct npc_data *snd, int m)
-{
+int npc_duplicate4instance(struct npc_data *snd, const int m) {
 	char newname[NPC_NAME_LENGTH+1];
 
 	if(m == -1 || map[m].instance_id == -1 )
@@ -3197,7 +3188,8 @@ int npc_duplicate4instance(struct npc_data *snd, int m)
 	if( snd->subtype == NPCTYPE_WARP )
 	{ // Adjust destination, if instanced
 		struct npc_data *wnd = NULL; // New NPC
-		int dm = map_mapindex2mapid(snd->u.warp.mapindex), im;
+		const int dm = map_mapindex2mapid(snd->u.warp.mapindex);
+		int im;
 		if( dm < 0 ) return 1;
 
 		if ((im = instance_mapid2imapid(dm, map[m].instance_id)) == -1) {
@@ -3232,7 +3224,7 @@ int npc_duplicate4instance(struct npc_data *snd, int m)
 	}
 	else
 	{
-		static char w1[50], w2[50], w3[50], w4[50];
+		static char w1[51], w2[NPC_NAME_LENGTH+12], w3[NPC_NAME_LENGTH*2 + 3], w4[51];
 		const char* stat_buf = "- call from instancing subsystem -\n";
 
 		snprintf(w1, sizeof(w1), "%s,%d,%d,%d", map[m].name, snd->bl.x, snd->bl.y, snd->ud.dir);
@@ -3685,7 +3677,7 @@ static const char* npc_parse_mob(char* w1, char* w2, char* w3, char* w4, const c
 }
 
 /*==========================================
- * ƒ}ƒbƒvƒtƒ‰ƒOs‚Ì‰ğÍ
+ * ï¿½}ï¿½bï¿½vï¿½tï¿½ï¿½ï¿½Oï¿½sï¿½Ì‰ï¿½ï¿½
  *------------------------------------------*/
 static const char* npc_parse_mapflag(char* w1, char* w2, char* w3, char* w4, const char* start, const char* buffer, const char* filepath)
 {
