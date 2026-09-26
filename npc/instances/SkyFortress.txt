@@ -7,6 +7,10 @@
 //= 1.0 First version. [Capuche]
 //============================================================
 
+1@sthb	mapflag	src4instance
+1@sthd	mapflag	src4instance
+1@sthc	mapflag	src4instance
+
 prt_q,249,82,2	script	Han#a1	105,{
 	mes "[Han]";
 	mes "There must be a ton of monsters";
@@ -311,7 +315,7 @@ S_Info:
 	return;
 }
 
-prt_q,243,75,3	script	Fortress Entry Warp 10007#1	10007,{
+prt_q,243,75,3	script	Fortress Entry Warp#1	10007,{
 	if (BaseLevel < 145) {
 		mes "- You should be level 145 or higher";
 		mes "to proceed. -";
@@ -369,7 +373,7 @@ OnInit:
 }
 
 // Dali entrance
-dali02,115,61,3	script	Fortress Entry Warp 10007#2	10007,{
+dali02,115,61,3	script	Fortress Entry Warp#2	10007,{
 	if (BaseLevel < 145) {
 		mes "- You should be level 145 or higher";
 		mes "to proceed. -";
