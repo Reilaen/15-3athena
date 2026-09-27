@@ -2225,7 +2225,8 @@ extern int current_equip_item_index;
 extern int current_equip_card_id;
 
 extern int percentrefinery[REFINE_TYPE_MAX][MAX_REFINE+1]; //The last slot always has a 0% success chance [Skotlex]
-extern short current_equip_opt_index; 
+extern int percentrefinery_enriched[REFINE_TYPE_MAX][MAX_REFINE+1];
+extern short current_equip_opt_index;
 
 //Mode definitions to clear up code reading. [Skotlex]
 enum e_mode

@@ -46,9 +46,11 @@ enum e_regen
 	RGN_SSP  = 0x08,
 };
 
-static int refinebonus[MAX_REFINE_BONUS][3];	// ¸˜Bƒ{[ƒiƒXƒe[ƒuƒ‹(refine_db.txt)
-int percentrefinery[REFINE_TYPE_MAX][MAX_REFINE+1];	// ¸˜B¬Œ÷—¦(refine_db.txt)
-static int atkmods[3][MAX_WEAPON_TYPE];	// •ŠíATKƒTƒCƒYC³(size_fix.txt)
+static int refinebonus[MAX_REFINE_BONUS][3];	// ï¿½ï¿½ï¿½Bï¿½{ï¿½[ï¿½iï¿½Xï¿½eï¿½[ï¿½uï¿½ï¿½(refine_db.txt)
+int percentrefinery[REFINE_TYPE_MAX][MAX_REFINE+1];	// ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(refine_db.txt)
+int percentrefinery_enriched[REFINE_TYPE_MAX][MAX_REFINE+1]; // (refine_enriched_db.txt)
+
+static int atkmods[3][MAX_WEAPON_TYPE];	// ï¿½ï¿½ï¿½ï¿½ATKï¿½Tï¿½Cï¿½Yï¿½Cï¿½ï¿½(size_fix.txt)
 
 // TODO: rewrite refine system later to use this struct... [15peaces]
 static struct {
@@ -1431,7 +1433,7 @@ static inline void status_cpy(struct status_data* a, const struct status_data* b
 
 
 /*==========================================
- * ¸˜Bƒ{[ƒiƒX
+ * ï¿½ï¿½ï¿½Bï¿½{ï¿½[ï¿½iï¿½X
  *------------------------------------------*/
 int status_getrefinebonus(int lv,int type)
 {
@@ -3193,7 +3195,7 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 
 	b_cart_weight_max = sd->cart_weight_max;
 
-	pc_calc_skilltree(sd);	// ƒXƒLƒ‹ƒcƒŠ?‚ÌŒvZ
+	pc_calc_skilltree(sd);	// ï¿½Xï¿½Lï¿½ï¿½ï¿½cï¿½ï¿½?ï¿½ÌŒvï¿½Z
 
 	if(opt&SCO_FIRST) {
 		//Load Hp/SP from char-received data.
@@ -6898,8 +6900,8 @@ const char* status_get_name(struct block_list *bl)
 }
 
 /*==========================================
- * ‘ÎÛ‚ÌClass‚ğ•Ô‚·(”Ä—p)
- * –ß‚è‚Í®”‚Å0ˆÈã
+ * ï¿½ÎÛ‚ï¿½Classï¿½ï¿½Ô‚ï¿½(ï¿½Ä—p)
+ * ï¿½ß‚ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½Èï¿½
  *------------------------------------------*/
 int status_get_class(struct block_list *bl) {
 	nullpo_ret(bl);
@@ -6915,8 +6917,8 @@ int status_get_class(struct block_list *bl) {
 	return 0;
 }
 /*==========================================
- * ‘ÎÛ‚ÌƒŒƒxƒ‹‚ğ•Ô‚·(”Ä—p)
- * –ß‚è‚Í®”‚Å0ˆÈã
+ * ï¿½ÎÛ‚Ìƒï¿½ï¿½xï¿½ï¿½ï¿½ï¿½Ô‚ï¿½(ï¿½Ä—p)
+ * ï¿½ß‚ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½Èï¿½
  *------------------------------------------*/
 int status_get_lv(struct block_list *bl) {
 	nullpo_ret(bl);
@@ -11382,7 +11384,7 @@ int status_change_clear(struct block_list* bl, int type)
 }
 
 /*==========================================
- * ƒXƒe[ƒ^ƒXˆÙíI—¹
+ * ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ùï¿½Iï¿½ï¿½
  *------------------------------------------*/
 int status_change_end_(struct block_list* bl, enum sc_type type, int tid)
 {
@@ -12277,7 +12279,7 @@ int status_change_end_(struct block_list* bl, enum sc_type type, int tid)
 }
 
 /*==========================================
- * ƒXƒe[ƒ^ƒXˆÙíI—¹ƒ^ƒCƒ}[
+ * ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ùï¿½Iï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[
  *------------------------------------------*/
 int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 {
@@ -12549,7 +12551,7 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 		}
 		break;
 
-	case SC_DANCING: //ƒ_ƒ“ƒXƒXƒLƒ‹‚ÌŠÔSPÁ”ï
+	case SC_DANCING: //ï¿½_ï¿½ï¿½ï¿½Xï¿½Xï¿½Lï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½SPï¿½ï¿½ï¿½ï¿½
 		{
 			int s = 0;
 			int sp = 1;
@@ -13396,7 +13398,7 @@ int status_change_timer(int tid, int64 tick, int id, intptr_t data)
 }
 
 /*==========================================
- * ƒXƒe[ƒ^ƒXˆÙíƒ^ƒCƒ}[”ÍˆÍˆ—
+ * ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Ùï¿½^ï¿½Cï¿½}ï¿½[ï¿½ÍˆÍï¿½ï¿½ï¿½
  *------------------------------------------*/
 int status_change_timer_sub(struct block_list* bl, va_list ap)
 {
@@ -14138,6 +14140,13 @@ static bool status_readdb_refine(char* fields[], int columns, int current)
 	return true;
 }
 
+static bool status_readdb_refine_enriched(char* fields[], int columns, const int current) {
+	for(int i = 0; i < MAX_REFINE; i++) {
+		percentrefinery_enriched[current][i] = atoi(fields[i]);
+	}
+	return true;
+}
+
 static bool  status_readdb_refine_cost(char* fields[], int columns, int current)
 {
 	int type, zeny;
@@ -14260,13 +14269,18 @@ int status_readdb(void)
 		refinebonus[i][2]=10;  // safe limit
 	}
 
-	// read databases
-	//
+	// refine_enriched_db.txt
+	for(i=0;i<ARRAYLENGTH(percentrefinery_enriched);i++){
+		for(j=0;j<MAX_REFINE; j++)
+			percentrefinery_enriched[i][j]=100;
+	}
 
+	// read databases
 	status_readdb_attrfix(db_path);
  	sv_readdb(db_path, "status_disabled.txt", ',', 2,                 2,                  -1,                           &status_readdb_status_disabled); 
 	sv_readdb(db_path, "size_fix.txt",        ',', MAX_WEAPON_TYPE,   MAX_WEAPON_TYPE,    ARRAYLENGTH(atkmods),         &status_readdb_sizefix);
 	sv_readdb(db_path, "refine_db.txt",       ',', 3+MAX_REFINE+1,    3+MAX_REFINE+1,     ARRAYLENGTH(percentrefinery), &status_readdb_refine);
+	sv_readdb(db_path, "refine_enriched_db.txt",       ',', MAX_REFINE,    MAX_REFINE,     ARRAYLENGTH(percentrefinery_enriched), &status_readdb_refine_enriched);
 	sv_readdb(db_path, "refine_cost_db.txt",  ',', 4,                 4,                  -1,                           &status_readdb_refine_cost);
 
 	return 0;

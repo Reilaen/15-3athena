@@ -67,23 +67,19 @@ payon,157,146,6	script	Suhnbi#cash	85,{
 		close;
 	}
 	
-	set .@refineitemid, getequipid(.@part); // save id of the item
-	set .@refinerycnt, getequiprefinerycnt(.@part); //save refinery count
+	.@refineitemid = getequipid(.@part); // save id of the item
+	.@refinerycnt = getequiprefinerycnt(.@part); //save refinery count
+	.@price = getequiprefinecost(.@part, REFINE_COST_ENRICHED, REFINE_ZENY_COST);
+	.@material = getequiprefinecost(.@part, REFINE_COST_ENRICHED, REFINE_MATERIAL_ID);
+	.@itemtype = getiteminfo( .@refineitemid, ITEMINFO_TYPE );
 
-	// Make sure you have the neccessary items and Zeny to refine your items
+	// Make sure you have the necessary items and Zeny to refine your items
 	// Determines chance of failure and verifies that you want to continue.
-	switch( getequipweaponlv(.@part) )
-	{
-		case 1: callsub S_RefineValidate,1,7620,50,.@part,.@refineitemid,.@refinerycnt; break;
-		case 2: callsub S_RefineValidate,2,7620,200,.@part,.@refineitemid,.@refinerycnt; break;
-		case 3: callsub S_RefineValidate,3,7620,5000,.@part,.@refineitemid,.@refinerycnt; break;
-		case 4: callsub S_RefineValidate,4,7620,20000,.@part,.@refineitemid,.@refinerycnt; break;
-		default: callsub S_RefineValidate,0,7619,2000,.@part,.@refineitemid,.@refinerycnt; break;
-	}
+	callsub S_RefineValidate,.@itemtype,.@material,.@price,.@part,.@refineitemid,.@refinerycnt;
 
 	mes "[Suhnbi]";
 	mes "Clang! Clang! Clang!";
-	if (getequippercentrefinery(.@part) > rand(100) || getequippercentrefinery(.@part) > rand(100)) {
+	if (getequippercentrefinery(.@part, true) > rand(100)) {
 		successrefitem .@part;
 		next;
 		Emotion e_no1;
@@ -295,7 +291,7 @@ malangdo,221,174,6	script	Holink#mal_cash	559,{
 		mes "You don't believe in refine master Holink, meow?~";
 		close;
 	}
-	if (getequippercentrefinery(.@part) < 100) {
+	if (getequippercentrefinery(.@part, true) < 100) {
 		mes "[Holink]";
 		mes "Meow!!";
 		if (.@type$ == "armor")
@@ -344,7 +340,7 @@ malangdo,221,174,6	script	Holink#mal_cash	559,{
 		close;
 	}
 	
-	if (getequippercentrefinery(.@part) > rand(100) || getequippercentrefinery(.@part) > rand(100)) {
+	if (getequippercentrefinery(.@part, true) > rand(100)) {
 		successrefitem .@part;
 		mes "[Holink]";
 		mes "Me~ Me~ Meow! Fun fun refining~";
