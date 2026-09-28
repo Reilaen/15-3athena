@@ -5,6 +5,18 @@
 // 		- Details.
 //			--More Details.
 //========================================
+09/28/2026
+	r599 [15peaces]
+		*Some fixes, thanks to @Reilaen
+			-Fixed Mecha Spider not having the correct mode.
+			-Added the PACKET_ZC_SE_PC_BUY_CASHITEM_RESULT packet to the packet db.
+				--Also added support for Kafrapoints.
+			-Fixed a bug that lead to instance duplicates not being found, if the source NPC's name was too long.
+			-Fixed cloakoffnpc/cloakonnpc to work as it is supposed to do officially.
+		*Some item updates.
+			-Removed some duplicate items.
+			-Added the combo script of Kind Heart and Hurt Mind.
+
 09/23/2026
 	r598 [15peaces]
 		*Fixed pc_get_skillcooldown to respect the configuration and specific state induced cooldown changes directly.

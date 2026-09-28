@@ -18543,7 +18543,7 @@ void clif_parse_CashShopBuy(const int fd, struct map_session_data* sd) {
 		return;
 	}
 
-	if (pc_paycash(sd, totalcash, 0, LOG_TYPE_CASH) <= 0) {
+	if (pc_paycash(sd, totalcash, p->kafraPoints, LOG_TYPE_CASH) <= 0) {
 		clif_cashshop_result(sd, 0, CSBR_SHORTTAGE_CASH);
 		return;
 	}

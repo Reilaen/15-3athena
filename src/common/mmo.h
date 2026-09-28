@@ -241,6 +241,9 @@ typedef uint32 t_itemid;
 #define MAX_ACHIEVEMENT_RANKS 20 // Achievement Ranks
 #define MAX_ACHIEVEMENT_ITEM_REWARDS 10 // Achievement Rewards
 
+#define MAX_CASHPOINT INT_MAX
+#define MAX_KAFRAPOINT INT_MAX
+
 //15-3athena
 //Will be needed in the future for keeping track of and saving cooldown times for skills. [15peaces]
 //#define MAX_SKILLCOOLDOWN 20

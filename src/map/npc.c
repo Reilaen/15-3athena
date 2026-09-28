@@ -188,12 +188,11 @@ int npc_enable_sub(struct block_list *bl, va_list ap)
 	return 0;
 }
 
-bool npc_enable(struct npc_data* nd, int flag)
+bool npc_enable(struct npc_data* nd, const int flag)
 {
 	nullpo_ret(nd);
 
-	if (flag & 1)
-	{
+	if (flag & 1) {
 		nd->sc.option &= ~OPTION_INVISIBLE;
 		clif_spawn(&nd->bl);
 	}
@@ -201,15 +200,19 @@ bool npc_enable(struct npc_data* nd, int flag)
 		nd->sc.option &= ~OPTION_HIDE;
 	else if (flag & 4)
 		nd->sc.option|= OPTION_HIDE;
-	else	//Can't change the view_data to invisible class because the view_data for all npcs is shared! [Skotlex]
-	{
+	else if (flag & 8)
+		nd->sc.option &= ~OPTION_CLOAK;
+	else if (flag & 16)
+		nd->sc.option |= OPTION_CLOAK;
+	else {
+		//Can't change the view_data to invisible class because the view_data for all npcs is shared! [Skotlex]
 		nd->sc.option |= OPTION_INVISIBLE;
 		clif_clearunit_area(&nd->bl, CLR_OUTSIGHT);
 	}
 
-	if (nd->class_ == WARP_CLASS || nd->class_ == FLAG_CLASS)
-	{	//Client won't display option changes for these classes [Toms]
-		if (nd->sc.option&(OPTION_HIDE|OPTION_INVISIBLE))
+	if (nd->class_ == WARP_CLASS || nd->class_ == FLAG_CLASS) {
+		//Client won't display option changes for these classes [Toms]
+		if (nd->sc.option & (OPTION_HIDE | OPTION_INVISIBLE | OPTION_CLOAK))
 			clif_clearunit_area(&nd->bl, CLR_OUTSIGHT);
 		else
 			clif_spawn(&nd->bl);
@@ -805,18 +808,18 @@ int npc_event(struct map_session_data* sd, const char* eventname, int ontouch)
 int npc_touch_areanpc_sub(struct block_list *bl, va_list ap)
 {
 	struct map_session_data *sd;
-	int pc_id;
-	char *name;
 
 	nullpo_ret(bl);
 	nullpo_ret((sd = map_id2sd(bl->id)));
 
-	pc_id = va_arg(ap,int);
-	name = va_arg(ap,char*);
+	const int pc_id = va_arg(ap, int);
+	const char* name = va_arg(ap, char*);
 
 	if( sd->state.warping )
 		return 0;
 	if( pc_ishiding(sd) )
+		return 0;
+	if (pc_isdead(sd))
 		return 0;
 	if( pc_id == sd->bl.id )
 		return 0;
@@ -874,6 +877,11 @@ int npc_touch_areanpc(struct map_session_data* sd, int m, int x, int y)
 	{
 		if (map[m].npc[i]->sc.option&OPTION_INVISIBLE) {
 			f=0; // a npc was found, but it is disabled; don't print warning
+			continue;
+		}
+
+		if (map[m].npc[i]->sc.option & OPTION_CLOAK) {
+			f = 0;
 			continue;
 		}
 
@@ -3197,7 +3205,8 @@ int npc_duplicate4instance(struct npc_data *snd, int m)
 	if( snd->subtype == NPCTYPE_WARP )
 	{ // Adjust destination, if instanced
 		struct npc_data *wnd = NULL; // New NPC
-		int dm = map_mapindex2mapid(snd->u.warp.mapindex), im;
+		const int dm = map_mapindex2mapid(snd->u.warp.mapindex);
+		int im;
 		if( dm < 0 ) return 1;
 
 		if ((im = instance_mapid2imapid(dm, map[m].instance_id)) == -1) {
@@ -3232,7 +3241,7 @@ int npc_duplicate4instance(struct npc_data *snd, int m)
 	}
 	else
 	{
-		static char w1[50], w2[50], w3[50], w4[50];
+		static char w1[51], w2[NPC_NAME_LENGTH + 12], w3[NPC_NAME_LENGTH * 2 + 3], w4[51];
 		const char* stat_buf = "- call from instancing subsystem -\n";
 
 		snprintf(w1, sizeof(w1), "%s,%d,%d,%d", map[m].name, snd->bl.x, snd->bl.y, snd->ud.dir);

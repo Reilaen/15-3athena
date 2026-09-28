@@ -73,7 +73,6 @@
 
 
 //LHZ 4 and more (renewal versions)
-1287,Durga,Durga,4,20,,1200,190,,1,1,0x00001000,63,2,34,3,100,1,16,{},{},{}
 1288,Bloody_Fear_C,Bloody Fear,4,1,,0,145,,1,0,0x00001000,63,2,34,4,1,0,16,{ bonus bIgnoreDefRace,RC_DemiHuman; bonus bIgnoreDefRace,RC_DemiHuman; bonus2 bAddEff,Eff_Bleeding,100; },{},{}
 1289,P_Katar1,Eden Katar I,4,0,,0,155,,1,0,0x00001000,63,2,34,3,60,0,16,{},{},{}
 1290,Agent_Katar,Agent Katar,4,41000,,1200,170,,1,1,0x00001000,63,2,34,3,100,1,16,{ bonus bHit,readparam(bLuk)/2; },{},{}
@@ -1235,8 +1234,6 @@
 6562,Tiny_Mouse_Tail,Tiny Mouse Tail,3,0,,0,,,,,,,,,,,,,{},{},{}
 
 // More Costumes & Co. (renewal)
-2977,Broken_Heart,Broken Heart,5,10,,100,,0,,1,0xFFFFFFFF,63,2,136,,110,0,,{ bonus bMaxSP,200; skill "DC_SCREAM",3; },{},{}
-2978,Kindly_Heart,Kindly Heart,5,10,,100,,0,,1,0xFFFFFFFF,63,2,136,,110,0,,{ bonus bMaxHP,500; bonus2 bHPRegenRate,300,10000; },{},{}
 2966,RWC_2012_Ring,RWC 2012 Ring,5,20,,200,,0,,0,0xFFFFFFFF,63,2,136,,0,0,0,{ bonus2 bAddClass,Class_All,1; if(isequipped(2967) && isequipped(13092)){ bonus bBaseAtk,-(getequiprefinerycnt(EQI_HAND_R)*10); } if(isequipped(2967) && isequipped(16026)){ bonus bBaseAtk,-(getequiprefinerycnt(EQI_HAND_R)*5); } if(isequipped(2967) && isequipped(18821)){ bonus2 bAddRace, RC_Boss, -(getequiprefinerycnt(EQI_HEAD_TOP)/2); bonus2 bAddRace, RC_NonBoss, -(getequiprefinerycnt(EQI_HEAD_TOP)/2); } if(isequipped(2968)){ bonus bAtkRate,4; bonus bMatkRate,4; } if(isequipped(2969)){ bonus bAtkRate,4; bonus bMatkRate,4; } if(isequipped(13092)){ bonus bBaseAtk,10*getequiprefinerycnt( (getequipid(EQI_HAND_R) == 13092) ? EQI_HAND_R : EQI_HAND_L ); } if(isequipped(16026)){ bonus bBaseAtk,getequiprefinerycnt(EQI_HAND_R)*5; } },{},{}
 2967,RWC_2012_Ring_,Chambered RWC 2012 Ring,5,20,,200,,0,,1,0xFFFFFFFF,63,2,136,,0,0,0,{ bonus2 bAddClass,Class_All,1; if(isequipped(2968)){ bonus bAtkRate,4; bonus bMatkRate,4; } if(isequipped(2969)){ bonus bAtkRate,4; bonus bMatkRate,4; } if(isequipped(13092)){ bonus bBaseAtk,getequiprefinerycnt(EQI_HAND_R)*10; } if(isequipped(16026)){ bonus bBaseAtk,getequiprefinerycnt(EQI_HAND_R)*5; } if(isequipped(18821)){ bonus2 bAddClass,Class_Boss,getequiprefinerycnt(EQI_HEAD_TOP)/2; bonus2 bAddRace,RC_NonBoss,getequiprefinerycnt(EQI_HEAD_TOP)/2; } },{},{}
 2997,RWC_Gold_Brooch,RWC Gold Brooch,5,10,,200,,0,,1,0xFFFFFFFF,63,2,136,,0,0,,{ bonus bBaseAtk,25; bonus bMatk,20; if(isequipped(2999)){ bonus2 bAddClass,Class_All,10; bonus bMatkRate,10; } },{},{}
@@ -4048,7 +4045,7 @@
 2971,Pocket_Watch,Pocket Watch,5,10,,200,,1,,1,0x800200,63,2,136,,80,1,,{},{},{}
 2976,Red_Lantern,Red Lantern,5,10,,200,,0,,1,0xFFFFFFFF,63,2,136,,100,0,,{ bonus bMaxSP,-300; skill "MG_SIGHT",1; },{},{ sc_end SC_SIGHT; }
 2977,Hurt_Mind,Hurt Mind,5,10,,100,,0,,1,0xFFFFFFFF,63,2,136,,110,0,,{ bonus bMaxSP,200; skill "DC_SCREAM",3; },{},{}
-2978,KindHeart,Kind Heart,5,10,,100,,0,,1,0xFFFFFFFF,63,2,136,,110,0,,{ bonus bMaxHP,500; bonus2 bHPRegenRate,300,10000; skill "DC_SCREAM",3; },{},{}
+2978,KindHeart,Kind Heart,5,10,,100,,0,,1,0xFFFFFFFF,63,2,136,,110,0,,{ bonus bMaxHP,500; bonus2 bHPRegenRate,300,10000; skill "DC_SCREAM",3; if(isequipped(2977)){ bonus5 bAutoSpell,"SO_PSYCHIC_WAVE",1,10,BF_WEAPON,1; bonus5 bAutoSpell,"HW_MAGICPOWER",1,10,BF_MAGIC,0; bonus5 bAutoSpell,"WZ_FROSTNOVA",10,10,BF_WEAPON|BF_MAGIC,0; bonus5 bAutoSpellWhenHit,"DC_SCREAM",1,10,BF_WEAPON|BF_MAGIC,0; } },{},{}
 2980,Evilspirit_Gloves,Evilspirit Gloves,5,10,,100,,,,1,0xFFFFFFFF,63,2,136,,110,1,,{ bonus bMaxHP,500; bonus bMaxSP,200; skill "PF_SPIDERWEB",1; },{},{}
 2983,Greed_Brooch,Greed Brooch,5,10,,100,,,,1,0xFFFFFFFF,63,2,136,,50,1,,{ bonus2 bHPLossRate,10,5000; if(isequipped(4218)){ bonus bVit,-3; bonus bHPrecovRate,-20; bonus bMaxHP,1000; } if(isequipped(4269)){ bonus bInt,-3; bonus bSPrecovRate,-20; bonus bMaxSP,150; } if(isequipped(4218,4269)){ bonus bVit,-3; bonus bHPrecovRate,-20; bonus bMaxHP,1000; bonus bInt,-3; bonus bSPrecovRate,-20; bonus bMaxSP,150; } },{},{}
 2984,Glove_Save_Rimnil,Glove Save Rimnil,5,10,,100,,,,1,0xFFFFFFFF,63,2,136,,30,1,,{ bonus2 bExpAddRace,RC_All,5; if(isequipped(4239,4245,4267,4151,4249,4235,4164,4221,4275,4204)){ bonus2 bExpAddRace,RC_All,2; }},{},{}
