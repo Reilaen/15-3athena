@@ -4576,15 +4576,20 @@ struct Damage battle_calc_magic_attack(struct block_list *src,struct block_list 
 
 	switch (skill_id)
 	{
-		case WL_HELLINFERNO:
-			if (mflag & 8)// 2nd Hit - The shadow damage.
-				s_ele = ELE_DARK;
-			break;
+	case WL_HELLINFERNO:
+		if (mflag & 8)// 2nd Hit - The shadow damage.
+			s_ele = ELE_DARK;
+		break;
 
-		case KO_KAIHOU:
-			if (sd)// Take the element of the charms.
-				s_ele = sd->charmball_type;
-			break;
+	case KO_KAIHOU:
+		if (sd)// Take the element of the charms.
+			s_ele = sd->charmball_type;
+		break;
+
+	case AB_ADORAMUS:
+		if (sc && sc->data[SC_ANCILLA])
+			s_ele = ELE_NEUTRAL;
+		break;
 
 		case SO_PSYCHIC_WAVE:
 			if ( sc )

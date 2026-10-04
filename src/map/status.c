@@ -4314,12 +4314,15 @@ int status_calc_npc_(struct npc_data *nd, enum e_status_calc_opt opt)
 void status_calc_regen(struct block_list *bl, struct status_data *status, struct regen_data *regen)
 {
 	struct map_session_data *sd;
+	struct status_change* sc;
 	int val, skill;
 
 	if( !(bl->type&BL_REGEN) || !regen )
 		return;
 
 	sd = BL_CAST(BL_PC,bl);
+	sc = status_get_sc(bl);
+
 	val = 1 + (status->vit/5) + (status->max_hp/200);
 
 	if( sd && sd->hprecov_rate != 100 )
@@ -4368,6 +4371,11 @@ void status_calc_regen(struct block_list *bl, struct status_data *status, struct
 				val += skill * 3 + skill * status->max_sp / 500;
 			if ((skill = pc_checkskill(sd, WM_LESSON)) > 0)
 				val += skill * 3 + skill * status->max_sp / 500;
+
+			if (sc != NULL) {
+				if (sc->data[SC_ANCILLA])
+					val += sc->data[SC_ANCILLA]->val3 / 100;
+			}
 			sregen->sp = cap_value(val, 0, SHRT_MAX);
 		}
 

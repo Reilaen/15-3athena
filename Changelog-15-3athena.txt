@@ -5,6 +5,12 @@
 // 		- Details.
 //			--More Details.
 //========================================
+10/04/2026
+	r600 [15peaces]
+		*Changed some monsters to fit pre-renewal caclulations.
+		*Fixed Bar Cookie Of Intelligence effect & balanced it for pre-renewal.
+		*Fixed some item effects.
+
 09/28/2026
 	r599 [15peaces]
 		*Some fixes, thanks to @Reilaen

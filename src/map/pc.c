@@ -9084,9 +9084,6 @@ int pc_itemheal(struct map_session_data *sd, t_itemid itemid, int hp,int sp)
 			sp = tmp;
 	}
 
-	if( sd->sc.data[SC_ANCILLA] )
-		sp += sp * sd->sc.data[SC_ANCILLA]->val3 / 100;// 30% Increase on SP recovery
-
 	if( sd->sc.data[SC_VITALITYACTIVATION] )
 	{
 		hp += hp * 50 / 100;// 50% Increase on HP recovery
