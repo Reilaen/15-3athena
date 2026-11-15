@@ -5,6 +5,10 @@
 // 		- Details.
 //			--More Details.
 //========================================
+11/15/2026
+	r607 [15peaces]
+		*Changed some more Eden Group items to fit pre-renewal calculations.
+
 11/09/2026
 	r606 [15peaces]
 		*Corrected Umbala_Spirit trading restrictions based on pre-renewal.

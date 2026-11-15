@@ -277,10 +277,6 @@
 22886,December_Gift_Box,December Gift Box,2,10,,100,,,,,0xFFFFFFFF,63,2,,,,,,{ getitem 22869,10; },{},{}
 
 //Eden Group Equipment (renewal versions)
-13051,P_Dagger2,Eden Dagger II,4,0,,0,158:70,,1,0,0x3E9F7EEF,63,2,2,2,40,0,1,{},{},{}
-13066,P_Dagger3,Eden Dagger III,4,0,,0,165:80,,1,0,0x3E9F7EEF,63,2,2,3,60,0,1,{},{},{}
-13112,P_Revolver1,Eden Revlover I,4,0,,0,44,,7,0,0x41000000,63,2,34,1,26,0,17,{ bonus bHit,-5; },{},{}
-13113,P_Revolver2,Eden Revlover II,4,0,,0,60,,7,0,0x41000000,63,2,34,1,40,0,17,{ bonus bHit,-5; },{},{}
 13114,P_Revolver3,Eden Revolver III,4,0,,0,76,,7,0,0x41000000,63,2,34,3,60,0,17,{ bonus bHit,-5; },{},{}
 13310,P_Huuma_Suriken1,P.Huuma Suriken I,4,0,,0,170,,1,0,0x02000000,63,2,34,3,60,0,22,{ bonus bMatk,50; },{},{}
 13423,P_Sabre1,Eden Sabre I,4,0,,0,147,,1,0,0x000654E2,63,2,2,2,26,0,2,{},{},{}

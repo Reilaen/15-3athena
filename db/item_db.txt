@@ -5896,7 +5896,7 @@
 13048,Damascus_C,Damascus,4,0,,0,153,,1,0,0x028F5EEE,7,2,2,3,1,0,1,{bonus2 bAddSize,Size_Small,40; bonus2 bAddSize,Size_Medium,40; bonus2 bAddSize,Size_Large,40;},{},{}
 13049,Lacma,Lacma,4,20,,650,45,,1,1,0xFA9F7EEF,7,2,2,3,1,1,1,{},{},{}
 13050,P_Dagger1,Eden Dagger I,4,0,,0,124,,1,0,0x3E9F7EEF,63,2,2,2,26,0,1,{bonus bMatkRate,6;},{},{}
-13051,P_Dagger2,Eden Dagger II,4,0,,0,158,,1,0,0xFA9F7EEF,7,2,2,2,40,0,1,{ /* bonus bMAtk,70; */ },{},{}
+13051,P_Dagger2,Eden Dagger II,4,0,,0,158,,1,0,0x3E9F7EEF,63,2,2,2,40,0,1,{bonus bMatkRate,7;},{},{}
 13052,Tourist_Dagger,Tourist Dagger,4,0,,500,51,,1,0,0xFA9F7EEF,7,2,2,1,1,0,1,{ bonus bAgi,2; },{},{}
 13053,F_Moonlight_Sword_C,Moonlight Sword,4,2,,0,85,,1,0,0x028F5EEE,7,2,2,4,0,0,1,{},{},{}
 13054,F_Combat_Knife_C,Combat Knife,4,1,,0,129,,1,0,0x028F5EEE,7,2,2,4,1,0,1,{},{},{}
@@ -5908,6 +5908,8 @@
 13060,E_Counter_Dagger_C,Counter Dagger,4,1,,0,209,,1,0,0x00810204,7,2,2,4,1,0,1,{},{},{}
 13061,Black_Wing,Black Wing,4,20,,600,142,,1,1,124,7,2,2,3,102,1,1,{},{},{}
 13062,Ancient_Dagger,Ancient Dagger,4,20,,600,107,,0,0,0x000F5EEE,2,2,2,4,120,1,1,{ /* bonus bMAtk,120; */ },{},{}
+//
+13066,P_Dagger3,Eden Dagger III,4,0,,0,165,,1,0,0x3E9F7EEF,63,2,2,3,60,0,1,{bonus bMatkRate,8;},{},{}
 // Guns
 13100,Six_Shooter,Six Shooter,4,4500,,400,30,,7,1,0x01000000,7,2,34,1,10,1,17,{ bonus bHit,-10; },{},{}
 13101,Six_Shooter_,Six Shooter,4,4500,,400,30,,7,2,0x01000000,7,2,34,1,10,1,17,{ bonus bHit,-10; },{},{}
@@ -5921,8 +5923,8 @@
 13109,Wasteland_Outlaw_C,Wasteland Outlaw,4,20,,0,100,,7,0,0x41000000,7,2,34,3,0,0,17,{ bonus bHit,readparam(bAgi)/10; bonus bAspdRate,readparam(bAgi)/14; bonus2 bAddClass,Class_All,10; bonus bMatkRate,10; },{},{}
 13110,Krieger_Pistol1,Glorious Pistol,4,0,,0,80,,7,0,0x41000000,7,2,34,4,80,1,17,{ bonus2 bAddRace,RC_DemiHuman,55; bonus2 bAddRace,RC_Player,55; bonus2 bIgnoreDefRaceRate,RC_DemiHuman,20; bonus2 bIgnoreDefRaceRate,RC_Player,20; bonus bUnbreakableWeapon,0; if(getrefine()>5){ bonus2 bAddRace,RC_DemiHuman,pow(getrefine()-4,2); bonus2 bAddRace,RC_Player,pow(getrefine()-4,2); bonus2 bIgnoreDefRaceRate,RC_DemiHuman,5; bonus2 bIgnoreDefRaceRate,RC_Player,5; } if(getrefine()>8) { bonus4 bAutoSpellOnSkill,"GS_RAPIDSHOWER","GS_GLITTERING",1,1000; bonus2 bSkillAtk,"GS_RAPIDSHOWER",getrefine()*2; } },{},{}
 //13111,Sharpshooter_Revolver
-13112,P_Revolver1,Eden Revlover I,4,0,,0,4,,7,0,0x01000000,7,2,34,1,26,0,17,{ bonus bHit,-5; },{},{}
-13113,P_Revolver2,Eden Revlover II,4,0,,0,60,,7,0,0x01000000,7,2,34,1,40,0,17,{ bonus bHit,-5; },{},{}
+13112,P_Revolver1,Eden Revlover I,4,0,,0,44,,7,0,0x41000000,63,2,34,1,26,0,17,{ bonus bHit,-5; },{},{}
+13113,P_Revolver2,Eden Revlover II,4,0,,0,60,,7,0,0x41000000,63,2,34,1,40,0,17,{ bonus bHit,-5; },{},{}
 13150,Branch,Branch,4,3000,,500,50,,9,3,0x01000000,7,2,34,1,1,1,18,{},{},{}
 13151,The_Cyclone,Cyclone,4,17500,,700,120,,9,1,0x01000000,7,2,34,2,24,1,18,{ bonus bHit,10; bonus bCritical,10; },{},{}
 13152,The_Cyclone_,Cyclone,4,17500,,700,120,,9,2,0x01000000,7,2,34,2,24,1,18,{ bonus bHit,10; bonus bCritical,10; },{},{}
