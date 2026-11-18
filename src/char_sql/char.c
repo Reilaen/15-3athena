@@ -1258,7 +1258,7 @@ int mmo_chars_fromsql(struct char_session_data* sd, uint8* buf)
 	return j;
 }
 
-#define MAX_CHAR_BUF 155 //Max size (for WFIFOHEAD calls)
+#define MAX_CHAR_BUF 150 //Max size (for WFIFOHEAD calls)
 
 // 0x99d HC_ACK_CHARINFO_PER_PAGE
 // Loads the basic character rooster for the given account and then
@@ -2315,20 +2315,9 @@ int mmo_char_send006b(int fd, struct char_session_data* sd)
 // 0x9a0 - HC_CHARLIST_NOTIFY - Tell client how many pages, kRO sends 17
 void mmo_charlist_notify(int fd, struct char_session_data* sd)
 {
-	int found = 0, count = 0, i = 0;
-	for (i = 0; i < MAX_CHARS; i++) {
-		if (sd->found_char[i] != -1) {
-			found = 1;
-		}
-		if (i % 3 && found) { //each page contains 3char max
-			count++;
-			found = 0;
-		}
-	}
-
 	WFIFOHEAD(fd,6);
 	WFIFOW(fd,0) = 0x9a0;
-	WFIFOL(fd, 2) = count ? count : 1;
+	WFIFOL(fd, 2) = (MAX_CHARS > 3) ? MAX_CHARS / 3 : 1;
 	WFIFOSET(fd,6);
 }
 
@@ -2346,11 +2335,6 @@ void mmo_char_send082d(int fd, struct char_session_data* sd)
 	WFIFOB(fd,8) = MAX_CHARS;	//ValidSlotNum
 	memset(WFIFOP(fd,9), 0, 20);//m_extension
 	WFIFOSET(fd,29);
-#if PACKETVER >= 20180620
-	mmo_charlist_notify(fd, sd);
-#else
-	mmo_char_send006b(fd, sd);
-#endif
 }
 
 void char_block_character(int fd, struct char_session_data* sd);
@@ -2413,6 +2397,8 @@ void char_block_character(int fd, struct char_session_data* sd) {
 void mmo_char_send(int fd, struct char_session_data* sd) {
 #if PACKETVER >= 20120702
 	mmo_char_send082d(fd, sd);
+	mmo_char_send006b(fd, sd);
+	mmo_charlist_notify(fd, sd);
 #else
 	mmo_char_send006b(fd, sd);
 #endif
@@ -4766,6 +4752,11 @@ int parse_char(int fd)
 		#define FIFOSD_CHECK(rest) { if(RFIFOREST(fd) < rest) return 0; if (sd==NULL || !sd->auth) { RFIFOSKIP(fd,rest); return 0; } }
 
 		cmd = RFIFOW(fd,0);
+
+#ifdef LOG_ALL_PACKETS
+			ShowDebug("parse_char: Received packet 0x%3x (connection %d)\n", cmd, fd);
+#endif
+
 		switch( cmd )
 		{
 

@@ -5,6 +5,14 @@
 // 		- Details.
 //			--More Details.
 //========================================
+11/18/2026
+	r608 [15peaces]
+		*Fixed the new char select packets.
+			-The char select is now working with 20190530 client, basic support for logging in & entering map server is done.
+		*Some cleaning in item database.
+		*Updated card trader points for Old Card Album
+			-The menu option to exchange points for an Old Card Album indicates 50 points, but the actual code and the introductory dialogue states 100 points.
+
 11/15/2026
 	r607 [15peaces]
 		*Changed some more Eden Group items to fit pre-renewal calculations.
